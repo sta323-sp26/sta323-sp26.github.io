@@ -1,3 +1,3 @@
 # Course Website
 
-https://sta523-fa25.github.io/
+https://sta323-sp26.github.io/
