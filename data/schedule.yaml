@@ -1,12 +1,12 @@
-startdate: "2025-08-25"
+startdate: "2026-01-11"
 dateFormat: 'Mon, Jan 2'
 schedule:
 
 
-- week: 1
-  day: 0
+- week: 0
+  day: 4
   lecture: "Welcome & Types in R"
-  slides: Lec01
+  slides:
   screencast:
   readings:
     - text: Tidyverse style guide
@@ -23,7 +23,7 @@ schedule:
 - week: 1
   day: 2
   lecture: "Control Flow"
-  slides: Lec02
+  slides:
   screencast:
   suppmat:
     - text: Control flow
@@ -33,25 +33,8 @@ schedule:
 
 - week: 1
   day: 4
-  lecture: "<i>First lab sessions</i>"
-  slides:
-  screencast:
-  suppmat:
-  readings:
-    - text: GitHub Auth Guide
-      link: https://github.com/DukeStatSci/github_auth_guide
-    - text: Happy Git and GitHub
-      link: http://happygitwithr.com/
-
-- week: 2
-  day: 0
-  lecture: "<i>No class - Labor Day</i>"
-
-
-- week: 2
-  day: 2
   lecture: "Lists, Attributes, & S3"
-  slides: Lec03
+  slides:
   screencast:
   readings:
     - text: Adv R - OO Field Guide - S3
@@ -61,10 +44,13 @@ schedule:
       link: https://docs.python.org/3/tutorial/datastructures.html
 
 - week: 2
+  day: 1
+  lecture: "<i>No lab - MLK Day</i>"
+
+- week: 2
   day: 2
-  hide_date: true
   lecture: "Subsetting"
-  slides: Lec04
+  slides:
   screencast:
   readings:
     - text: Adv R - Subsetting
@@ -74,12 +60,11 @@ schedule:
       link: https://docs.python.org/3/tutorial/datastructures.html
 
 
-
-- week: 3
-  day: 0
+- week: 2
+  day: 4
   lecture: "Writing R Packages"
   screencast:
-  slides: Lec05
+  slides:
   readings:
     - text: R Packages
       link: https://r-pkgs.org/
@@ -93,7 +78,7 @@ schedule:
   day: 2
   lecture: "Testing with testthat"
   screencast:
-  slides: Lec06
+  slides:
   readings:
     - text: testthat
       link: https://testthat.r-lib.org/
@@ -101,11 +86,11 @@ schedule:
       link: https://r-pkgs.org/tests.html
   suppmat:
 
-- week: 4
-  day: 0
+- week: 3
+  day: 4
   lecture: "LLMs & R"
   screencast:
-  slides: Lec07
+  slides:
   readings:
     - text: Hadley's A no bullshit guide to LLMs
       link: https://www.youtube.com/watch?v=ctc2kx3LxG8&t=18m17s
@@ -115,8 +100,8 @@ schedule:
 
 - week: 4
   day: 2
-  lecture: "Tidy data, dplyr, & tidyr"
-  slides: Lec08
+  lecture: "Tidy data - dplyr & tidyr"
+  slides:
   screencast:
   readings:
     - text: Tidy Data paper
@@ -138,10 +123,10 @@ schedule:
       link: https://pandas.pydata.org/docs/user_guide/reshaping.html
 
 
-- week: 5
-  day: 0
-  lecture: "Functional programming & purrr"
-  slides: Lec09
+- week: 4
+  day: 4
+  lecture: "Functional programming -s purrr"
+  slides:
   screencast:
   readings:
     - text: Purrr tutorial
@@ -152,10 +137,10 @@ schedule:
       link: https://github.com/rstudio/cheatsheets/raw/master/purrr.pdf
   suppmat:
 
-- week: 5
-  day: 2
+- week: 4
+  day: 4
   lecture: "Visualization with ggplot2"
-  slides: Lec10
+  slides:
   screencast:
   readings:
     - text: R4DS - Visualization
@@ -170,18 +155,18 @@ schedule:
     - text: plotnine
       link: https://plotnine.readthedocs.io/en/stable/
 
-- week: 6
-  day: 0
+- week: 5
+  day: 2
   lecture: "Visualization Design"
-  slides: Lec11
+  slides:
   screencast:
   readings:
   suppmat:
  
-- week: 6
-  day: 2
+- week: 5
+  day: 4
   lecture: "Text processing & Regular expressions"
-  slides: Lec12
+  slides:
   screencast:
   readings:
     - text: stringr Cheat Sheet,
@@ -196,10 +181,10 @@ schedule:
     - text: re — Regular expression operations
       link: https://docs.python.org/3/library/re.html
 
-- week: 7
-  day: 0
+- week: 6
+  day: 2
   lecture: "Web scraping"
-  slides: Lec13
+  slides:
   screencast:
   readings:
     - text: rvest - selector gadget vignette
@@ -208,40 +193,10 @@ schedule:
     - text: BeautifulSoup
       link: https://www.crummy.com/software/BeautifulSoup/bs4/doc/
 
-- week: 7
-  day: 2
-  lecture: "filesystems, Dennys & LQ scraping"
-  screencast:
-  slides: Lec14
-  readings:
-    - text: Project-oriented workflow
-      link: https://rstats.wtf/project-oriented-workflow.html
-    - text: fs comparison
-      link: https://fs.r-lib.org/articles/function-comparisons.html
-  suppmat:
-
-- week: 8
-  day: 0
-  lecture: "<i>No class - Fall Break</i>"
-
-- week: 8
-  day: 2
-  lecture: "make"
-  slides: Lec15
-  screencast:
-  readings:
-    - text: Minimal make
-      link: https://kbroman.org/minimal_make/
-    - text: Why use make
-      link: https://bost.ocks.org/mike/make/
-    - text: targets
-      link: https://books.ropensci.org/targets/
-  suppmat:
-
-- week: 9
-  day: 0
+- week: 6
+  day: 4
   lecture: "Web APIs"
-  slides: Lec16
+  slides:
   screencast:
   readings:
     - text: httr2
@@ -255,10 +210,38 @@ schedule:
       link: https://requests.readthedocs.io/en/latest/
 
 
-- week: 9
+
+- week: 7
+  day: 2
+  lecture: "filesystems, Dennys & LQ scraping"
+  screencast:
+  slides:
+  readings:
+    - text: Project-oriented workflow
+      link: https://rstats.wtf/project-oriented-workflow.html
+    - text: fs comparison
+      link: https://fs.r-lib.org/articles/function-comparisons.html
+  suppmat:
+
+- week: 7
+  day: 4
+  lecture: "make"
+  slides:
+  screencast:
+  readings:
+    - text: Minimal make
+      link: https://kbroman.org/minimal_make/
+    - text: Why use make
+      link: https://bost.ocks.org/mike/make/
+    - text: targets
+      link: https://books.ropensci.org/targets/
+  suppmat:
+
+
+- week: 8
   day: 2
   lecture: "Shiny"
-  slides: Lec17
+  slides:
   screencast:
   readings:
     - text: Shiny Docs & Gallery
@@ -271,10 +254,25 @@ schedule:
       link: https://posit-conf-2025.github.io/shiny-r/
   suppmat:
 
+- week: 8
+  day: 4
+  lecture: "bslib, dynamic UIs, and publishing"
+  slides:
+  screencast:
+  readings:
+
+- week: 9
+  day: 2
+  lecture: "<i>No class - Spring break</i>"
+
+- week: 9
+  day: 4
+  lecture: "<i>No class - Spring break</i>"
+
 - week: 10
-  day: 0
+  day: 2
   lecture: "Databases & dplyr"
-  slides: Lec18
+  slides:
   screencast:
   readings:
     - text: SQL Translation
@@ -288,9 +286,9 @@ schedule:
       link: https://docs.python.org/3/library/sqlite3.html
 
 - week: 10
-  day: 2
+  day: 4
   lecture: "DuckDB & SQL"
-  slides: Lec19
+  slides:
   screencast:
   readings:
     - text: DuckDB SQL Reference
@@ -302,17 +300,9 @@ schedule:
   suppmat:
 
 - week: 11
-  day: 0
-  lecture: "bslib, dynamic UIs, and publishing"
-  slides: Lec20
-  screencast:
-  readings:
-
-
-- week: 11
   day: 2
   lecture: "Profiling & Parallelization"
-  slides: Lec21
+  slides:
   screencast:
   readings:
     - text: "parallel Vignettes"
@@ -324,63 +314,39 @@ schedule:
   suppmat:
 
 - week: 12
-  day: 0
-  lecture: "Spatial data"
-  slides: Lec22
-  screencast:
-  readings:
-    - text: "sf Vignettes"
-      link: https://cran.r-project.org/web/packages/sf/vignettes/
-  suppmat:
-
-- week: 12
   day: 2
   lecture: "Tidy Models"
-  slides: Lec23
+  slides:
   screencast:
   readings:
     - text: "Tidy Models - Get Started"
       link: https://www.tidymodels.org/start/
   suppmat:
 
-- week: 13
-  day: 0
-  lecture: "Model Tuning"
-  screencast:
-  slides: Lec24
-  readings:
-    - text: "posit::conf 2025 - Tidy Models Workshop"
-      link: https://workshops.tidymodels.org/
-  suppmat:
+- week: 12
+  day: 4
+  lecture: "Tidy Models"
 
 - week: 13
   day: 2
-  lecture: "Building APIs with R (plumber2)"
-  slides: Lec25
-  screencast:
-  readings:
-    - text: plumber2
-      link: https://plumber2.posit.co/
+  lecture: Optimization
 
-
-- week: 14
-  day: 0
-  lecture: "Rcpp"
-  screencast:
-  slides: Lec26
-  readings:
-    - text: Adv-R - Rewriting R code in C++
-      link: http://adv-r.had.co.nz/Rcpp.html
-    - text: Rcpp Gallery
-      link: https://gallery.rcpp.org/
-    - text: Rcpp for Everyone
-      linl: https://teuder.github.io/rcpp4everyone_en/
-  suppmat:
+- week: 13
+  day: 4
+  lecture: Optimization
 
 - week: 14
   day: 2
-  lecture: "<i>No class - Thanksgiving Break</i>"
+  lecture: Gradient Descent
+
+- week: 14
+  day: 4
+  lecture: Gradient Descent
+
+- week: 15
+  day: 2
+  lecture: "LDOC"
 
 - week: 16
-  day: 4
+  day: 6
   lecture: "<i>Final project due by 11:59 pm</i>"

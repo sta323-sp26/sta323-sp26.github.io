@@ -1,7 +1,7 @@
 baseurl: "/"
-title: "Programming for Statistical Science"
+title: "Statistical Computing"
 author: "Colin Rundel"
-copyright: "&copy; 2025. All rights reserved."
+copyright: "&copy; 2026. All rights reserved."
 ignoreFiles: ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 publishDir: "docs"
 
@@ -15,19 +15,19 @@ menu:
   - name: Canvas
     pre: <i class="fas fa-chalkboard-teacher"></i>
     weight: 3
-    url: https://canvas.duke.edu/courses/61210
+    url: https://canvas.duke.edu/courses/73157
   - name: Github
     pre: <i class='fa fa-github fa-fw'></i>
     weight: 6
-    url: https://github.com/sta523-fa25
+    url: https://github.com/sta323-sp26
   - name: RStudio
     pre: <i class='fab fa-r-project fa-fw'></i>
     weight: 7
     url: https://rstudio.stat.duke.edu
 
 params:
-  subtitle: "(Fall 2025)"
-  course: "Sta 523"
+  subtitle: "(Spring 2026)"
+  course: "Sta 323"
   highlightjs: androidstudio
   highlightjs_extra_languages:
     - yaml
@@ -42,8 +42,8 @@ params:
       email: colin.rundel@duke.edu
       hours:
       - loc: 204 Old Chemistry / Zoom
-        day: Wednesdays
-        time: "12:00 - 1:30 pm"
+        day: TBD
+        time: ""
   assignments:
     - name: Homework
       type: Team
@@ -57,12 +57,12 @@ params:
   classroom:
     lecture:
       location: Old Chemistry 116
-      days: Mondays & Wednesdays
-      time: 10:05 - 11:20 am
+      days: Tuesdays & Thursdays
+      time: 1:25 - 2:40 pm
     labs:
-      - location: Old Chemistry 116
-        days: Fridays
-        time: 10:05 - 11:20 am
-      - location: Old Chemistry 116
-        days: Fridays
+      - location: Perkins Link 3 (087)
+        days: Mondays
         time: 11:45 am - 1:00 pm
+      - location: Perkins Link 3 (087)
+        days: Mondays
+        time: 1:25 - 2:40 pm
