@@ -58,11 +58,11 @@ options(
 
 ## Labs
 
-- Attendance is expected
+- Attendance is expected - must attend lab you are enrolled in
 
 - Opportunity to work on course assignments with TA support
 
-- Labs will begin next week
+- Labs will begin next week - Monday (1/12)
 
 
 ## Assessment
@@ -79,7 +79,7 @@ We will be assessing you based on the following:
 |Homeworks |Team      |30%    | 5/6 | ~ Every other week  |
 |Midterms  |Individual|40%    | 2   | ~ Week 6 and 14     |
 |Project   |Team      |10%    | 1   | ~ Week 10           | 
-|Quizzes   |Individual|20%    | ~15 |                     | 
+|Quizzes   |Individual|20%    | ~10-12 | ~ Wee               | 
 :::
 
 
@@ -127,7 +127,7 @@ We will be assessing you based on the following:
 
 - Nature of the tools is changing rapidly - Autocomplete vs ChatBots vs Agentic
 
-
+  - Google Gemini and GitHub Copilot have "free" student options
 
 
 ## Academic integrity
@@ -263,6 +263,8 @@ R has six atomic vector types.
 | character   |  character |
 | complex     |  complex   |
 | raw         |  raw       |
+
+<br/>
 
 We can check the type of any object in R using the `typeof()` function. `mode()` is a higher level abstraction used to group similar types together.
 
@@ -431,7 +433,7 @@ c(1,c(2, c(3)))
 ```
 
 ::: {.aside}
-**Note** - atomic vectors are inherently flat / 1d, so multiple `c()` calls does not create a nested structure.
+**Note** - atomic vectors are inherently flat / 1d, so multiple `c()` calls do not create a nested structure.
 :::
 
 
@@ -570,7 +572,7 @@ FALSE | !5
 
 
 
-## Explicit Coercion
+## Explicit coercion
 
 Most of the `is` functions we just saw have an `as` variant which can be used for *explicit* coercion.
 
@@ -597,10 +599,21 @@ as.double("one")
 
 ## Missing Values
   
-R uses `NA` to represent missing values in its data structures, what may not be obvious is that there are different `NA`s for the different atomic types.
+R uses `NA` to represent missing values in its data structures. 
 
-:::: {.columns}
-::: {.column width='50%'}
+What may not be obvious is that there are different `NA`s for the different atomic types.
+
+:::: {.columns .small}
+::: {.column width='30%'}
+```{r}
+NA
+NA+1
+NA+1L
+c(NA,"")
+```
+:::
+
+::: {.column width='30%'}
 ```{r}
 typeof(NA)
 typeof(NA+1)
@@ -609,7 +622,7 @@ typeof(c(NA,""))
 ```
 :::
 
-::: {.column width='50%'}
+::: {.column width='40%'}
 ```{r}
 typeof(NA_character_)
 typeof(NA_real_)
@@ -619,13 +632,9 @@ typeof(NA_complex_)
 :::
 ::::
 
-::: aside
-This makes sense as `NA` values can appear along with other values in atomic vectors.
-:::
-
 ## NA stickiness
 
-Because `NA`s represent missing values it makes sense that most calculations using them will also be missing.
+As `NA`s represent missing values (most) calculations using them return a missing value.
 
 :::: {.columns .small}
 ::: {.column width='50%'}
@@ -647,7 +656,7 @@ sum(c(1, 2, 3, NA))
 
 . . .
 
-Aggregation / summarization functions (e.g. `sum()`, `mean()`, `sd()`, etc.) will often have a `na.rm` argument which *drops* the missing values from the calculation.
+Aggregation / summarization functions (e.g. `sum()`, `mean()`, `sd()`, etc.) will often have an `na.rm` argument which *removes* the missing values from the calculation.
 
 ::: {.small}
 ```{r}
@@ -659,11 +668,11 @@ mean(c(1, 2, 3, NA), na.rm = TRUE)
 
 ## NAs are not always sticky 
   
-A useful mental model for `NA`s is to consider them as a unknown value that could take any of the possible values for a type. 
+A useful mental model for `NA`s is to consider them as a unknown value that could take any of the possible values for a given type. 
 
 . . .
 
-For numbers or characters this isn't very helpful, but for a logical value we know that the value must either be `TRUE` or `FALSE` and we can use that when deciding what value to return.
+For numbers or characters this isn't helpful, but for a logical value it must either be `TRUE` or `FALSE` which is relevant for certain calculations.
 
 . . .
 
@@ -701,7 +710,7 @@ These are defined as part of the IEEE floating point standard (not unique to R)
 :::: {.columns}
 ::: {.column width='50%'}
 ```{r}
-pi / 0
+-1 / 0
 0 / 0
 1/0 + 1/0
 ```
@@ -719,7 +728,7 @@ NaN * NA
 
 ## Testing for `Inf` and `NaN`
 
-`NaN` and `Inf` there are convenience functions for testing for these types of values
+there are predicate functions for testing for these types of values
 
 :::: {.columns .small}
 ::: {.column width='50%'}
