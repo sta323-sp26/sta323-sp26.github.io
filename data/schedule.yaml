@@ -22,8 +22,8 @@ schedule:
 
 - week: 1
   day: 2
-  lecture: "Control Flow"
-  slides:
+  lecture: "Vectorization & Control Flow"
+  slides: Lec02
   screencast:
   suppmat:
     - text: Control flow
