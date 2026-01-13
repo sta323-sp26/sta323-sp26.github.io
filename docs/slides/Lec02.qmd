@@ -1,5 +1,5 @@
 ---
-title: "Control Flow"
+title: "Vectorization &<br/>Control Flow"
 subtitle: "Lecture 02"
 author: "Dr. Colin Rundel"
 footer: "Sta 323 - Spring 2026"
@@ -47,11 +47,6 @@ Considering only the four (common) data types, what is R's implicit type convers
 ::: {.aside}
 *Hint* - think about the pairwise interactions between types.
 :::
-
-```{r}
-#| echo: False
-countdown::countdown(minutes=5)
-```
 
 
 
@@ -105,12 +100,9 @@ TRUE && FALSE
 
 . . .
 
-`&` and `|` are almost always going to be the right choice, the only time we use `&&` or `||` is when you need to take advantage of [short-circuit evaluation](https://en.wikipedia.org/wiki/Short-circuit_evaluation).
-
-
-::: {.aside}
 Before R 4.3 both `||` and `&&` only used the *first* value in the vector, all other values are ignored and there was no warning about the ignored values.
-:::
+
+`&` and `|` are almost always going to be the right choice, the only time we use `&&` or `||` is when you need to take advantage of [short-circuit evaluation](https://en.wikipedia.org/wiki/Short-circuit_evaluation).
 
 
 ## Vectorization and math
@@ -263,7 +255,7 @@ y %in% x
 
 . . .
 
-Type coercion also applies for comparison opperators which can result in *interesting* behavior
+Type coercion also applies for comparison operators which can result in *interesting* behavior
 
 :::: {.columns .small}
 ::: {.column width='50%'}
@@ -284,7 +276,7 @@ TRUE == 5
 
 ## `>` & `<` with characters
 
-While maybe somewhat unexpected, these comparison operators can be used character values.
+While perhaps unexpected, these comparison operators can be used with character values.
 
 :::: {.columns}
 ::: {.column width='50%'}
@@ -712,7 +704,7 @@ if (condition_one) {
 } else if (condition_two) {
   ## Do other stuff
 } else if (condition_error) {
-  stop("Condition error occured")
+  stop("Condition error occurred")
 }
 ```
 :::
@@ -723,7 +715,7 @@ Do stuff (better):
 #| eval: False
 # Do stuff better
 if (condition_error) {
-  stop("Condition error occured")
+  stop("Condition error occurred")
 }
 
 if (condition_one) {
@@ -837,13 +829,14 @@ In general the goals of writing functions is to,
 
 ## Functions as objects
 
-Functions are 1st order objects in R and have a *mode* of `function`. They are assigned names like other objects using `=` or `<-`.
+Functions are first-class objects in R and have a *mode* of `function`. They are assigned names like other objects using `=` or `<-`.
 
 ::: {.medium}
 ```{r}
 gcd = function(x1, y1, x2 = 0, y2 = 0) {
+  # x and y values should be in radians
   R = 6371 # Earth mean radius in km
-  
+
   # distance in km
   acos(sin(y1)*sin(y2) + cos(y1)*cos(y2) * cos(x2-x1)) * R
 }

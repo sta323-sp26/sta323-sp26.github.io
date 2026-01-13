@@ -442,7 +442,7 @@
   <meta name="generator" content="quarto-1.9.12">
 
   <meta name="author" content="Dr. Colin Rundel">
-  <title>Control Flow</title>
+  <title>Vectorization &amp; Control Flow</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -1916,7 +1916,7 @@ if (!window.customElements.get('countdown-timer')) {
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Control Flow</h1>
+  <h1 class="title">Vectorization &amp;<br>Control Flow</h1>
   <p class="subtitle">Lecture 02</p>
 
 <div class="quarto-title-authors">
@@ -1942,11 +1942,6 @@ Dr. Colin Rundel
 <h4 id="part-2">Part 2</h4>
 <p>Considering only the four (common) data types, what is R’s implicit type conversion hierarchy (from highest priority to lowest priority)?</p>
 
-<div class="cell">
-<div class="cell-output-display">
-<countdown-timer class="countdown" id="timer_f84345e2" minutes="5" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
-</div>
-</div>
 <aside><div>
 <p><em>Hint</em> - think about the pairwise interactions between types.</p>
 </div></aside></section>
@@ -2041,12 +2036,10 @@ Dr. Colin Rundel
 </div></div>
 </div>
 <div class="fragment">
-<p><code>&amp;</code> and <code>|</code> are almost always going to be the right choice, the only time we use <code>&amp;&amp;</code> or <code>||</code> is when you need to take advantage of <a href="https://en.wikipedia.org/wiki/Short-circuit_evaluation">short-circuit evaluation</a>.</p>
-
-</div>
-<aside><div>
 <p>Before R 4.3 both <code>||</code> and <code>&amp;&amp;</code> only used the <em>first</em> value in the vector, all other values are ignored and there was no warning about the ignored values.</p>
-</div></aside></section>
+<p><code>&amp;</code> and <code>|</code> are almost always going to be the right choice, the only time we use <code>&amp;&amp;</code> or <code>||</code> is when you need to take advantage of <a href="https://en.wikipedia.org/wiki/Short-circuit_evaluation">short-circuit evaluation</a>.</p>
+</div>
+</section>
 <section id="vectorization-and-math" class="slide level2">
 <h2>Vectorization and math</h2>
 <p>Almost all of the basic mathematical operations (and many other functions) in R are vectorized.</p>
@@ -2261,7 +2254,7 @@ length</code></pre>
 </div>
 </div></div>
 <div class="fragment">
-<p>Type coercion also applies for comparison opperators which can result in <em>interesting</em> behavior</p>
+<p>Type coercion also applies for comparison operators which can result in <em>interesting</em> behavior</p>
 <div class="columns small">
 <div class="column" style="width:50%;">
 <div class="cell">
@@ -2290,7 +2283,7 @@ length</code></pre>
 </section>
 <section id="with-characters" class="slide level2">
 <h2><code>&gt;</code> &amp; <code>&lt;</code> with characters</h2>
-<p>While maybe somewhat unexpected, these comparison operators can be used character values.</p>
+<p>While perhaps unexpected, these comparison operators can be used with character values.</p>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
@@ -2571,7 +2564,7 @@ length</code></pre>
 </div></div>
 <div class="cell">
 <div class="cell-output-display">
-<countdown-timer class="countdown" id="timer_908d099b" minutes="3" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
+<countdown-timer class="countdown" id="timer_e6055371" minutes="3" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
 </div>
 </div>
 </section>
@@ -2732,7 +2725,7 @@ length</code></pre>
 <span id="cb147-3"><a href></a>} <span class="cf">else</span> <span class="cf">if</span> (condition_two) {</span>
 <span id="cb147-4"><a href></a>  <span class="do">## Do other stuff</span></span>
 <span id="cb147-5"><a href></a>} <span class="cf">else</span> <span class="cf">if</span> (condition_error) {</span>
-<span id="cb147-6"><a href></a>  <span class="fu">stop</span>(<span class="st">&quot;Condition error occured&quot;</span>)</span>
+<span id="cb147-6"><a href></a>  <span class="fu">stop</span>(<span class="st">&quot;Condition error occurred&quot;</span>)</span>
 <span id="cb147-7"><a href></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div><div class="column fragment" style="width:50%;">
@@ -2740,7 +2733,7 @@ length</code></pre>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb148"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb148-1"><a href></a><span class="co"># Do stuff better</span></span>
 <span id="cb148-2"><a href></a><span class="cf">if</span> (condition_error) {</span>
-<span id="cb148-3"><a href></a>  <span class="fu">stop</span>(<span class="st">&quot;Condition error occured&quot;</span>)</span>
+<span id="cb148-3"><a href></a>  <span class="fu">stop</span>(<span class="st">&quot;Condition error occurred&quot;</span>)</span>
 <span id="cb148-4"><a href></a>}</span>
 <span id="cb148-5"><a href></a></span>
 <span id="cb148-6"><a href></a><span class="cf">if</span> (condition_one) {</span>
@@ -2837,15 +2830,16 @@ length</code></pre>
 </section>
 <section id="functions-as-objects" class="slide level2">
 <h2>Functions as objects</h2>
-<p>Functions are 1st order objects in R and have a <em>mode</em> of <code>function</code>. They are assigned names like other objects using <code>=</code> or <code>&lt;-</code>.</p>
+<p>Functions are first-class objects in R and have a <em>mode</em> of <code>function</code>. They are assigned names like other objects using <code>=</code> or <code>&lt;-</code>.</p>
 <div class="medium">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb158"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb158-1"><a href></a>gcd <span class="ot">=</span> <span class="cf">function</span>(x1, y1, <span class="at">x2 =</span> <span class="dv">0</span>, <span class="at">y2 =</span> <span class="dv">0</span>) {</span>
-<span id="cb158-2"><a href></a>  R <span class="ot">=</span> <span class="dv">6371</span> <span class="co"># Earth mean radius in km</span></span>
-<span id="cb158-3"><a href></a>  </span>
-<span id="cb158-4"><a href></a>  <span class="co"># distance in km</span></span>
-<span id="cb158-5"><a href></a>  <span class="fu">acos</span>(<span class="fu">sin</span>(y1)<span class="sc">*</span><span class="fu">sin</span>(y2) <span class="sc">+</span> <span class="fu">cos</span>(y1)<span class="sc">*</span><span class="fu">cos</span>(y2) <span class="sc">*</span> <span class="fu">cos</span>(x2<span class="sc">-</span>x1)) <span class="sc">*</span> R</span>
-<span id="cb158-6"><a href></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb158-2"><a href></a>  <span class="co"># x and y values should be in radians</span></span>
+<span id="cb158-3"><a href></a>  R <span class="ot">=</span> <span class="dv">6371</span> <span class="co"># Earth mean radius in km</span></span>
+<span id="cb158-4"><a href></a></span>
+<span id="cb158-5"><a href></a>  <span class="co"># distance in km</span></span>
+<span id="cb158-6"><a href></a>  <span class="fu">acos</span>(<span class="fu">sin</span>(y1)<span class="sc">*</span><span class="fu">sin</span>(y2) <span class="sc">+</span> <span class="fu">cos</span>(y1)<span class="sc">*</span><span class="fu">cos</span>(y2) <span class="sc">*</span> <span class="fu">cos</span>(x2<span class="sc">-</span>x1)) <span class="sc">*</span> R</span>
+<span id="cb158-7"><a href></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div class="fragment">
@@ -3412,7 +3406,7 @@ length</code></pre>
         z$qr &lt;- NULL
     z
 }
-&lt;bytecode: 0x120cdccd8&gt;
+&lt;bytecode: 0x10d767748&gt;
 &lt;environment: namespace:stats&gt;</code></pre>
 </div>
 </div>
@@ -3825,7 +3819,7 @@ length</code></pre>
 </div></div>
 <div class="cell">
 <div class="cell-output-display">
-<countdown-timer class="countdown" id="timer_faf1fb74" minutes="3" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
+<countdown-timer class="countdown" id="timer_ba382769" minutes="3" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
 </div>
 </div>
 

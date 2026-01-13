@@ -4,63 +4,36 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture Overview
 
-This is a Hugo-based academic course website for "Programming for Statistical Science" (Sta 523). The site structure includes:
+Hugo-based academic course website for Sta 323 "Statistical Computing" (Spring 2026). Combines Hugo SSG for the main site with Quarto revealjs presentations for lecture slides.
 
-- **Hugo static site**: Uses Hugo SSG with custom layouts and themes
-- **Quarto presentations**: Lecture slides in `.qmd` format rendered to HTML/PDF
-- **R integration**: RStudio project with R-based content and analysis
-
-## Key Directories
-
-- `docs/`: Generated Hugo site (published output)
-- `docs/slides/`: Compiled lecture slides (HTML/PDF/QMD source)
-- `layouts/`: Hugo templates and partials
-- `static/`: Static assets (CSS, images, data files)
-- `data/`: YAML configuration data (schedule.yaml)
+**Build pipeline**: QMD → HTML (quarto render) → PDF (renderthis::to_pdf)
 
 ## Development Commands
 
-### Building the site
 ```bash
 make build          # Build HTML slides, PDFs, and Hugo site
-make all            # Build everything (equivalent to: make pdf build)
+make open           # Build and open docs/index.html in browser
+make push           # Build, commit, and push to git
+make clean          # Remove all generated files
 ```
 
-### Working with slides
+### Single slide workflow
 ```bash
-make html           # Build only HTML slides from QMD files
-make pdf            # Build only PDF slides from HTML files
-```
-
-### Development workflow
-```bash
-make open           # Build site and open docs/index.html in browser
-make clean          # Remove all generated files (docs/, HTML/PDF slides)
-```
-
-### Publishing
-```bash
-make push           # Build, commit, and push changes to git
+quarto render static/slides/Lec01.qmd                    # Render one slide to HTML
+Rscript -e "renderthis::to_pdf('static/slides/Lec01.html')"  # Convert HTML to PDF
 ```
 
 ## Slide Development
 
-Slides are created as Quarto documents (`.qmd`) using:
-- **Format**: `revealjs` with custom theme (`slides.scss`)
-- **Engine**: knitr for R code execution
-- **Extensions**: Uses `drop` plugin and various Quarto extensions in `_extensions/`
-- **Rendering**: `quarto render` for HTML, `renderthis::to_pdf()` for PDF conversion
+Slides live in `static/slides/*.qmd` using revealjs format with custom theme (`slides.scss`). Each slide uses knitr engine for R code execution.
 
-## Configuration Files
+## Key Configuration
 
-- `config.yaml`: Hugo site configuration with menu, params, and course details
-- `Makefile`: Build automation with pattern rules for QMD→HTML→PDF pipeline
-- `website.Rproj`: RStudio project settings
-- `data/schedule.yaml`: Course schedule data
+- `config.yaml`: Hugo site config, menu structure, course params (assignments, classroom info)
+- `data/schedule.yaml`: Course schedule driving the schedule partial. Each entry has: `week`, `day`, `lecture`, `slides` (filename without extension), `readings`, `suppmat`
 
 ## R Development Notes
 
-When working with R code in this repository:
 - Use `=` for assignment (not `<-`)
-- When using external packages, prefer `pkg::function()` syntax
-- Minimize single-line comments (only for "why", not "how")
+- Prefer `pkg::function()` syntax over importing functions
+- Minimize comments (only for "why", not "how")
