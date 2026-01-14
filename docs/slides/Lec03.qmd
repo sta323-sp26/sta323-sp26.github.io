@@ -41,7 +41,7 @@ list("A", c(TRUE,FALSE), (1:4)/2, list(1L), function(x) x^2)
 
 ## List Structure
 
-Often we want a more compact representation of a complex object, the `str()` function is useful for this, particularly for lists.
+Often we want a more compact representation of a complex object; the `str()` function is useful for this, particularly for lists.
 
 :::: {.columns .small}
 ::: {.column width='50%'}
@@ -115,9 +115,9 @@ unlist( list(1, list(2, list(3, "Hello"))) )
 
 Because of their more complex structure we often want to name the elements of a list (we can also do this with atomic vectors). 
 
-This can make accessing list elements more straight forward and avoids the use of magic numbers.
+This can make accessing list elements more straightforward and avoids the use of magic numbers.
 
-::: medium
+::: {.medium}
 ```{r}
 str(list(A = 1, B = list(C = 2, D = 3)))
 ```
@@ -127,7 +127,7 @@ str(list(A = 1, B = list(C = 2, D = 3)))
 
 More complex names (i.e. non-valid object names) must be quoted,
 
-::: medium
+::: {.medium}
 ```{r}
 list("knock knock" = "who's there?")
 ```
@@ -135,8 +135,8 @@ list("knock knock" = "who's there?")
 
 ## Aside - Variable names vs. value names
 
-::: medium
-We have seen how to assign a name to an R object (via `=` or `<-`). The general rule for these names is that it must start with a letter (upper or lower) or a `.` and then be followed additional letters, numbers, `.` or `_`. 
+::: {.medium}
+We have seen how to assign a name to an R object (via `=` or `<-`). The general rule for these names is that it must start with a letter (upper or lower) or a `.` and then be followed by additional letters, numbers, `.` or `_`. 
 
 These names are unambiguous to the interpreter / parser and so do not need any additional decoration. However if you want to use a name that does not follow these rules, then you must quote it using backticks.
 :::
@@ -382,7 +382,7 @@ This operator is a relatively recent addition to base R (added in v4.4) but was 
 
 Attributes are metadata that can be attached to objects in R. 
 
-Certain attributes are special ( e.g. `class`, `comment`, `dim`, `dimnames`, `names`, ...) because they change the behavior of the object(s).
+Certain attributes are special (e.g. `class`, `comment`, `dim`, `dimnames`, `names`, ...) because they change the behavior of the object(s).
 
 . . .
 
@@ -533,7 +533,7 @@ y
 
 ## Building objects
 
-The approach we just used is a bit clunky - generally the preferred method for construction an object with attributes from scratch is to use the `structure()` function.
+The approach we just used is a bit clunky - generally the preferred method for constructing an object with attributes from scratch is to use the `structure()` function.
 
 ::: {.medium}
 ```{r}
@@ -921,11 +921,11 @@ On the left we have defined an S3 method called `report`, it is designed to retu
 
 * Try running the `report` function with different input types, what happens? 
 
-* Now uncomment out the code on line 17 and try rerunning the code, what has changed? 
+* Now uncomment out the first `rm()` line and try rerunning the code, what has changed? 
 
 * What does this tell us about S3, types, modes, and classes?
 
-* What if we also uncomment the code on line 18?
+* What if we also uncomment the code the other `rm()` lines?
 :::
 ::::
 

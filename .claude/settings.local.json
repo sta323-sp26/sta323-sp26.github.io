@@ -6,7 +6,9 @@
       "Bash(hugo:*)",
       "Bash(cp:*)",
       "Bash(mkdir:*)",
-      "Bash(Rscript:*)"
+      "Bash(Rscript:*)",
+      "Bash(tree:*)",
+      "Bash(find:*)"
     ],
     "deny": []
   }
