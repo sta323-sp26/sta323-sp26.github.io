@@ -2,7 +2,7 @@
 title: "Lists, Attributes, & S3"
 subtitle: "Lecture 03"
 author: "Dr. Colin Rundel"
-footer: "Sta 523 - Fall 2025"
+footer: "Sta 323 - Spring 2026"
 format:
   revealjs:
     theme: slides.scss
@@ -30,7 +30,7 @@ options(
 
 ## Lists
 
-Lists are the other vector data structure in R, they differ from atomic vectors in that they can contain a heterogeneous collection of R object (e.g. atomic vectors, other lists, functions, etc.).
+Lists are the other vector data structure in R, they differ from atomic vectors in that they are a *heterogeneous* collection of R objects (e.g. atomic vectors, other lists, functions, etc.).
 
 ::: {.xsmall}
 ```{r}
@@ -75,9 +75,9 @@ str( list(1, list(2, list(3, 4), 5)) )
 :::
 
 
-::: {.aside}
-Because of this, lists become a natural way of representing tree-like structures within R
-:::
+<br/>
+
+Because of this, lists become a natural way of representing *tree-like* structures within R
 
 
 ## List Coercion
@@ -115,7 +115,7 @@ unlist( list(1, list(2, list(3, "Hello"))) )
 
 Because of their more complex structure we often want to name the elements of a list (we can also do this with atomic vectors). 
 
-This can make accessing list elements more straight forward and avoids the use of magic numbers - more on this next lecture.
+This can make accessing list elements more straight forward and avoids the use of magic numbers.
 
 ::: medium
 ```{r}
@@ -166,10 +166,10 @@ a b
 :::
 ::::
 
+. . .
 
-::: aside
 Vector (atomic or generic) names can be any valid R character vector values (as this is how they are stored) but there are a number of circumstances where we use them like a variable name (e.g. `mtcars$mpg`), and so it is a good idea to avoid using names that violate the object naming rules to avoid having to use backticks all the time (e.g. ``x$`knock knock` ``).
-:::
+
 
 
 
@@ -262,7 +262,7 @@ Note - If you're familiar with SQL's `NULL` it behaves more like R's `NA` than R
 
 In this special case the longer vector will have its length coerced to 0 resulting in a 0-length vector being returned.
 
-:::: {.columns .small}
+:::: {.columns .xsmall}
 ::: {.column width='50%'}
 ```{r}
 integer() + 1
@@ -281,7 +281,7 @@ character() > "M"
 
 As a `NULL` values always have length 0, this rule will apply most of the time (note the types)
 
-:::: {.columns .small}
+:::: {.columns .xsmall}
 ::: {.column width='50%'}
 ```{r}
 NULL + 1
@@ -304,7 +304,7 @@ log(NULL)
 Given the previous issue, comparisons and conditionals with `NULL`s can be problematic.
 
 
-::: {.medium}
+::: {.small}
 ```{r}
 x = NULL
 ```
@@ -318,7 +318,7 @@ if (x > 0)
 
 . . .
 
-::: {.medium}
+::: {.small}
 ```{r}
 #| error: True
 if (!is.null(x) & (x > 0))
@@ -328,7 +328,7 @@ if (!is.null(x) & (x > 0))
 
 . . .
 
-::: {.medium}
+::: {.small}
 ```{r}
 #| error: True
 if (!is.null(x) && (x > 0))
@@ -370,9 +370,10 @@ if (x %||% 1 > 0)
 :::
 
 
-::: {.aside}
-This operator is a relatively recent addition to base R (v4.4) and was popularized in the tidyverse.
-:::
+<br/>
+
+This operator is a relatively recent addition to base R (added in v4.4) but was popularized in the tidyverse and other packages.
+
 
 
 # Attributes
@@ -843,7 +844,7 @@ shuffle.integer = function(x) {
 
 ## Shuffle results
 
-::: {.medium}
+::: {.small}
 ```{r}
 shuffle( 1:10 )
 ```
@@ -851,7 +852,7 @@ shuffle( 1:10 )
 
 . . .
 
-::: {.medium}
+::: {.small}
 ```{r}
 shuffle( factor(c("A","B","C","A")) )
 ```
@@ -859,7 +860,7 @@ shuffle( factor(c("A","B","C","A")) )
 
 . . .
 
-::: {.medium}
+::: {.small}
 ```{r}
 #| error: true
 shuffle( c(1, 2, 3, 4, 5) )
@@ -868,7 +869,7 @@ shuffle( c(1, 2, 3, 4, 5) )
 
 . . .
 
-::: {.medium}
+::: {.small}
 ```{r}
 #| error: true
 shuffle( letters[1:5] )
@@ -877,7 +878,7 @@ shuffle( letters[1:5] )
 
 . . .
 
-::: {.medium}
+::: {.small}
 ```{r}
 #| error: true
 shuffle( factor(letters[1:5]) )
@@ -955,11 +956,12 @@ From Advanced R:
 <br/>
 
 ::: {.columns .center}
-::: {.column .large width=25%}
+::: {.column .large width=50%}
+<br/><br/>
 Why?
 :::
-::: {.column .fragment width=75%}
-![](imgs/whydoesr.png){width=66%}
+::: {.column .fragment width=50%}
+![](imgs/whydoesr.png){width=100%}
 :::
 :::
 
