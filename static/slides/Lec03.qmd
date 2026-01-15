@@ -929,10 +929,6 @@ On the left we have defined an S3 method called `report`, it is designed to retu
 :::
 ::::
 
-```{r}
-#| echo: false
-countdown::countdown(3)
-```
 
 
 ## Conclusions?
