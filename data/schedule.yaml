@@ -2,7 +2,6 @@ startdate: "2026-01-11"
 dateFormat: 'Mon, Jan 2'
 schedule:
 
-
 - week: 0
   day: 4
   lecture: "Welcome & Types in R"
@@ -50,7 +49,7 @@ schedule:
 - week: 2
   day: 2
   lecture: "Subsetting"
-  slides:
+  slides: Lec04
   screencast:
   readings:
     - text: Adv R - Subsetting
