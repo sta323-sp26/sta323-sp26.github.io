@@ -118,7 +118,7 @@ attributes(m)
 
 . . .
 
-Matrices (and arrays) are just atomic vectors with a `dim` attribute attached. They do not have an explicit class attribute, but instead have implicit class.
+Matrices (and arrays) are just atomic vectors with a `dim` attribute attached. They do not have an explicit class attribute, but have implicit class(es).
 
 :::: {.columns .small}
 ::: {.column width='50%'}
@@ -250,8 +250,6 @@ A data frame is how R handles heterogeneous tabular data (i.e. a table of rows a
 
 . . .
 
-R represents data frames using a *list* of equal length *vectors*.
-
 ::: {.small}
 ```{r}
 str(df)
@@ -260,6 +258,10 @@ str(df)
 
 
 ## Data Frame Structure
+
+
+R represents data frames using a *list* of equal length *vectors*.
+
 
 :::: {.columns .small}
 ::: {.column width='50%'}
@@ -376,11 +378,11 @@ data.frame(x = 1:3, y = character())
 
 ## Subsetting in R
 
-R has three subsetting operators (`[`, `[[`, and `$`). The behavior of these operators depends on the object (class) they are being used with.
+R has three subsetting operators (`[`, `[[`, and `$`). The behavior of these operators depends on the object (class) they are being used with (S3).
 
 <br/>
 
-In general there are 6 different types of subsetting that can be performed:
+In general there are 6 different types of subsetting that can be performed based on the value passed to the operator,
 
 :::: {.columns}
 ::: {.column width='50%'}
@@ -404,7 +406,7 @@ In general there are 6 different types of subsetting that can be performed:
 Returns elements at the given location(s)
 
 
-:::: {.columns .small}
+:::: {.columns .xsmall}
 ::: {.column width='50%'}
 ```{r}
 x = c(1,4,7)
@@ -432,7 +434,7 @@ str( y[c(1.9,2.1)] )
 ::::
 
 ::: {.aside}
-Note - R uses a 1-based indexing scheme
+Note - R uses 1-based indexing
 :::
 
 ## Negative Integer subsetting
@@ -574,7 +576,7 @@ str(y[0])
 
 . . .
 
-`0`s can be mixed with either positive or negative integers for subsetting, but they are ignored in both cases.
+`0`s can be mixed with either positive or negative integers for subsetting, and are ignored in both cases.
 
 
 :::: {.columns .small}
@@ -596,7 +598,7 @@ y[c(0,-1)]
 
 ## Character subsetting
 
-If the vector has names, selects elements whose names correspond to the values in the name vector.
+If the vector has names, selects 1st element whose names correspond to the value in the `names` attribute.
 
 :::: {.columns .small}
 ::: {.column width='50%'}
@@ -975,4 +977,408 @@ x$y
 . . .
 
 The expression `x$y` gets interpreted as `x[["y"]]` by R, note the inclusion of the `"`s, this is not the same as the expression `x[[y]]`.
+
+
+
+# Subsetting Data Frames
+
+## Subsetting rows
+
+As data frames have 2 dimensions, we can subset on either the rows or the columns - the subsetting values are separated by a comma.
+
+::: {.small}
+```{r}
+(df = data.frame(x = 1:3, y = c("A","B","C"), z = TRUE))
+```
+:::
+
+. . .
+
+:::: {.columns .small}
+::: {.column width='50%'}
+```{r}
+df[1, ]
+```
+:::
+::: {.column width='50%'}
+```{r}
+str( df[1, ] )
+```
+:::
+::::
+
+
+. . .
+
+:::: {.columns .small}
+::: {.column width='50%'}
+```{r}
+df[c(1,3), ]
+```
+:::
+::: {.column width='50%'}
+```{r}
+str( df[c(1,3), ] )
+```
+:::
+::::
+
+
+
+
+## Subsetting Columns
+
+::: {.small}
+```{r}
+df
+```
+:::
+
+. . .
+
+:::: {.columns .small}
+::: {.column width='50%'}
+```{r}
+df[, 1]
+```
+:::
+::: {.column width='50%'}
+```{r}
+str( df[, 1] )
+```
+:::
+::::
+
+
+. . .
+
+:::: {.columns .small}
+::: {.column width='50%'}
+```{r}
+df[, 1:2]
+```
+:::
+::: {.column width='50%'}
+```{r}
+str( df[, 1:2] )
+```
+:::
+::::
+
+
+. . .
+
+:::: {.columns .small}
+::: {.column width='50%'}
+```{r}
+df[, -3]
+```
+:::
+::: {.column width='50%'}
+```{r}
+str( df[, -3] )
+```
+:::
+::::
+
+
+## Subsetting both
+
+::: {.small}
+```{r}
+df
+```
+:::
+
+. . .
+
+:::: {.columns .small}
+::: {.column width='50%'}
+```{r}
+df[1, 1]
+```
+:::
+::: {.column width='50%'}
+```{r}
+str( df[1, 1] )
+```
+:::
+::::
+
+
+. . .
+
+:::: {.columns .small}
+::: {.column width='50%'}
+```{r}
+df[1:2, 1:2]
+```
+:::
+::: {.column width='50%'}
+```{r}
+str( df[1:2, 1:2] )
+```
+:::
+::::
+
+
+. . .
+
+:::: {.columns .small}
+::: {.column width='50%'}
+```{r}
+df[-1, 2:3]
+```
+:::
+::: {.column width='50%'}
+```{r}
+str( df[-1, 2:3] )
+```
+:::
+::::
+
+
+## Preserving vs Simplifying
+
+Most of the time, R's `[` subset operator is a *preserving* operator, in that the returned object will always have the same type/class as the object being subset. 
+
+Confusingly, when used with some classes (e.g. data frame, matrix or array) `[` becomes a *simplifying* operator (does not preserve type) - this behavior is instead controlled by the `drop` argument.
+
+
+## Drop w/ row subset
+
+:::: {.columns .small}
+::: {.column width='50%'}
+```{r}
+#| error: True
+df[1, ]
+```
+:::
+::: {.column width='50%'}
+```{r}
+#| error: True
+str(df[1, ])
+```
+:::
+::::
+
+
+. . .
+
+:::: {.columns .small}
+::: {.column width='50%'}
+```{r}
+#| error: True
+df[1, , drop=TRUE]
+```
+:::
+::: {.column width='50%'}
+```{r}
+#| error: True
+str(df[1, , drop=TRUE])
+```
+:::
+::::
+
+## Drop w/ column subset
+
+:::: {.columns .small}
+::: {.column width='50%'}
+```{r}
+#| error: True
+df[, 1]
+```
+:::
+::: {.column width='50%'}
+```{r}
+#| error: True
+str(df[, 1])
+```
+:::
+::::
+
+
+. . .
+
+:::: {.columns .small}
+::: {.column width='50%'}
+```{r}
+#| error: True
+df[, 1, drop=FALSE]
+```
+:::
+::: {.column width='50%'}
+```{r}
+#| error: True
+str(df[, 1, drop=FALSE])
+```
+:::
+::::
+
+
+## Exceptions
+
+`drop` only works when the resulting value can be represented as a 1d vector (either a list or atomic).
+
+:::: {.columns}
+::: {.column width='50%'}
+```{r}
+#| error: True
+df[1:2, 1:2]
+```
+:::
+::: {.column width='50%'}
+```{r}
+#| error: True
+str(df[1:2, 1:2])
+```
+:::
+::::
+
+
+. . .
+
+:::: {.columns}
+::: {.column width='50%'}
+```{r}
+#| error: True
+df[1:2, 1:2, drop=TRUE]
+```
+:::
+::: {.column width='50%'}
+```{r}
+#| error: True
+str(df[1:2, 1:2, drop=TRUE])
+```
+:::
+::::
+
+
+## Preserving vs Simplifying Subsets
+
+<br/>
+
+Type             |  Simplifying             |  Preserving
+:----------------|:-------------------------|:--------------------------------------------------------
+Atomic Vector    |  `x[[1]]`                |  `x[1]`
+List             |  `x[[1]]`                |  `x[1]`
+Matrix / Array   |  `x[[1]]` <br/> `x[1, ]` <br/> `x[, 1]` |  `x[1, , drop=FALSE]` <br/> `x[, 1, drop=FALSE]`
+Factor           |  `x[1:4, drop=TRUE]`     |  `x[1:4]` <br/> `x[[1]]`
+Data frame       |  `x[, 1]` <br/> `x[[1]]` |  `x[, 1, drop=FALSE]` <br/> `x[1]`
+
+
+
+
+```{r}
+#| echo: False
+knitr::knit_exit()
+```
+
+
+# Subsetting and assignment
+
+## Subsetting and assignment
+
+Subsets can also be used with assignment to update specific values within an object (in-place).
+
+```{r}
+x = c(1, 4, 7, 9, 10, 15)
+```
+
+. . .
+
+```{r}
+x[2] = 2
+x
+```
+. . .
+```{r}
+x %% 2 != 0
+```
+. . .
+```{r}
+x[x %% 2 != 0] = (x[x %% 2 != 0] + 1) / 2
+x
+```
+. . .
+```{r}
+x[c(1,1)] = c(2,3)
+x
+```
+
+```{r}
+x = 1:6
+```
+
+```{r}
+x[c(2,NA)] = 1
+x
+```
+
+. . .
+
+```{r}
+x = 1:6
+```
+```{r}
+x[c(-1,-2)] = 3
+x
+```
+
+. . .
+
+```{r}
+x = 1:6
+```
+```{r}
+x[c(TRUE,NA)] = 1
+x
+```
+
+. . .
+
+```{r}
+x = 1:6
+```
+```{r}
+x[] = 1:3
+x
+```
+
+
+## Subsets of Subsets
+
+```{r}
+( df = data.frame(a = c(5,1,NA,3)) )
+```
+
+```{r}
+df$a[df$a == 5] = 0
+df
+```
+
+. . .
+
+```{r}
+df[1][df[1] != 3] = -1
+df
+```
+
+## Exercise 2
+
+Some data providers choose to encode missing values using values like `-999`. Below is a sample data frame with missing values encoded in this way. 
+
+```{r}
+d = data.frame(
+  patient_id = c(1, 2, 3, 4, 5),
+  age = c(32, 27, 56, 19, 65),
+  bp = c(110, 100, 125, -999, -999),
+  o2 = c(97, 95, -999, -999, 99)
+)
+```
+
+* *Task 1* - using the subsetting tools we've discussed come up with code that will replace the `-999` values in the `bp` and `o2` column with actual `NA` values. Save this as `d_na`.
+
+* *Task 2* - Once you have created `d_na` come up with code that translate it back into the original data frame `d`, i.e. replace the `NA`s with `-999`.
+
 

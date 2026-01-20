@@ -1210,7 +1210,7 @@ Dr. Colin Rundel
 </div></div>
 </div>
 <div class="fragment">
-<p>Matrices (and arrays) are just atomic vectors with a <code>dim</code> attribute attached. They do not have an explicit class attribute, but instead have implicit class.</p>
+<p>Matrices (and arrays) are just atomic vectors with a <code>dim</code> attribute attached. They do not have an explicit class attribute, but have implicit class(es).</p>
 <div class="columns small">
 <div class="column" style="width:50%;">
 <div class="cell">
@@ -1377,7 +1377,6 @@ Dr. Colin Rundel
 </div>
 </div>
 <div class="fragment">
-<p>R represents data frames using a <em>list</em> of equal length <em>vectors</em>.</p>
 <div class="small">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href></a><span class="fu">str</span>(df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1393,6 +1392,7 @@ Dr. Colin Rundel
 </section>
 <section id="data-frame-structure" class="slide level2">
 <h2>Data Frame Structure</h2>
+<p>R represents data frames using a <em>list</em> of equal length <em>vectors</em>.</p>
 <div class="columns small">
 <div class="column" style="width:50%;">
 <div class="cell">
@@ -1565,9 +1565,9 @@ $row.names
 </section>
 <section id="subsetting-in-r" class="slide level2">
 <h2>Subsetting in R</h2>
-<p>R has three subsetting operators (<code>[</code>, <code>[[</code>, and <code>$</code>). The behavior of these operators depends on the object (class) they are being used with.</p>
+<p>R has three subsetting operators (<code>[</code>, <code>[[</code>, and <code>$</code>). The behavior of these operators depends on the object (class) they are being used with (S3).</p>
 <p><br></p>
-<p>In general there are 6 different types of subsetting that can be performed:</p>
+<p>In general there are 6 different types of subsetting that can be performed based on the value passed to the operator,</p>
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
@@ -1586,7 +1586,7 @@ $row.names
 <section id="positive-integer-subsetting" class="slide level2">
 <h2>Positive Integer subsetting</h2>
 <p>Returns elements at the given location(s)</p>
-<div class="columns small">
+<div class="columns xsmall">
 <div class="column" style="width:50%;">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb87"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href></a>x <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">4</span>,<span class="dv">7</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1641,7 +1641,7 @@ $row.names
 </div></div>
 
 <aside><div>
-<p>Note - R uses a 1-based indexing scheme</p>
+<p>Note - R uses 1-based indexing</p>
 </div></aside></section>
 <section id="negative-integer-subsetting" class="slide level2">
 <h2>Negative Integer subsetting</h2>
@@ -1819,7 +1819,7 @@ $row.names
 </div>
 </div></div>
 <div class="fragment">
-<p><code>0</code>s can be mixed with either positive or negative integers for subsetting, but they are ignored in both cases.</p>
+<p><code>0</code>s can be mixed with either positive or negative integers for subsetting, and are ignored in both cases.</p>
 <div class="columns small">
 <div class="column" style="width:50%;">
 <div class="cell">
@@ -1853,7 +1853,7 @@ $row.names
 </section>
 <section id="character-subsetting" class="slide level2">
 <h2>Character subsetting</h2>
-<p>If the vector has names, selects elements whose names correspond to the values in the name vector.</p>
+<p>If the vector has names, selects 1st element whose names correspond to the value in the <code>names</code> attribute.</p>
 <div class="columns small">
 <div class="column" style="width:50%;">
 <div class="cell">
@@ -2351,8 +2351,415 @@ $row.names
 </div></div>
 <div class="fragment">
 <p>The expression <code>x$y</code> gets interpreted as <code>x[[&quot;y&quot;]]</code> by R, note the inclusion of the <code>&quot;</code>s, this is not the same as the expression <code>x[[y]]</code>.</p>
-
 </div>
+</section></section>
+<section>
+<section id="subsetting-data-frames" class="title-slide slide level1 center">
+<h1>Subsetting Data Frames</h1>
+
+</section>
+<section id="subsetting-rows" class="slide level2">
+<h2>Subsetting rows</h2>
+<p>As data frames have 2 dimensions, we can subset on either the rows or the columns - the subsetting values are separated by a comma.</p>
+<div class="small">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb274"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb274-1"><a href></a>(<span class="at">df =</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">y =</span> <span class="fu">c</span>(<span class="st">&quot;A&quot;</span>,<span class="st">&quot;B&quot;</span>,<span class="st">&quot;C&quot;</span>), <span class="at">z =</span> <span class="cn">TRUE</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  x y    z
+1 1 A TRUE
+2 2 B TRUE
+3 3 C TRUE</code></pre>
+</div>
+</div>
+</div>
+<div class="fragment">
+<div class="columns small">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb276"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb276-1"><a href></a>df[<span class="dv">1</span>, ]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  x y    z
+1 1 A TRUE</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb278"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb278-1"><a href></a><span class="fu">str</span>( df[<span class="dv">1</span>, ] )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&#39;data.frame&#39;:   1 obs. of  3 variables:
+ $ x: int 1
+ $ y: chr &quot;A&quot;
+ $ z: logi TRUE</code></pre>
+</div>
+</div>
+</div></div>
+</div>
+<div class="fragment">
+<div class="columns small">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb280"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb280-1"><a href></a>df[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>), ]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  x y    z
+1 1 A TRUE
+3 3 C TRUE</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb282"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb282-1"><a href></a><span class="fu">str</span>( df[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>), ] )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&#39;data.frame&#39;:   2 obs. of  3 variables:
+ $ x: int  1 3
+ $ y: chr  &quot;A&quot; &quot;C&quot;
+ $ z: logi  TRUE TRUE</code></pre>
+</div>
+</div>
+</div></div>
+</div>
+</section>
+<section id="subsetting-columns" class="slide level2">
+<h2>Subsetting Columns</h2>
+<div class="small">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb284"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb284-1"><a href></a>df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  x y    z
+1 1 A TRUE
+2 2 B TRUE
+3 3 C TRUE</code></pre>
+</div>
+</div>
+</div>
+<div class="fragment">
+<div class="columns small">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb286"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb286-1"><a href></a>df[, <span class="dv">1</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1 2 3</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb288"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb288-1"><a href></a><span class="fu">str</span>( df[, <span class="dv">1</span>] )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> int [1:3] 1 2 3</code></pre>
+</div>
+</div>
+</div></div>
+</div>
+<div class="fragment">
+<div class="columns small">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb290"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb290-1"><a href></a>df[, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  x y
+1 1 A
+2 2 B
+3 3 C</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb292"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb292-1"><a href></a><span class="fu">str</span>( df[, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>] )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&#39;data.frame&#39;:   3 obs. of  2 variables:
+ $ x: int  1 2 3
+ $ y: chr  &quot;A&quot; &quot;B&quot; &quot;C&quot;</code></pre>
+</div>
+</div>
+</div></div>
+</div>
+<div class="fragment">
+<div class="columns small">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb294"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb294-1"><a href></a>df[, <span class="sc">-</span><span class="dv">3</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  x y
+1 1 A
+2 2 B
+3 3 C</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb296"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb296-1"><a href></a><span class="fu">str</span>( df[, <span class="sc">-</span><span class="dv">3</span>] )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&#39;data.frame&#39;:   3 obs. of  2 variables:
+ $ x: int  1 2 3
+ $ y: chr  &quot;A&quot; &quot;B&quot; &quot;C&quot;</code></pre>
+</div>
+</div>
+</div></div>
+</div>
+</section>
+<section id="subsetting-both" class="slide level2">
+<h2>Subsetting both</h2>
+<div class="small">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb298"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb298-1"><a href></a>df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  x y    z
+1 1 A TRUE
+2 2 B TRUE
+3 3 C TRUE</code></pre>
+</div>
+</div>
+</div>
+<div class="fragment">
+<div class="columns small">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb300"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb300-1"><a href></a>df[<span class="dv">1</span>, <span class="dv">1</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb302"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb302-1"><a href></a><span class="fu">str</span>( df[<span class="dv">1</span>, <span class="dv">1</span>] )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> int 1</code></pre>
+</div>
+</div>
+</div></div>
+</div>
+<div class="fragment">
+<div class="columns small">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb304"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb304-1"><a href></a>df[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  x y
+1 1 A
+2 2 B</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb306"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb306-1"><a href></a><span class="fu">str</span>( df[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>] )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&#39;data.frame&#39;:   2 obs. of  2 variables:
+ $ x: int  1 2
+ $ y: chr  &quot;A&quot; &quot;B&quot;</code></pre>
+</div>
+</div>
+</div></div>
+</div>
+<div class="fragment">
+<div class="columns small">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb308"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb308-1"><a href></a>df[<span class="sc">-</span><span class="dv">1</span>, <span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  y    z
+2 B TRUE
+3 C TRUE</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb310"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb310-1"><a href></a><span class="fu">str</span>( df[<span class="sc">-</span><span class="dv">1</span>, <span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>] )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&#39;data.frame&#39;:   2 obs. of  2 variables:
+ $ y: chr  &quot;B&quot; &quot;C&quot;
+ $ z: logi  TRUE TRUE</code></pre>
+</div>
+</div>
+</div></div>
+</div>
+</section>
+<section id="preserving-vs-simplifying" class="slide level2">
+<h2>Preserving vs Simplifying</h2>
+<p>Most of the time, R’s <code>[</code> subset operator is a <em>preserving</em> operator, in that the returned object will always have the same type/class as the object being subset.</p>
+<p>Confusingly, when used with some classes (e.g. data frame, matrix or array) <code>[</code> becomes a <em>simplifying</em> operator (does not preserve type) - this behavior is instead controlled by the <code>drop</code> argument.</p>
+</section>
+<section id="drop-w-row-subset" class="slide level2">
+<h2>Drop w/ row subset</h2>
+<div class="columns small">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb312"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb312-1"><a href></a>df[<span class="dv">1</span>, ]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  x y    z
+1 1 A TRUE</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb314"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb314-1"><a href></a><span class="fu">str</span>(df[<span class="dv">1</span>, ])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&#39;data.frame&#39;:   1 obs. of  3 variables:
+ $ x: int 1
+ $ y: chr &quot;A&quot;
+ $ z: logi TRUE</code></pre>
+</div>
+</div>
+</div></div>
+<div class="fragment">
+<div class="columns small">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb316"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb316-1"><a href></a>df[<span class="dv">1</span>, , drop<span class="ot">=</span><span class="cn">TRUE</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$x
+[1] 1
+
+$y
+[1] &quot;A&quot;
+
+$z
+[1] TRUE</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb318"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb318-1"><a href></a><span class="fu">str</span>(df[<span class="dv">1</span>, , <span class="at">drop=</span><span class="cn">TRUE</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>List of 3
+ $ x: int 1
+ $ y: chr &quot;A&quot;
+ $ z: logi TRUE</code></pre>
+</div>
+</div>
+</div></div>
+</div>
+</section>
+<section id="drop-w-column-subset" class="slide level2">
+<h2>Drop w/ column subset</h2>
+<div class="columns small">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb320"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb320-1"><a href></a>df[, <span class="dv">1</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1 2 3</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb322"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb322-1"><a href></a><span class="fu">str</span>(df[, <span class="dv">1</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> int [1:3] 1 2 3</code></pre>
+</div>
+</div>
+</div></div>
+<div class="fragment">
+<div class="columns small">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb324"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb324-1"><a href></a>df[, <span class="dv">1</span>, drop<span class="ot">=</span><span class="cn">FALSE</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  x
+1 1
+2 2
+3 3</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb326"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb326-1"><a href></a><span class="fu">str</span>(df[, <span class="dv">1</span>, <span class="at">drop=</span><span class="cn">FALSE</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&#39;data.frame&#39;:   3 obs. of  1 variable:
+ $ x: int  1 2 3</code></pre>
+</div>
+</div>
+</div></div>
+</div>
+</section>
+<section id="exceptions" class="slide level2">
+<h2>Exceptions</h2>
+<p><code>drop</code> only works when the resulting value can be represented as a 1d vector (either a list or atomic).</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb328"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb328-1"><a href></a>df[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  x y
+1 1 A
+2 2 B</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb330"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb330-1"><a href></a><span class="fu">str</span>(df[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&#39;data.frame&#39;:   2 obs. of  2 variables:
+ $ x: int  1 2
+ $ y: chr  &quot;A&quot; &quot;B&quot;</code></pre>
+</div>
+</div>
+</div></div>
+<div class="fragment">
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb332"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb332-1"><a href></a>df[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, drop<span class="ot">=</span><span class="cn">TRUE</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  x y
+1 1 A
+2 2 B</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb334"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb334-1"><a href></a><span class="fu">str</span>(df[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">drop=</span><span class="cn">TRUE</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&#39;data.frame&#39;:   2 obs. of  2 variables:
+ $ x: int  1 2
+ $ y: chr  &quot;A&quot; &quot;B&quot;</code></pre>
+</div>
+</div>
+</div></div>
+</div>
+</section>
+<section id="preserving-vs-simplifying-subsets" class="slide level2">
+<h2>Preserving vs Simplifying Subsets</h2>
+<p><br></p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 26%">
+<col style="width: 56%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Simplifying</th>
+<th style="text-align: left;">Preserving</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Atomic Vector</td>
+<td style="text-align: left;"><code>x[[1]]</code></td>
+<td style="text-align: left;"><code>x[1]</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">List</td>
+<td style="text-align: left;"><code>x[[1]]</code></td>
+<td style="text-align: left;"><code>x[1]</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Matrix / Array</td>
+<td style="text-align: left;"><code>x[[1]]</code> <br> <code>x[1, ]</code> <br> <code>x[, 1]</code></td>
+<td style="text-align: left;"><code>x[1, , drop=FALSE]</code> <br> <code>x[, 1, drop=FALSE]</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Factor</td>
+<td style="text-align: left;"><code>x[1:4, drop=TRUE]</code></td>
+<td style="text-align: left;"><code>x[1:4]</code> <br> <code>x[[1]]</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Data frame</td>
+<td style="text-align: left;"><code>x[, 1]</code> <br> <code>x[[1]]</code></td>
+<td style="text-align: left;"><code>x[, 1, drop=FALSE]</code> <br> <code>x[1]</code></td>
+</tr>
+</tbody>
+</table>
+
 </section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
