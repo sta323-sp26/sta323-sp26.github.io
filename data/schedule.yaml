@@ -61,9 +61,9 @@ schedule:
 
 - week: 2
   day: 4
-  lecture: "Writing R Packages"
+  lecture: "R Packages"
   screencast:
-  slides:
+  slides: Lec05
   readings:
     - text: R Packages
       link: https://r-pkgs.org/
