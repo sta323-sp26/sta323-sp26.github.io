@@ -29,7 +29,7 @@ options(tibble.width = 50)
 
 ## What are R packages?
 
-R packages are just collections of files - R code, compiled code (C, C++, etc.), data, documentation, and others that live in your library path.
+R packages are just collections of files - R code, compiled code (C, C++, Rust etc.), data, documentation, and others that live in your library path.
 
 . . .
 
@@ -49,7 +49,7 @@ dir(.libPaths())
 
 ## Search path
 
-When you run `library(pkg)` the functions (and objects) in the package's namespace are attached to the global search path.
+To load a package we use `library(pkg)` which attachs the package's namespace (functions, data, etc.) to the global search path.
 
 ::: {.xsmall}
 ```{r}
@@ -106,7 +106,7 @@ search()
 
 ## Automatic loading
 
-Using a package function via `::` will automatically *load* the package (and its dependencies) but not *attach* it to the search path.
+Using a package function via `::` will automatically *load* the package (and its dependencies) but not *attach* it to the global search path.
 
 :::: {.columns .xxsmall}
 ::: {.column width='33%'}
@@ -158,24 +158,27 @@ remotes::install_github("rundel/diffmatchpatch")
 
 ::: {.fragment}
 
-there is one other method that comes up (particularly around package development), which is to install a package from local file(s).
-
 #### Local install:
 
+::: {.small}
 From the terminal,
-
-::: {.xsmall}
-```{bash}
-#| eval: false
-R CMD install diffmatchpatch_0.1.0.tar.gz
-```
 :::
 
-or from R,
+::: {.xsmall}
+
+```bash
+R CMD install ./diffmatchpatch
+R CMD install diffmatchpatch_0.1.0.tar.gz
+```
+
+:::
+
+::: {.small}
+From R,
+:::
 
 ::: {.xsmall}
-```{r}
-#| eval: False
+```bash
 devtools::install("diffmatchpatch_0.1.0.tar.gz")
 ```
 :::
@@ -282,7 +285,7 @@ From [R Packages (2e) - Chap. 3.3](https://r-pkgs.org/structure.html#sec-bundled
 
 What follows is an *opinionated* introduction to package development, 
 
-* this is not the only way to do thing (none of the following tools are required)
+* this is not the only way to do things (none of the following tools are required)
 
 * We strongly recommend using:
   * RStudio
@@ -363,11 +366,11 @@ All R packages are expected to have documentation for all *exported* functions a
 
 
 
-# Package vignette(s)
+# Other details
 
 ## Vignette
 
-Long form documentation for your package that live in `vignette/`, use `browseVignette(pkg)` to see a package's vignettes.
+Long form documentation for your package that live in `vignettes/`, use `browseVignette(pkg)` to see a package's vignettes.
 
 * Not required, but adds a lot of value to a package
 
@@ -388,13 +391,10 @@ These are an un-official extension to vignettes where package authors wish to in
 
 * Use `usethis::use_article()` to create
 
-* Files are added to `vignette/articles/` which is added to `.Rbuildignore`
+* Files are added to `vignettes/articles/` which is added to `.Rbuildignore`
 
 
-# Package data
-
-
-## Exported data
+## Package data
 
 Many packages contain sample data (e.g. `nycflights13`, `babynames`, etc.)
 
@@ -402,11 +402,11 @@ Generally these files are made available by saving data objects into the `data/`
 
 * `.Rdata` files created using `save()` (can contain multiple objects)
 
-* `.rda` files created using `usethis::use_data(obj)` which uses `saveRDS()` (one object per file, recommended)
+* `.rds` files created using `usethis::use_data(obj)` which uses `saveRDS()` (one object per file, recommended)
 
 * Data is usually compressed, for large data sets it may be worth trying different options (there is a 5 Mb package size limit on CRAN)
 
-* Exported data must be documented (possible via roxygen)
+* Exported data must be documented (possible with roxygen)
 
 ## Lazy data
 
@@ -450,7 +450,7 @@ When published a package should generally only contain the final data set, but i
 
 * `data-raw/` then contain scripts, data files, and anything else needed to generate the final object
 
-* See examples [babynames](https://github.com/hadley/babynames) or [nycflights](https://github.com/hadley/nycflights13)
+* See examples [babynames](https://github.com/hadley/babynames) or [nycflights13](https://github.com/hadley/nycflights13)
 
 * Use `usethis::use_data_raw()` to create and ignore the `data-raw/` directory.
 
@@ -468,15 +468,31 @@ If you have data that you want to have access to from within the package but not
 * Example [nflplotR](https://github.com/nflverse/nflplotR/tree/main/R) which contains team logos and colors for NFL teams.
 
 
-## Raw data files
+## pkgdown
 
-If you want to include raw data files (e.g `.csv`, shapefiles, etc.) there are generally placed in `inst/` (or a nested folder) so that they are installed with the package.
+pkgdown is a package that makes it easy to build a website for your R package directly from the source files.
 
-* Accessed using `system.file("dir", package = "package")` after install
+* Generates a polished website from your existing documentation
 
-* Use folders to keep things organized, Hadley recommends and uses `inst/extdata/` 
+* Converts `man/` files to HTML reference pages
 
-* Example [sf](https://github.com/r-spatial/sf/tree/master/inst)
+* Renders vignettes and articles as website pages
 
+* Creates a searchable function reference
 
+* Automatically links to other packages and functions
+
+* Can be customized via a `_pkgdown.yml` file
+
+::: {.xsmall}
+```{r}
+#| eval: false
+usethis::use_pkgdown()
+pkgdown::build_site()
+```
+:::
+
+::: {.aside}
+See the [pkgdown documentation](https://pkgdown.r-lib.org/) for more details.
+:::
 
