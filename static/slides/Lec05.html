@@ -2330,9 +2330,103 @@ Dr. Colin Rundel
 <ul>
 <li><p>roxygen uses special comment lines prefixed with <code>#&#39;</code></p></li>
 <li><p>roxygen specific command have the format <code>@cmd</code> and mostly match <code>Rd</code> commands</p></li>
-<li><p><code>devtools::document()</code> or menu <code>Build &gt; Document</code> with reprocess all source files and rebuild all <code>Rd</code>s</p></li>
-<li><p><code>usethis::create_package()</code> with <code>roxygen = TRUE</code> will initialize your package to use roxygen (default behavior)</p></li>
+<li><p><code>devtools::document()</code> or <code>Build &gt; Document</code> menu will process all source files and rebuild all <code>Rd</code>s</p></li>
+<li><p><code>usethis::create_package()</code> with <code>roxygen = TRUE</code> (default) will initialize your package to use roxygen</p></li>
 </ul>
+</section>
+<section id="dependencies" class="slide level2">
+<h2>Dependencies</h2>
+<p>The <code>DESCRIPTION</code> file also specifies package dependencies using the fields:</p>
+<ul>
+<li><p><em>Depends</em> - Packages that are <em>attached</em> when your package is attached. Use sparingly.</p></li>
+<li><p><em>Imports</em> - Packages your code uses. These are <em>loaded</em> but not <em>attached</em>. Access functions via <code>pkg::fun()</code>. This is where most dependencies belong.</p></li>
+<li><p><em>Suggests</em> - Packages used in examples, tests, or vignettes but not required for core functionality. Users can install the package without these.</p></li>
+</ul>
+<div class="xsmall">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href></a>usethis<span class="sc">::</span><span class="fu">use_package</span>(<span class="st">&quot;dplyr&quot;</span>)              <span class="co"># Adds to Imports</span></span>
+<span id="cb35-2"><a href></a>usethis<span class="sc">::</span><span class="fu">use_package</span>(<span class="st">&quot;ggplot2&quot;</span>, <span class="st">&quot;Suggests&quot;</span>) <span class="co"># Adds to Suggests</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+
+<aside><div>
+<p>See <a href="https://r-pkgs.org/dependencies-mindset-background.html">R Packages (2e) - Chapter 10</a> for more details.</p>
+</div></aside></section>
+<section id="package-checking" class="slide level2">
+<h2>Package checking</h2>
+<p><code>devtools::check()</code> (or <code>R CMD check</code>) validates your package against CRAN standards</p>
+<ul>
+<li>Verifies package structure and metadata</li>
+<li>Runs all documentation examples and tests</li>
+<li>Builds and checks vignettes</li>
+<li>Checks for other common problems</li>
+</ul>
+<div class="fragment">
+<p>Results are reported as:</p>
+<ul>
+<li><strong>ERRORs</strong> - Must be fixed; package will not install</li>
+<li><strong>WARNINGs</strong> - Should be fixed; CRAN will reject submissions with warnings</li>
+<li><strong>NOTEs</strong> - Should be investigated; some are acceptable, many are not for CRAN</li>
+</ul>
+<div class="xsmall">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href></a>devtools<span class="sc">::</span><span class="fu">check</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</section>
+<section id="the-devtools-workflow" class="slide level2">
+<h2>The devtools workflow</h2>
+<p>The typical package development cycle:</p>
+<div class="small">
+<table class="caption-top">
+<colgroup>
+<col style="width: 43%">
+<col style="width: 56%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>devtools::load_all()</code></td>
+<td>Load all package code (simulates installing and attaching)</td>
+</tr>
+<tr class="even">
+<td><code>devtools::document()</code></td>
+<td>Run roxygen2 to update <code>man/</code> and <code>NAMESPACE</code></td>
+</tr>
+<tr class="odd">
+<td><code>devtools::test()</code></td>
+<td>Run tests in <code>tests/</code></td>
+</tr>
+<tr class="even">
+<td><code>devtools::check()</code></td>
+<td>Run <code>R CMD check</code> on your package</td>
+</tr>
+<tr class="odd">
+<td><code>devtools::build()</code></td>
+<td>Build a source tarball (<code>.tar.gz</code>)</td>
+</tr>
+<tr class="even">
+<td><code>devtools::install()</code></td>
+<td>Install the package locally</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="fragment">
+<p>The most common workflow during development is:</p>
+<ol type="1">
+<li>Edit code in <code>R/</code></li>
+<li><code>load_all()</code> to test changes interactively</li>
+<li><code>document()</code> after updating roxygen comments</li>
+<li><code>check()</code> before committing or submitting</li>
+</ol>
+</div>
 </section></section>
 <section>
 <section id="other-details" class="title-slide slide level1 center">
@@ -2378,7 +2472,7 @@ Dr. Colin Rundel
 <div class="fragment">
 <div class="small">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href></a>pryr<span class="sc">::</span><span class="fu">mem_used</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href></a>pryr<span class="sc">::</span><span class="fu">mem_used</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>55.4 MB</code></pre>
 </div>
@@ -2388,8 +2482,8 @@ Dr. Colin Rundel
 <div class="fragment">
 <div class="small">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href></a><span class="fu">library</span>(nycflights13)</span>
-<span id="cb37-2"><a href></a>pryr<span class="sc">::</span><span class="fu">mem_used</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href></a><span class="fu">library</span>(nycflights13)</span>
+<span id="cb39-2"><a href></a>pryr<span class="sc">::</span><span class="fu">mem_used</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>55.7 MB</code></pre>
 </div>
@@ -2399,10 +2493,10 @@ Dr. Colin Rundel
 <div class="fragment">
 <div class="small">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href></a><span class="fu">invisible</span>(flights)</span>
-<span id="cb39-2"><a href></a>pryr<span class="sc">::</span><span class="fu">mem_used</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href></a><span class="fu">invisible</span>(flights)</span>
+<span id="cb41-2"><a href></a>pryr<span class="sc">::</span><span class="fu">mem_used</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>96.3 MB</code></pre>
+<pre><code>96.4 MB</code></pre>
 </div>
 </div>
 </div>
@@ -2442,8 +2536,8 @@ Dr. Colin Rundel
 </ul>
 <div class="xsmall">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href></a>usethis<span class="sc">::</span><span class="fu">use_pkgdown</span>()</span>
-<span id="cb41-2"><a href></a>pkgdown<span class="sc">::</span><span class="fu">build_site</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href></a>usethis<span class="sc">::</span><span class="fu">use_pkgdown</span>()</span>
+<span id="cb43-2"><a href></a>pkgdown<span class="sc">::</span><span class="fu">build_site</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 

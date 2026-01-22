@@ -351,6 +351,7 @@ All R packages are expected to have documentation for all *exported* functions a
 
 * All packages need Rd files, that doesn't mean you need to write Rd
 
+
 ## Roxygen2
 
 > The premise of roxygen2 is simple: describe your functions in comments next to their definitions and roxygen2 will process your source code and comments to automatically generate `.Rd` files in `man/`, `NAMESPACE`, and, if needed, the `Collate` field in `DESCRIPTION.`
@@ -359,11 +360,83 @@ All R packages are expected to have documentation for all *exported* functions a
 
 * roxygen specific command have the format `@cmd` and mostly match `Rd` commands
 
-* `devtools::document()` or menu `Build > Document` with reprocess all source files and rebuild all `Rd`s
+* `devtools::document()` or `Build > Document` menu will process all source files and rebuild all `Rd`s
 
-* `usethis::create_package()` with `roxygen = TRUE` will initialize your package to use roxygen (default behavior)
+* `usethis::create_package()` with `roxygen = TRUE` (default) will initialize your package to use roxygen
 
 
+## Dependencies
+
+The `DESCRIPTION` file also specifies package dependencies using the fields:
+
+* *Depends* - Packages that are *attached* when your package is attached. Use sparingly.
+
+* *Imports* - Packages your code uses. These are *loaded* but not *attached*. Access functions via `pkg::fun()`. This is where most dependencies belong.
+
+* *Suggests* - Packages used in examples, tests, or vignettes but not required for core functionality. Users can install the package without these.
+
+::: {.xsmall}
+```{r}
+#| eval: false
+usethis::use_package("dplyr")              # Adds to Imports
+usethis::use_package("ggplot2", "Suggests") # Adds to Suggests
+```
+:::
+
+::: {.aside}
+See [R Packages (2e) - Chapter 10](https://r-pkgs.org/dependencies-mindset-background.html) for more details.
+:::
+
+
+## Package checking
+
+`devtools::check()` (or `R CMD check`) validates your package against CRAN standards
+
+* Verifies package structure and metadata
+* Runs all documentation examples and tests 
+* Builds and checks vignettes
+* Checks for other common problems
+
+. . .
+
+Results are reported as:
+
+* **ERRORs** - Must be fixed; package will not install
+* **WARNINGs** - Should be fixed; CRAN will reject submissions with warnings
+* **NOTEs** - Should be investigated; some are acceptable, many are not for CRAN
+
+::: {.xsmall}
+```{r}
+#| eval: false
+devtools::check()
+```
+:::
+
+
+
+## The devtools workflow
+
+The typical package development cycle:
+
+::: {.small}
+| Function | Description |
+|----------|-------------|
+| `devtools::load_all()` | Load all package code (simulates installing and attaching) |
+| `devtools::document()` | Run roxygen2 to update `man/` and `NAMESPACE` |
+| `devtools::test()` | Run tests in `tests/` |
+| `devtools::check()` | Run `R CMD check` on your package |
+| `devtools::build()` | Build a source tarball (`.tar.gz`) |
+| `devtools::install()` | Install the package locally |
+:::
+
+. . .
+
+The most common workflow during development is:
+
+1. Edit code in `R/`
+2. `load_all()` to test changes interactively
+3. `document()` after updating roxygen comments
+4. `check()` before committing or submitting
 
 
 # Other details
@@ -466,6 +539,9 @@ If you have data that you want to have access to from within the package but not
 * Not necessary for small data frames and similar objects - just create in a script. Use when you want the object to be compressed.
 
 * Example [nflplotR](https://github.com/nflverse/nflplotR/tree/main/R) which contains team logos and colors for NFL teams.
+
+
+
 
 
 ## pkgdown
