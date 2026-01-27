@@ -77,7 +77,7 @@ schedule:
   day: 2
   lecture: "Testing with testthat"
   screencast:
-  slides:
+  slides: Lec06
   readings:
     - text: testthat
       link: https://testthat.r-lib.org/
