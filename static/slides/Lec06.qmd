@@ -1,0 +1,721 @@
+---
+title: "Testing with testthat"
+subtitle: "Lecture 06"
+author: "Dr. Colin Rundel"
+footer: "Sta 323 - Spring 2026"
+format:
+  revealjs:
+    theme: slides.scss
+    transition: fade
+    slide-number: true
+    self-contained: true
+execute:
+  echo: true
+  warning: true
+engine: knitr
+---
+
+```{r setup}
+#| message: False
+#| warning: False
+#| include: False
+knitr::opts_chunk$set(
+  fig.align = "center", fig.retina = 2, dpi = 150
+)
+
+library(testthat)
+
+options(width=50)
+options(tibble.width = 50)
+```
+
+
+# Package checking
+
+## `R CMD check` - What it does
+
+`R CMD check` is CRAN's comprehensive quality control system that runs dozens of checks:
+
+::: {.incremental}
+* **Package structure** - Correct directories, required files (DESCRIPTION, NAMESPACE)
+* **Code syntax** - All R code parses without errors  
+* **Documentation** - All functions documented, all examples run
+* **Dependencies** - All used packages exist and in DESCRIPTION
+* **Tests** - All test files execute without errors
+* **CRAN policy compliance** - Follows all submission guidelines (written and unwritten)
+:::
+
+
+## devtools::check() vs R CMD check
+
+`devtools::check()` is a convenient wrapper around `R CMD check`:
+
+::: {.columns .small}
+::: {.column}
+```r
+devtools::check()
+```
+:::
+::: {.column}
+```shell
+R CMD build .
+R CMD check packagename_1.0.0.tar.gz
+```
+:::
+:::
+
+<br/>
+
+Benefits of `devtools::check()`:
+
+* Automatically handles building and checking
+* Better integrated with RStudio workflow
+* Cleaner output formatting
+* Automatically installs package first
+
+
+
+
+
+
+## Interpreting check output
+
+`R CMD check` produces three levels of issues:
+
+* **ERROR** 🔴 - Must be fixed before CRAN submission
+* **WARNING** 🟡 - Should be fixed (CRAN may reject)
+* **NOTE** 📝 - Optional improvements (CRAN usually accepts)
+
+Anything flagged must be addressed in the CRAN submission process.
+
+While the check is running issues are shown inline, *and* summarized at the end.
+
+
+
+## GitHub Actions for continuous checking
+
+Set up automated checking with:
+```r
+usethis::use_github_action("check-standard")
+```
+
+This creates `.github/workflows/R-CMD-check.yaml` that runs checks on:
+
+* Latest R on macOS, Windows, Linux (Ubuntu)  
+* Previous R and R-devel on Linux (Ubuntu)
+
+
+
+
+
+
+# Package testing
+
+
+## Basic test structure 
+
+Package tests live in `tests/`, 
+
+* Any R scripts found in the folder will be run when checking
+
+* Generally tests "fail" if an error is thrown, warnings are also tracked
+
+* Testing with base R alone is possible but not recommended (See [Writing R Extensions](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Package-subdirectories))
+
+* There is functionality for comparing test outputs to expected results, but it has limited functionality
+
+* Note that R CMD check also runs all documentation examples (unless explicitly tagged with don't run) 
+
+
+## testthat {.center}
+
+![](imgs/hex_testthat.png){fig-align="center" width="40%"}
+
+## testthat fundamentals
+
+testthat is the most widely used testing framework for R packages, it also has excellent  integration with RStudio & usethis. 
+
+A project can be initialized to use testthat via:
+```r
+usethis::use_testthat()
+```
+
+<br/>
+
+This creates the following files and directories:
+
+* `tests/testthat.R` - Entry point for R CMD check
+* `tests/testthat/` - Directory for test files
+* Adds testthat to `DESCRIPTION`'s `Suggests` field
+
+::: {.aside}
+testthat uses editions as a way for newer versions of testthat to maintain backwards compatibility, Edition 3 is the latest version which you should be using
+:::
+
+## testthat project structure
+
+::: {.small}
+```
+mypackage/
+├── R/
+│   └── utils.R
+├── tests/
+│   ├── testthat.R 
+│   └── testthat/
+│       └── test-utils.R
+└── DESCRIPTION
+```
+:::
+
+Test file naming:
+
+* Must start with `test-` or `test_`  
+
+* Typically tests `test-utils.R` map to scripts `R/utils.R` (use `usethis::use_test()` to create for current open file)
+
+* Can also group related functions: `test-data-processing.R`
+
+* `helper*.R`, `teardown*.R`, and `setup.R` all have special behavior - see [Special files](https://testthat.r-lib.org/articles/special-files.html)
+
+* All other files are ignored
+
+## testthat script structure  
+
+Tests are hierarchically organized:
+
+* **File** - Collection of related tests
+
+* **Test** - Group of related expectations (`test_that()`)  
+
+* **Expectation** - Single assertion (`expect_equal()`, `expect_error()`, etc.)
+
+
+. . .
+
+```{r}
+test_that("`+` works correctly", {
+  expect_equal(`+`(2, 3), 5)
+  expect_equal(`+`(0, 0), 0)
+  expect_type(`+`(1, 1), "double")
+  expect_type(`+`(1L, 1L), "integer")
+})
+```
+
+## Running tests
+
+There are multiple ways to execute your package's tests:
+
+<br/>
+
+During development:
+
+* `devtools::test()` - Run all tests  
+* `devtools::test_file("tests/testthat/test-utils.R")` - Run one file
+* **Ctrl/Cmd+Shift+T** (RStudio) - Run all tests
+* **Ctrl/Cmd+T** (RStudio) - Run tests for current file
+
+From command line:
+
+* `R CMD check` - Runs tests as part of package check
+* `Rscript -e "devtools::test()"` - In scripts / GitHub Actions
+
+## Core expectation functions
+
+testthat provides many expectation functions for different scenarios.
+
+Equality and identity:
+```r
+expect_equal(actual, expected)
+expect_identical(actual, expected)
+expect_true(x)
+expect_false(x)
+```
+
+Types and classes:
+```r
+expect_type(x, "double")
+expect_s3_class(df, "data.frame")
+```
+
+Conditions:
+```r
+expect_error(code, regexp = "...")
+expect_warning(code, regexp = "...")
+expect_message(code, regexp = "...")
+```
+
+## expect_equal() vs expect_identical() {.scrollable}
+
+Equal compares values based on a tolerance (not the same as `==`), identity check for exact equivalence.
+
+::: {.columns .xsmall}
+::: {.column}
+```{r}
+#| error: true
+test_that("equality", {
+  expect_equal(0.2 + 0.2, 0.4)
+  expect_equal(0.1 + 0.2, 0.3)
+  expect_equal(1L, 1.0)
+})
+```
+:::
+::: {.column}
+```{r}
+#| error: true
+test_that("identity", {
+  expect_identical(0.2 + 0.2, 0.4)
+  expect_identical(0.1 + 0.2, 0.3)
+  expect_identical(1L, 1.0)
+})
+```
+:::
+:::
+
+## Testing function outputs
+
+::: {.small}
+```{r}
+calculate_mean_ci = function(x, conf_level = 0.95) {
+  if (length(x) == 0) 
+    stop("Cannot calculate CI for empty vector")
+  if (any(is.na(x))) 
+    stop("Missing values not allowed") 
+  
+  n = length(x)
+  mean_x = mean(x)
+  se = sd(x) / sqrt(n)
+  t_val = qt((1 + conf_level) / 2, df = n - 1)
+  
+  c(lower = mean_x - t_val * se, upper = mean_x + t_val * se)
+}
+```
+:::
+
+## Example tests
+
+::: {.small}
+```{r}
+#| error: true
+test_that("calculate_mean_ci works correctly", {
+  # Test normal case
+  result = calculate_mean_ci(c(1, 2, 3, 4, 5))
+  expect_type(result, "double")
+  expect_length(result, 2)
+  expect_named(result, c("lower", "upper"))
+  expect_true(result["lower"] < result["upper"])
+  
+  # Test with known values
+  expect_equal(
+    calculate_mean_ci(c(0, 0, 0)), 
+    c(lower = 0, upper = 0)
+  )
+  
+  # Test confidence level parameter  
+  ci_95 = calculate_mean_ci(c(1, 2, 3), conf_level = 0.95)
+  ci_99 = calculate_mean_ci(c(1, 2, 3), conf_level = 0.99)
+  expect_true(ci_99["upper"] - ci_99["lower"] > ci_95["upper"] - ci_95["lower"])
+})
+```
+:::
+
+## Testing error conditions
+
+::: {.xsmall}
+```{r}
+#| error: true
+#| output-location: column
+test_that("calculate_mean_ci error cases", {
+  # Empty vector should error
+  expect_error(
+    calculate_mean_ci(numeric(0)), 
+    "Cannot calculate CI for empty vector"
+  )
+
+  # Missing values should error
+  expect_error(
+    calculate_mean_ci(c(1, 2, NA)), 
+    "Missing values not allowed"
+  )
+  
+  # Invalid confidence level should error
+  expect_error(
+    calculate_mean_ci(1:5, conf_level = 1.5), 
+    "conf_level must be between 0 and 1"
+  )
+  
+  # Single value (edge case to think about)
+  expect_error(
+    calculate_mean_ci(5)
+  )
+})
+```
+:::
+
+## Testing for errors
+
+Testing for errors is important, but `expect_error()` can be dangerous if you don't check the output. All that the expectation tells you is that *some* error was thrown, not that it was the *right* error.
+
+::: {.small}
+```{r}
+#| error: true
+calculate_discount = function(price, discount_percent) {
+  if (price < 0) stop("Price cannot be negative")
+  if (discount_percent > 100) stop("Discount cannot exceed 100%")
+  
+  price * (1 - discount_pct / 100)  # Bug: wrong variable name
+}
+
+test_that("demonstrates why checking error messages matters", {
+  # ✗ passes but for the wrong reason!
+  expect_error(calculate_discount(100, -50))
+  # ✓ This correctly tests the price validation
+  expect_error(calculate_discount(-50, 10), "Price cannot be negative")
+})
+```
+:::
+
+##
+
+::: {.small}
+```{r}
+#| error: true
+calculate_discount(100, -50)
+```
+
+```{r}
+#| error: true
+calculate_discount(-50, 10)
+```
+:::
+
+. . .
+
+In this case the issue would likely be caught by other tests,
+
+::: {.small}
+```{r}
+#| error: true
+test_that("Calculation test", {
+  expect_equal(calculate_discount(100, 20), 80)
+})
+```
+:::
+
+
+## Skipping tests
+
+Skip tests when certain conditions aren't met:
+
+::: {.small}
+```r
+test_that("database connection works", {
+  skip_if_not_installed("RPostgreSQL")
+  skip_if(Sys.getenv("TEST_DB_URL") == "", "Database URL not set")
+  skip_on_cran()
+  skip_on_ci()
+  
+  # Database tests ...
+})
+
+test_that("internet-dependent test", {
+  skip_if_offline()
+  
+  # Test that requires internet connection
+  result = download_data("https://example.com/api")
+  expect_type(result, "list")
+})
+```
+:::
+
+## Snapshot tests
+
+Snapshot tests capture the output of your functions and compare against previously saved results:
+
+::: {.incremental}
+* **First run**: Snapshot is created and saved
+* **Subsequent runs**: Current output compared against saved snapshot
+* **When output changes**: Test fails, you review and accept/reject the change
+:::
+
+. . .
+
+Snapshot tests are best for:
+
+* Error messages and warnings
+* Complex data structure outputs  
+* Printed output from functions
+* Any output where exact specification is difficult
+
+## expect_snapshot() for output
+
+Test printed output and messages:
+
+::: {.small}
+```r
+print_summary = function(data) {
+  cat("Data summary:\n")
+  cat("Rows:", nrow(data), "\n")
+  cat("Columns:", ncol(data), "\n")
+  cat("Column names:", paste(names(data), collapse = ", "), "\n")
+}
+
+test_that("print_summary produces consistent output", {
+  df = data.frame(x = 1:3, y = letters[1:3])
+  
+  expect_snapshot({
+    print_summary(df)
+  })
+})
+```
+:::
+
+## Snapshot output
+
+Creates `tests/testthat/_snaps/print-summary.md`:
+
+```
+# print_summary produces consistent output
+
+    Code
+      print_summary(df)
+    Output
+      Data summary:
+      Rows: 3 
+      Columns: 2 
+      Column names: x, y 
+```
+
+## Managing snapshots
+
+::: {.columns}
+::: {.column}
+Accepting changes:
+
+::: {.small}
+```r
+snapshot_accept()
+snapshot_accept("test-myfunction.R")
+```
+:::
+:::
+::: {.column}
+Reviewing changes
+
+::: {.small}
+```r
+snapshot_review()
+snapshot_review("test-myfunction.R")
+```
+:::
+:::
+:::
+
+<br/>
+
+Some best practices:
+
+* Review snapshot changes carefully in code review
+* Don't commit snapshot updates without understanding why they changed
+* Use descriptive test names for easier snapshot identification
+
+
+
+## Why testing matters
+
+Testing is a fundamental part of creating reliable, maintainable R packages (and code in general):
+
+* Catch bugs early - Find problems before they reach users
+* Document behavior - Tests serve as executable specifications
+* Prevent regressions - Ensure new changes don't break existing functionality
+* Enable refactoring - Change implementation with confidence
+
+
+## Testing as documentation
+
+Well-written tests serve multiple purposes:
+
+```r
+test_that("mean() behaves as expected", {
+  # Basic calculations
+  expect_equal(mean(c(1, 2, 3)), 2)
+  expect_equal(mean(c(3, 2, 1)), 2)
+  
+  # Missing values
+  expect_true(is.na(mean(c(1, 2, NA))))
+  expect_equal(mean(c(1, 2, NA), na.rm = TRUE), 1.5)
+  result = mean(numeric(0))
+  expect_true(is.na(result))
+  expect_true(is.nan(result))
+})
+```
+
+Tests make your intentions clear to future maintainers (including yourself!)
+
+# Test-Driven Development
+
+## The TDD cycle: Red-Green-Refactor
+
+Test-Driven Development follows a simple cycle:
+
+::: {.incremental}
+1. **🔴 Red**: Write a failing test for the functionality you want to implement
+2. **🟢 Green**: Write the minimal code to make the test pass
+3. **🔵 Refactor**: Clean up the code while keeping tests green
+4. **Repeat**: Move on to the next piece of functionality
+:::
+
+. . .
+
+This approach ensures:
+
+* You only write code that's actually needed
+
+* Every line of code is covered by tests
+
+* Your design is driven by actual usage
+
+## TDD example
+
+Let's implement a `is_palindrome()` function using TDD:
+
+. . .
+
+**Step 1** - Write the test(s) first
+
+::: {.small}
+```{r}
+#| error: true
+test_that("is_palindrome works correctly", {
+  expect_true(is_palindrome(c(1, 2, 3, 2, 1)))
+  expect_true(is_palindrome(c("a", "b", "a")))
+  expect_false(is_palindrome(c(1, 2, 3)))
+  expect_true(is_palindrome(c(5)))  # Single element
+  expect_true(is_palindrome(numeric(0)))  # Empty vector
+})
+```
+:::
+
+## Step 2
+
+Write minimal code to pass:
+
+::: {.small}
+```{r}
+is_palindrome = function(x) {
+  all(x == rev(x))
+}
+```
+:::
+
+. . .
+
+Which we then check with our existing tests:
+
+::: {.small}
+```{r}
+#| error: true
+test_that("is_palindrome works correctly", {
+  expect_true(is_palindrome(c(1, 2, 3, 2, 1)))
+  expect_true(is_palindrome(c("a", "b", "a")))
+  expect_false(is_palindrome(c(1, 2, 3)))
+  expect_true(is_palindrome(c(5)))  # Single element
+  expect_true(is_palindrome(numeric(0)))  # Empty vector
+})
+```
+:::
+
+## Step 3: Refactor
+
+We can consider a slightly improved implementation:
+
+::: {.small}
+```{r}
+is_palindrome = function(x) {
+  identical(x, rev(x))
+}
+```
+:::
+
+. . .
+
+Which we again verify with the tests:
+
+::: {.small}
+```{r}
+#| error: true
+test_that("is_palindrome works correctly", {
+  expect_true(is_palindrome(c(1, 2, 3, 2, 1)))
+  expect_true(is_palindrome(c("a", "b", "a")))
+  expect_false(is_palindrome(c(1, 2, 3)))
+  expect_true(is_palindrome(c(5)))  # Single element
+  expect_true(is_palindrome(numeric(0)))  # Empty vector
+})
+```
+:::
+
+## Step 4: Repeat 
+
+We can consider additional functionality, such as input validation by expanding our tests:
+
+::: {.small}
+```{r}
+#| error: true
+test_that("is_palindrome errors for non-atomic input", {
+  expect_error(is_palindrome(list(1, 2, 1)))
+})
+```
+:::
+
+. . .
+
+::: {.small}
+```{r}
+is_palindrome = function(x) {
+  stopifnot("Input must be an atomic vector" = is.atomic(x))
+  identical(x, rev(x))
+}
+```
+```{r}
+test_that("is_palindrome errors for non-atomic input", {
+  expect_error(is_palindrome(list(1, 2, 1)))
+})
+```
+:::
+
+## TDD in the real world
+
+In practice, TDD may not be followed strictly, but the principles remain valuable:
+
+* Tests should guide your design and implementation
+
+* Tests should not be an afterthought once your code is "done"
+
+* Refactoring is easier and safer with a solid test suite
+
+* Writing tests 2nd can lead to missing edge cases / faulty assumptions
+
+# Why Packages?
+
+## Benefits of packages
+
+Organizing your projects as a package provides many advantages:
+
+* Benefit from the existing infrastructure for package development
+
+* Easier to share and distribute your code (dependencies, installation, documentation, etc.)
+
+* Easier to bundle and document data sets
+
+* Better support for testing and documentation
+
+* Tends to lead to better organized, modular code and overall better design
+
+## Packages and LLMs
+
+We will go into this more on Thursday, but packages are also a great way to structure your code to work with LLMs:
+
+* Prescribed structure makes it easier for the LLMs to understand your codebase
+
+* Better context management
+
+* Better grounding and easier iteration through tests and checks
