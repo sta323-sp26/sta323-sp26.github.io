@@ -549,7 +549,27 @@ test_that("mean() behaves as expected", {
 })
 ```
 
-Tests make your intentions clear to future maintainers (including yourself!)
+Tests make your intentions clear to future maintainers / contributors (including yourself!)
+
+
+## Code coverage
+
+Code coverage measures the % of your code that is executed during testing.
+
+* Useful as a rough indicator of how well tested your code is
+* The `covr` package provides coverage tooling for R packages
+* Most CI services (e.g. GitHub Actions) can track coverage over time
+
+. . .
+
+Coverage has important limitations:
+
+* Measures execution, not correctness 
+* Does not measure the code your code uses
+* 100% coverage does not mean bug-free code
+* Incentivizes writing tests that touch lines rather than tests that verify behavior
+* Edge cases and input validation can be missed even at high coverage
+
 
 # Test-Driven Development
 

@@ -1198,7 +1198,7 @@ Dr. Colin Rundel
 <span id="cb6-5"><a href></a>  <span class="fu">expect_type</span>(<span class="st">`</span><span class="at">+</span><span class="st">`</span>(<span class="dv">1</span>L, <span class="dv">1</span>L), <span class="st">&quot;integer&quot;</span>)</span>
 <span id="cb6-6"><a href></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Test passed with 4 successes 🎉.</code></pre>
+<pre><code>Test passed with 4 successes 🥇.</code></pre>
 </div>
 </div>
 </div>
@@ -1249,7 +1249,7 @@ Dr. Colin Rundel
 <span id="cb11-4"><a href></a>  <span class="fu">expect_equal</span>(<span class="dv">1</span>L, <span class="fl">1.0</span>)</span>
 <span id="cb11-5"><a href></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Test passed with 3 successes 😀.</code></pre>
+<pre><code>Test passed with 3 successes 🎊.</code></pre>
 </div>
 </div>
 </div><div class="column">
@@ -1321,7 +1321,7 @@ Objects equal but not identical</code></pre>
 <span id="cb17-18"><a href></a>  <span class="fu">expect_true</span>(ci_99[<span class="st">&quot;upper&quot;</span>] <span class="sc">-</span> ci_99[<span class="st">&quot;lower&quot;</span>] <span class="sc">&gt;</span> ci_95[<span class="st">&quot;upper&quot;</span>] <span class="sc">-</span> ci_95[<span class="st">&quot;lower&quot;</span>])</span>
 <span id="cb17-19"><a href></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Test passed with 6 successes 🎉.</code></pre>
+<pre><code>Test passed with 6 successes 😀.</code></pre>
 </div>
 </div>
 </div>
@@ -1411,7 +1411,7 @@ Expected `calculate_mean_ci(5)` to throw a error.</code></pre>
 <span id="cb22-12"><a href></a>  <span class="fu">expect_error</span>(<span class="fu">calculate_discount</span>(<span class="sc">-</span><span class="dv">50</span>, <span class="dv">10</span>), <span class="st">&quot;Price cannot be negative&quot;</span>)</span>
 <span id="cb22-13"><a href></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Test passed with 2 successes 🎊.</code></pre>
+<pre><code>Test passed with 2 successes 🎉.</code></pre>
 </div>
 </div>
 </div>
@@ -1583,7 +1583,26 @@ Backtrace:
 <span id="cb36-10"><a href></a>  <span class="fu">expect_true</span>(<span class="fu">is.na</span>(result))</span>
 <span id="cb36-11"><a href></a>  <span class="fu">expect_true</span>(<span class="fu">is.nan</span>(result))</span>
 <span id="cb36-12"><a href></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Tests make your intentions clear to future maintainers (including yourself!)</p>
+<p>Tests make your intentions clear to future maintainers / contributors (including yourself!)</p>
+</section>
+<section id="code-coverage" class="slide level2">
+<h2>Code coverage</h2>
+<p>Code coverage measures the % of your code that is executed during testing.</p>
+<ul>
+<li>Useful as a rough indicator of how well tested your code is</li>
+<li>The <code>covr</code> package provides coverage tooling for R packages</li>
+<li>Most CI services (e.g. GitHub Actions) can track coverage over time</li>
+</ul>
+<div class="fragment">
+<p>Coverage has important limitations:</p>
+<ul>
+<li>Measures execution, not correctness</li>
+<li>Does not measure the code your code uses</li>
+<li>100% coverage does not mean bug-free code</li>
+<li>Incentivizes writing tests that touch lines rather than tests that verify behavior</li>
+<li>Edge cases and input validation can be missed even at high coverage</li>
+</ul>
+</div>
 </section></section>
 <section>
 <section id="test-driven-development" class="title-slide slide level1 center">
@@ -1662,7 +1681,7 @@ Backtrace:
 <span id="cb41-6"><a href></a>  <span class="fu">expect_true</span>(<span class="fu">is_palindrome</span>(<span class="fu">numeric</span>(<span class="dv">0</span>)))  <span class="co"># Empty vector</span></span>
 <span id="cb41-7"><a href></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Test passed with 5 successes 🥳.</code></pre>
+<pre><code>Test passed with 5 successes 🎉.</code></pre>
 </div>
 </div>
 </div>
@@ -1690,7 +1709,7 @@ Backtrace:
 <span id="cb44-6"><a href></a>  <span class="fu">expect_true</span>(<span class="fu">is_palindrome</span>(<span class="fu">numeric</span>(<span class="dv">0</span>)))  <span class="co"># Empty vector</span></span>
 <span id="cb44-7"><a href></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Test passed with 5 successes 🥳.</code></pre>
+<pre><code>Test passed with 5 successes 😸.</code></pre>
 </div>
 </div>
 </div>
@@ -1728,7 +1747,7 @@ Expected `is_palindrome(list(1, 2, 1))` to throw a error.</code></pre>
 <span id="cb50-2"><a href></a>  <span class="fu">expect_error</span>(<span class="fu">is_palindrome</span>(<span class="fu">list</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span>)))</span>
 <span id="cb50-3"><a href></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Test passed with 1 success 🥇.</code></pre>
+<pre><code>Test passed with 1 success 🎉.</code></pre>
 </div>
 </div>
 </div>
