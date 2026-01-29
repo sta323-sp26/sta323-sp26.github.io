@@ -88,8 +88,7 @@ schedule:
 - week: 3
   day: 4
   lecture: "LLMs & R"
-  screencast: Lec07
-  slides:
+  slides: Lec07
   readings:
     - text: Hadley's A no bullshit guide to LLMs
       link: https://www.youtube.com/watch?v=ctc2kx3LxG8&t=18m17s
