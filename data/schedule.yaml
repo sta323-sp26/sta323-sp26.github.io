@@ -97,22 +97,15 @@ schedule:
   readings:
     - text: Tidy Data paper
       link: https://vita.had.co.nz/papers/tidy-data.pdf
-    - text: R4DS - tidy data
+    - text: R4DS - Data transformation
+      link: https://r4ds.had.co.nz/transform.html
+    - text: R4DS - Tidy data
       link: http://r4ds.had.co.nz/tidy-data.html
     - text: Data transformation cheatsheet
       link: https://github.com/rstudio/cheatsheets/raw/master/data-transformation.pdf
     - text: tidyr pivoting
       link: https://tidyr.tidyverse.org/articles/pivot.html
-    - text: tidyr rectangling
-      link: https://tidyr.tidyverse.org/articles/rectangle.html
-  suppmat:
-    - text: Python for Data Analysis
-      link: https://wesmckinney.com/book/pandas-basics.html
-    - text: Group By
-      link: https://pandas.pydata.org/docs/user_guide/groupby.html
-    - text: Reshaping
-      link: https://pandas.pydata.org/docs/user_guide/reshaping.html
-
+    
 
 - week: 4
   day: 4
@@ -121,6 +114,8 @@ schedule:
   readings:
     - text: Purrr tutorial
       link: https://jennybc.github.io/purrr-tutorial/index.html
+    - text: tidyr rectangling
+      link: https://tidyr.tidyverse.org/articles/rectangle.html
     - text: R4DS - Iteration
       link: http://r4ds.had.co.nz/iteration.html
     - text: purrr cheatsheet

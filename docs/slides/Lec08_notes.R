@@ -15,14 +15,6 @@ flights |>
     .by = carrier
   )
 
-
-# What was the shortest flight out of each airport in terms of
-# distance?
-
-flights |>
-  slice_min(distance, by = origin)
-
-
 # Which plane (tail number) flew out of each New York airport the most?
 
 flights |>
@@ -41,6 +33,15 @@ flights |>
   ) |>
   slice_min(avg_dep_delay, n = 5)
 
+# Which flight has the largest arrival delay as a percentage of 
+# its scheduled air time?
+
+flights |>
+  mutate(
+    arr_delay_pct = arr_delay / air_time
+  ) |>
+  slice_max(arr_delay_pct, n = 1) |>
+  select(year:day, origin, dest, tailnum, arr_delay, air_time, arr_delay_pct)
 
 
 # Exercise 1: Palmer penguins contingency table
