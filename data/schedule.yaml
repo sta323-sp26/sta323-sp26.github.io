@@ -6,7 +6,6 @@ schedule:
   day: 4
   lecture: "Welcome & Types in R"
   slides: Lec01
-  screencast:
   readings:
     - text: Tidyverse style guide
       link: https://style.tidyverse.org/
@@ -23,7 +22,6 @@ schedule:
   day: 2
   lecture: "Vectorization & Control Flow"
   slides: Lec02
-  screencast:
   suppmat:
     - text: Control flow
       link: https://docs.python.org/3/tutorial/controlflow.html
@@ -34,7 +32,6 @@ schedule:
   day: 4
   lecture: "Lists, Attributes, & S3"
   slides: Lec03
-  screencast:
   readings:
     - text: Adv R - OO Field Guide - S3
       link: http://adv-r.had.co.nz/OO-essentials.html#s3
@@ -50,7 +47,6 @@ schedule:
   day: 2
   lecture: "Subsetting"
   slides: Lec04
-  screencast:
   readings:
     - text: Adv R - Subsetting
       link: http://adv-r.had.co.nz/Subsetting.html
@@ -62,7 +58,6 @@ schedule:
 - week: 2
   day: 4
   lecture: "R Packages"
-  screencast:
   slides: Lec05
   readings:
     - text: R Packages
@@ -76,7 +71,6 @@ schedule:
 - week: 3
   day: 2
   lecture: "Testing with testthat"
-  screencast:
   slides: Lec06
   readings:
     - text: testthat
@@ -99,8 +93,7 @@ schedule:
 - week: 4
   day: 2
   lecture: "Tidy data - dplyr & tidyr"
-  slides:
-  screencast:
+  slides: Lec08
   readings:
     - text: Tidy Data paper
       link: https://vita.had.co.nz/papers/tidy-data.pdf
@@ -125,7 +118,6 @@ schedule:
   day: 4
   lecture: "Functional programming -s purrr"
   slides:
-  screencast:
   readings:
     - text: Purrr tutorial
       link: https://jennybc.github.io/purrr-tutorial/index.html
@@ -139,7 +131,6 @@ schedule:
   day: 4
   lecture: "Visualization with ggplot2"
   slides:
-  screencast:
   readings:
     - text: R4DS - Visualization
       link: http://r4ds.had.co.nz/data-visualisation.html
@@ -157,7 +148,6 @@ schedule:
   day: 2
   lecture: "Visualization Design"
   slides:
-  screencast:
   readings:
   suppmat:
  
@@ -165,7 +155,6 @@ schedule:
   day: 4
   lecture: "Text processing & Regular expressions"
   slides:
-  screencast:
   readings:
     - text: stringr Cheat Sheet,
       link: https://github.com/rstudio/cheatsheets/blob/master/strings.pdf
@@ -183,7 +172,6 @@ schedule:
   day: 2
   lecture: "Web scraping"
   slides:
-  screencast:
   readings:
     - text: rvest - selector gadget vignette
       link: https://rvest.tidyverse.org/articles/articles/selectorgadget.html
@@ -195,7 +183,6 @@ schedule:
   day: 4
   lecture: "Web APIs"
   slides:
-  screencast:
   readings:
     - text: httr2
       link: https://httr2.r-lib.org/
@@ -212,7 +199,6 @@ schedule:
 - week: 7
   day: 2
   lecture: "filesystems, Dennys & LQ scraping"
-  screencast:
   slides:
   readings:
     - text: Project-oriented workflow
@@ -225,7 +211,6 @@ schedule:
   day: 4
   lecture: "make"
   slides:
-  screencast:
   readings:
     - text: Minimal make
       link: https://kbroman.org/minimal_make/
@@ -240,7 +225,6 @@ schedule:
   day: 2
   lecture: "Shiny"
   slides:
-  screencast:
   readings:
     - text: Shiny Docs & Gallery
       link: http://shiny.rstudio.com/
@@ -256,7 +240,6 @@ schedule:
   day: 4
   lecture: "bslib, dynamic UIs, and publishing"
   slides:
-  screencast:
   readings:
 
 - week: 9
@@ -271,7 +254,6 @@ schedule:
   day: 2
   lecture: "Databases & dplyr"
   slides:
-  screencast:
   readings:
     - text: SQL Translation
       link: https://cran.r-project.org/web/packages/dbplyr/vignettes/sql-translation.html
@@ -287,7 +269,6 @@ schedule:
   day: 4
   lecture: "DuckDB & SQL"
   slides:
-  screencast:
   readings:
     - text: DuckDB SQL Reference
       link: https://duckdb.org/docs/sql/introduction
@@ -301,7 +282,6 @@ schedule:
   day: 2
   lecture: "Profiling & Parallelization"
   slides:
-  screencast:
   readings:
     - text: "parallel Vignettes"
       link: https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf
@@ -315,7 +295,6 @@ schedule:
   day: 2
   lecture: "Tidy Models"
   slides:
-  screencast:
   readings:
     - text: "Tidy Models - Get Started"
       link: https://www.tidymodels.org/start/
