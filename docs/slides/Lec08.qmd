@@ -31,6 +31,16 @@ library(magrittr)
 ![](imgs/hex-tidyverse.png){fig-align="center" width="40%"}
 
 
+## tidyverse package
+
+::: {.medium}
+```{r}
+#| message: true
+library(tidyverse)
+```
+:::
+
+
 ## Tidy data
 
 :::: {.columns}
@@ -53,6 +63,8 @@ knitr::include_graphics('imgs/tidy3.png')
 ::: {.aside}
 From R4DS - [tidy data](http://r4ds.had.co.nz/tidy-data.html)
 :::
+
+
 
 ## Tidy vs Untidy
 

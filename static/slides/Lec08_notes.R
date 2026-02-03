@@ -22,8 +22,8 @@ flights |>
   slice_max(n, by = origin)
 
 
-# Which date should you fly on if you want to have the lowest
-# possible average departure delay? What about arrival delay?
+# Which 5 days should you consider flying on if you want to have 
+# the lowest possible average departure delay?
 
 flights |>
   group_by(month, day) |>
