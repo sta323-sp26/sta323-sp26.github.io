@@ -116,7 +116,7 @@ schedule:
 
 - week: 4
   day: 4
-  lecture: "Functional programming -s purrr"
+  lecture: "Functional programming - purrr"
   slides:
   readings:
     - text: Purrr tutorial
