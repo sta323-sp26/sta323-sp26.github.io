@@ -98,11 +98,11 @@ schedule:
     - text: Tidy Data paper
       link: https://vita.had.co.nz/papers/tidy-data.pdf
     - text: R4DS - Data transformation
-      link: https://r4ds.had.co.nz/transform.html
-    - text: R4DS - Tidy data
-      link: http://r4ds.had.co.nz/tidy-data.html
+      link: https://r4ds.hadley.nz/data-transform.html
+    - text: R4DS - Data tidying
+      link: https://r4ds.hadley.nz/data-tidy.html
     - text: Data transformation cheatsheet
-      link: https://github.com/rstudio/cheatsheets/raw/master/data-transformation.pdf
+      link: https://rstudio.github.io/cheatsheets/html/data-transformation.html
     - text: tidyr pivoting
       link: https://tidyr.tidyverse.org/articles/pivot.html
     
