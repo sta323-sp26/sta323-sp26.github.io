@@ -110,7 +110,7 @@ schedule:
 - week: 4
   day: 4
   lecture: "Functional programming - purrr"
-  slides:
+  slides: Lec09
   readings:
     - text: Purrr tutorial
       link: https://jennybc.github.io/purrr-tutorial/index.html

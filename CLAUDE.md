@@ -27,6 +27,8 @@ Rscript -e "renderthis::to_pdf('static/slides/Lec01.html')"  # Convert HTML to P
 
 Slides live in `static/slides/*.qmd` using revealjs format with custom theme (`slides.scss`). Each slide uses knitr engine for R code execution.
 
+**Note:** Sections titled "Example" are live-coded demonstrations done in class and intentionally have no content in the slides.
+
 ## Key Configuration
 
 - `config.yaml`: Hugo site config, menu structure, course params (assignments, classroom info)
