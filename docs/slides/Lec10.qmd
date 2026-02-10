@@ -39,16 +39,16 @@ library(palmerpenguins)
 
 ## The Grammar of Graphics
 
-- Visualization concept created by Leland Wilkinson (The Grammar of Graphics, 1999)
-- Attempt to taxonomize the basic elements of statistical graphics
+- Conceptualized by Leland Wilkinson in The Grammar of Graphics (1999)
 
+- Attempt to taxonomize the basic elements of statistical graphics
 
 - Adapted for R by Hadley Wickham (2009)
   - consistent and compact syntax to describe statistical graphics
   
-  - highly modular as it breaks up graphs into semantic components 
+  - highly modular - breaks down graphs into semantic components 
   
-  - ggplot2 is not meant as a guide to which graph to use and how to best convey your data (more on that later), but it does have some strong opinions.
+  - not meant as a guide on which graph to use or how to best convey your data (more on that next time), but it does have some strong opinions.
 
 
 ## Terminology
@@ -94,7 +94,7 @@ ggplot(
 
 ## Data - Palmer Penguins
 
-Measurements for penguin species, island in Palmer Archipelago, size (flipper length, body mass, bill dimensions), and sex.
+Measurements of penguin species, island in the Palmer Archipelago, size (flipper length, body mass, bill dimensions), and sex.
 
 :::: {.columns}
 ::: {.column width='33%'}
@@ -476,11 +476,21 @@ ggplot(
 
 Commonly used characteristics of plotting geometries that can be **mapped to a specific variable** in the data, examples include:
 
-- position (`x`, `y`)
+::: {.columns}
+::: {.column}
+- `x`, `y` (position)
 - `color`
+- `fill`
 - `shape`
+:::
+::: {.column}
 - `size`
 - `alpha` (transparency)
+- `linetype`
+:::
+:::
+<!-- end columns -->
+
 
 Different geometries have different aesthetics available - see the [ggplot2 geoms](https://ggplot2.tidyverse.org/reference/index.html#Geoms) help files for listings.
 
@@ -505,7 +515,7 @@ ggplot(
 :::
 
 
-## Stop the warning
+## Avoid the warning
 
 ::: {.xsmall}
 ```{r color_narm}
@@ -625,7 +635,7 @@ ggplot(
 
 <br/>
 
-From the previous example `color`, `shape`, and `alpha` are all **aesthetics** while `size` was a **setting**.
+In this example `color`, `shape`, and `alpha` are all **mapping** while `size` is a **setting**.
 
 # Labels
 
@@ -662,7 +672,7 @@ ggplot(
 
 ## Labels
 
-Instead of overriding with `labs()`, we can annotate the data so that the label is generated automatically, by attaching a `label` argument to the appropriate column in our data frame.
+Instead of overriding with `labs()`, we can annotate the data so that the label is generated automatically, by attaching a `label` attribute to the appropriate column in our data frame.
 
 
 ::: {.xxsmall}
@@ -707,8 +717,8 @@ Alternatively, we can provide a dictionary / lookup table via the `dictionary` a
 
 lookup = c(
   species = "Species",
-  bill_depth_mm = "Bill depth {mm}",
-  bill_length_mm = "Bill length {mm}"
+  bill_depth_mm = "Bill depth (mm)",
+  bill_length_mm = "Bill length (mm)"
 )
 
 ggplot(
@@ -737,9 +747,9 @@ ggplot(
 
 ## Scales
 
-Scales control the mapping from data values to aesthetic values — they determine *how* a variable is translated into color, size, position, etc.
-
-Every aesthetic has a default scale, but we can override it:
+::: {.small}
+Scales control the mapping from data values to aesthetic values — they determine *how* a variable is translated into `color`, `size`, position, etc. Every aesthetic has a default scale, but we can override it:
+:::
 
 ::: {.xsmall}
 ```{r scales-color}
@@ -747,9 +757,7 @@ Every aesthetic has a default scale, but we can override it:
 ggplot(
   penguins, aes(x = bill_depth_mm, y = bill_length_mm)
 ) +
-  geom_point(
-    aes(color = species), na.rm = TRUE
-  ) +
+  geom_point(aes(color = species), na.rm = TRUE) +
   scale_color_brewer(type = "qual", palette = "Set2")
 ```
 :::
@@ -761,9 +769,14 @@ Scales also apply to positional aesthetics (`x` and `y`) — useful for transfor
 
 ::: {.xsmall}
 ```{r scales-axis}
-#| out-width: 75%
+#| out-width: 100%
+#| output-location: column
 ggplot(
-  penguins, aes(x = body_mass_g, y = bill_length_mm)
+  penguins, 
+  aes(
+    x = body_mass_g, 
+    y = bill_length_mm
+  )
 ) +
   geom_point(
     aes(color = species), na.rm = TRUE
@@ -778,6 +791,84 @@ ggplot(
 
 ::: {.aside}
 The [scales](https://scales.r-lib.org/) package provides a variety of useful helper functions for formatting axis labels, e.g. `label_comma()`, `label_percent()`, `label_dollar()`, etc.
+:::
+
+## Log scales
+
+::: {.xsmall}
+```{r scales-log}
+#| out-width: 75%
+ggplot(
+  penguins, aes(x = body_mass_g, y = bill_length_mm)
+) +
+  geom_point(aes(color = species), na.rm = TRUE) +
+  scale_x_log10()
+```
+:::
+
+::: {.aside}
+This can also be achieved via `scale_x_continuous(transform = "log10")` which supports many additional transformations.
+:::
+
+# Statistical Transformations
+
+## Statistical Transformations
+
+Many geoms apply a statistical transformation to the data before plotting — e.g. binning, counting, or fitting a model.
+
+::: {.xsmall}
+```{r stat-smooth}
+#| out-width: 75%
+ggplot(
+  penguins, aes(x = bill_depth_mm, y = bill_length_mm)
+) +
+  geom_point(na.rm = TRUE) +
+  geom_smooth(method = "lm", na.rm = TRUE)
+```
+:::
+
+## Stat transformations + aesthetics
+
+Statistical transformations respect aesthetic groupings.
+
+::: {.xsmall}
+```{r stat-smooth-group}
+#| out-width: 75%
+ggplot(
+  penguins, aes(x = bill_depth_mm, y = bill_length_mm, color = species)
+) +
+  geom_point(na.rm = TRUE) +
+  geom_smooth(method = "lm", na.rm = TRUE, se = FALSE, )
+```
+:::
+
+## Implicit stat transformations
+
+Some geoms imply a stat — `geom_bar()` uses `stat = "count"` by default, so it only needs an `x` aesthetic.
+
+::: {.columns .xsmall}
+::: {.column}
+```{r stat-bar}
+ggplot(
+  penguins, aes(x = species, fill = island)
+) +
+  geom_bar()
+```
+:::
+::: {.column .fragment}
+```{r stat-bar2}
+penguins |> 
+  count(species, island) |>
+  ggplot(
+    aes(x = species, y = n, fill = island)
+  ) +
+    geom_bar(stat = "identity")
+```
+:::
+:::
+<!-- end columns -->
+::: {}
+
 :::
 
 # Faceting
@@ -872,7 +963,7 @@ ggplot(
 
 ::: {.xsmall}
 ```{r facet-layout-text}
-#| out-width: 75%
+#| out-width: 100%
 #| code-line-numbers: "8-15"
 #| output-location: slide
 ggplot(
@@ -883,11 +974,11 @@ ggplot(
   facet_grid(species ~ island) +
   guides(color = "none") +
   geom_text(
-    x = 17.5, y = 35, label = "Only sampled on Dream", size = 6, color = "black", 
+    x = 17.5, y = 35, label = "Only on Dream", size = 6, color = "black", 
     layout = 5
   ) +
   geom_text(
-    x = 17.5, y = 35, label = "Only sampled on Biscoe", size = 6, color = "black", 
+    x = 17.5, y = 35, label = "Only on Biscoe", size = 6, color = "black", 
     layout = 7
   )
 ```
@@ -1005,6 +1096,69 @@ ggplot(
 ) + 
   geom_point(na.rm = TRUE) +
   facet_wrap(~ species, ncol = 2, dir = "rb")
+```
+:::
+
+## facet_wrap - free scales
+
+By default, all facets share the same axis limits. Use `scales` to let axes vary across panels.
+
+::: {.xsmall}
+```{r facetwrap-free}
+#| out-width: 75%
+ggplot(
+  penguins, aes(x = bill_depth_mm, y = bill_length_mm)
+) +
+  geom_point(na.rm = TRUE) +
+  facet_wrap(~ species, scales = "free")
+```
+:::
+
+# Coordinate Systems
+
+## coord_cartesian - zooming
+
+`coord_cartesian()` zooms into the plot without dropping data — unlike setting `scale` limits which removes points before stat computations.
+
+::: {.xsmall}
+```{r coord-cartesian}
+#| out-width: 75%
+ggplot(
+  penguins, aes(x = bill_depth_mm, y = bill_length_mm, color = species)
+) +
+  geom_point(na.rm = TRUE) +
+  coord_cartesian(xlim = c(15, 20), ylim = c(40, 55))
+```
+:::
+
+## coord_flip
+
+`coord_flip()` swaps the x and y axes — useful for making horizontal bar charts or boxplots more readable.
+
+::: {.xsmall}
+```{r coord-flip}
+#| out-width: 75%
+ggplot(
+  penguins, aes(x = species, y = body_mass_g)
+) +
+  geom_boxplot(na.rm = TRUE) +
+  coord_flip()
+```
+:::
+
+## coord_polar
+
+`coord_polar()` maps position onto a circular coordinate system.
+
+::: {.xsmall}
+```{r coord-polar}
+#| out-width: 66%
+ggplot(
+  penguins |> dplyr::filter(!is.na(species)),
+  aes(x = species, fill = species)
+) +
+  geom_bar(width = 1) +
+  coord_polar()
 ```
 :::
 

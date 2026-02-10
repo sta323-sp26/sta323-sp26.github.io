@@ -29,6 +29,8 @@ Slides live in `static/slides/*.qmd` using revealjs format with custom theme (`s
 
 **Note:** Sections titled "Example" are live-coded demonstrations done in class and intentionally have no content in the slides.
 
+**Note:** When reviewing slides, do not review or comment on the content of exercises or examples (spelling and grammar checks are fine). These are meant to be external live-coded experiences for students, so the content will usually not be in the slides.
+
 ## Key Configuration
 
 - `config.yaml`: Hugo site config, menu structure, course params (assignments, classroom info)
