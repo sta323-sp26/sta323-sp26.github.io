@@ -122,8 +122,8 @@ schedule:
       link: https://github.com/rstudio/cheatsheets/raw/master/purrr.pdf
   suppmat:
 
-- week: 4
-  day: 4
+- week: 5
+  day: 2
   lecture: "Visualization with ggplot2"
   slides: Lec10
   readings:
@@ -140,14 +140,14 @@ schedule:
       link: https://plotnine.readthedocs.io/en/stable/
 
 - week: 5
-  day: 2
+  day: 4
   lecture: "Visualization Design"
-  slides:
+  slides: Lec11
   readings:
   suppmat:
  
-- week: 5
-  day: 4
+- week: 6
+  day: 2
   lecture: "Text processing & Regular expressions"
   slides:
   readings:
@@ -164,7 +164,7 @@ schedule:
       link: https://docs.python.org/3/library/re.html
 
 - week: 6
-  day: 2
+  day: 4
   lecture: "Web scraping"
   slides:
   readings:
@@ -174,20 +174,20 @@ schedule:
     - text: BeautifulSoup
       link: https://www.crummy.com/software/BeautifulSoup/bs4/doc/
 
-- week: 6
-  day: 4
-  lecture: "Web APIs"
-  slides:
-  readings:
-    - text: httr2
-      link: https://httr2.r-lib.org/
-    - text: httr - Best practices for API packages
-      link: https://httr.r-lib.org/articles/api-packages.html
-    - text: GitHub API Docs
-      link: https://docs.github.com/en/rest?apiVersion=2022-11-28
-  suppmat:
-    - text: Requests
-      link: https://requests.readthedocs.io/en/latest/
+#- week: 7
+#  day: 2
+#  lecture: "Web APIs"
+#  slides:
+#  readings:
+#    - text: httr2
+#      link: https://httr2.r-lib.org/
+#    - text: httr - Best practices for API packages
+#      link: https://httr.r-lib.org/articles/api-packages.html
+#    - text: GitHub API Docs
+#      link: https://docs.github.com/en/rest?apiVersion=2022-11-28
+#  suppmat:
+#    - text: Requests
+#      link: https://requests.readthedocs.io/en/latest/
 
 
 
