@@ -144,6 +144,12 @@ schedule:
   lecture: "Visualization Design"
   slides: Lec11
   readings:
+  - text: "Data Visualization: A Practical Introduction"
+    link: https://socviz.co/
+  - text: "Fundamentals of Data Visualization"
+    link: https://clauswilke.com/dataviz/
+  - text: "Sta 313 - Advanced Data Visualization"
+    link: https://vizdata.org/
   suppmat:
  
 - week: 6
