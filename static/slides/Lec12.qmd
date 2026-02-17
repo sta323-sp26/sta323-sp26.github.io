@@ -45,7 +45,7 @@ As you have likely noticed, the individual characters in a string (element of a 
 - `grep()`, `grepl()` - regular expression pattern matching
 - `sub()`, `gsub()` - regular expression pattern replacement
 
-`+` many more - the *See Also* section of the above functions' documentation to find additional functions.
+`+` many more - the *See Also* section of the above functions' documentation can be used to find additional functions.
 
 ##
 
@@ -168,9 +168,9 @@ str_trunc(x, width=60, side = "center")
 :::
 
 
-## String wrapping - `str_wrap()`
+## String wrapping - `str_wrap()` {.scrollable}
 
-::: {.small}
+::: {.xsmall}
 ```{r}
 cat(x)
 ```
@@ -178,15 +178,13 @@ cat(x)
 
 . . .
 
-::: {.small}
+::: {.xsmall}
 ```{r}
 str_wrap(x)
 ```
 :::
 
-##
-
-::: {.small}
+::: {.xsmall}
 ```{r}
 str_wrap(x) |> cat()
 ```
@@ -194,7 +192,7 @@ str_wrap(x) |> cat()
 
 . . .
 
-::: {.small}
+::: {.xsmall}
 ```{r}
 str_wrap(x, width=60) |> cat()
 ```
