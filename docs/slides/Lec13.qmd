@@ -213,11 +213,13 @@ read_html(html) |> html_elements("body>div")
 read_html(html) |> html_elements("body div div")
 ```
 
-## css selectors
+## CSS selectors
 
-We will be using a tool called selector gadget to help us identify the html elements of interest - it does this by constructing a css selector which can be used to subset the html document.
+::: {.medium}
+We will be using a tool called selector gadget to help us identify the html elements of interest - it does this by constructing a CSS selector which can be used to subset the html document.
 
 Some examples of basic selector syntax is below,
+:::
 
 ::: {.small}
 
@@ -233,8 +235,9 @@ element>element   |  `div > p`       | Select all &lt;p&gt; elements with &lt;di
 
 :::
 
-
+::: {.medium}
 There are also a number of additional combinators and pseudo-classes that improve flexibility, see examples [here](https://www.w3schools.com/cssref/css_selectors.asp).
+:::
 
 ::: {.aside}
 `html_elements()` also supports [XPath](https://www.w3schools.com/xml/xpath_intro.asp) selectors as an alternative to CSS selectors, though we will prefer CSS selectors in this course.
@@ -453,7 +456,6 @@ for (url in urls) {
 session = polite::bow("https://example.com")
 
 polite::nod(session, "page/1") |> polite::scrape()
-Sys.sleep(1)  # polite already delays, but you can add more
 polite::nod(session, "page/2") |> polite::scrape()
 ```
 :::
@@ -486,6 +488,8 @@ The returned object also supports interacting with the page like a user would:
 page$click("#load-more-button")
 page$scroll_to(top = 1000)
 page$type("#search-box", "query text")
+page$view()
+page$session$screenshot("screenshot.png")
 ```
 :::
 
