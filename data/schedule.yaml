@@ -172,7 +172,7 @@ schedule:
 - week: 6
   day: 4
   lecture: "Web scraping"
-  slides:
+  slides: Lec13
   readings:
     - text: rvest - selector gadget vignette
       link: https://rvest.tidyverse.org/articles/articles/selectorgadget.html
