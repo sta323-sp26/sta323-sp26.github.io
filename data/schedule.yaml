@@ -180,24 +180,37 @@ schedule:
     - text: BeautifulSoup
       link: https://www.crummy.com/software/BeautifulSoup/bs4/doc/
 
-#- week: 7
-#  day: 2
-#  lecture: "Web APIs"
-#  slides:
-#  readings:
-#    - text: httr2
-#      link: https://httr2.r-lib.org/
-#    - text: httr - Best practices for API packages
-#      link: https://httr.r-lib.org/articles/api-packages.html
-#    - text: GitHub API Docs
-#      link: https://docs.github.com/en/rest?apiVersion=2022-11-28
-#  suppmat:
-#    - text: Requests
-#      link: https://requests.readthedocs.io/en/latest/
-
-
+- week: 7
+  day: 2
+  lecture: "Web APIs"
+  slides: Lec14
+  readings:
+    - text: httr2
+      link: https://httr2.r-lib.org/
+    - text: httr - Best practices for API packages
+      link: https://httr.r-lib.org/articles/api-packages.html
+    - text: GitHub API Docs
+      link: https://docs.github.com/en/rest?apiVersion=2022-11-28
+  suppmat:
+    - text: Requests
+      link: https://requests.readthedocs.io/en/latest/
 
 - week: 7
+  day: 4
+  lecture: "Profiling & Parallelization"
+  slides:
+  readings:
+    - text: "parallel Vignettes"
+      link: https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf
+    - text: "mirai"
+      link: https://mirai.r-lib.org/
+    - text: "Futureverse"
+      link: https://www.futureverse.org/
+  suppmat:
+
+
+
+- week: 8
   day: 2
   lecture: "filesystems, Dennys & LQ scraping"
   slides:
@@ -208,7 +221,7 @@ schedule:
       link: https://fs.r-lib.org/articles/function-comparisons.html
   suppmat:
 
-- week: 7
+- week: 8
   day: 4
   lecture: "make"
   slides:
@@ -222,7 +235,15 @@ schedule:
   suppmat:
 
 
-- week: 8
+- week: 9
+  day: 2
+  lecture: "<i>No class - Spring break</i>"
+
+- week: 9
+  day: 4
+  lecture: "<i>No class - Spring break</i>"
+
+- week: 10
   day: 2
   lecture: "Shiny"
   slides:
@@ -237,21 +258,13 @@ schedule:
       link: https://posit-conf-2025.github.io/shiny-r/
   suppmat:
 
-- week: 8
+- week: 10
   day: 4
   lecture: "bslib, dynamic UIs, and publishing"
   slides:
   readings:
 
-- week: 9
-  day: 2
-  lecture: "<i>No class - Spring break</i>"
-
-- week: 9
-  day: 4
-  lecture: "<i>No class - Spring break</i>"
-
-- week: 10
+- week: 11
   day: 2
   lecture: "Databases & dplyr"
   slides:
@@ -266,7 +279,7 @@ schedule:
     - text: Python sqlite3 — DB-API
       link: https://docs.python.org/3/library/sqlite3.html
 
-- week: 10
+- week: 11
   day: 4
   lecture: "DuckDB & SQL"
   slides:
@@ -279,18 +292,6 @@ schedule:
       link: https://www.youtube.com/watch?v=GELhdezYmP0
   suppmat:
 
-- week: 11
-  day: 2
-  lecture: "Profiling & Parallelization"
-  slides:
-  readings:
-    - text: "parallel Vignettes"
-      link: https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf
-    - text: "mirai"
-      link: https://mirai.r-lib.org/
-    - text: "Futureverse"
-      link: https://www.futureverse.org/
-  suppmat:
 
 - week: 12
   day: 2
