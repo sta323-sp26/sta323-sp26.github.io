@@ -1,105 +1,121 @@
 library(tidyverse)
+library(httr2)
 
-## Demo 1 ------------
+## Demo 1 - GitHub API - Basic access
 
-# https://api.github.com/orgs/ORG/repos
-
-z = jsonlite::read_json("https://api.github.com/orgs/sta523-fa25/repos")
+z = jsonlite::read_json("https://api.github.com/orgs/sta323-sp26/repos")
+length(z)
+str(z, max.level = 2)
+z |> map_chr("full_name")
 
 z = jsonlite::read_json("https://api.github.com/orgs/tidyverse/repos")
+length(z)
+z |> map_chr("full_name")
+
+z = jsonlite::read_json("https://api.github.com/orgs/tidyverse/repos?page=2")
+length(z)
+z |> map_chr("full_name")
 
 z = jsonlite::read_json("https://api.github.com/orgs/tidyverse/repos?per_page=100")
-
+length(z)
 z |> map_chr("full_name")
 
 
-# https://api.github.com/user - Get authenticated user
+## Demo 2 - Authenticated Endpoint(s)
 
 jsonlite::read_json("https://api.github.com/user")
 
 
+## Demo 3 - httr2 + GitHub
 
-## GitHub + httr2 example -----
+### Basic request
 
-library(httr2)
+resp = request("https://api.github.com/users/rundel") |>
+  req_perform()
 
-### User info ------
+resp |> resp_status()
+resp |> resp_status_desc()
+resp |> resp_content_type()
 
-request("https://api.github.com/users/rundel") |>
+resp |> resp_body_json() |> str()
+
+
+### Pagination
+
+request("https://api.github.com/orgs/tidyverse/repos") |>
+  req_auth_bearer_token(gitcreds::gitcreds_get()$password) |>
   req_perform() |>
-  resp_body_json()
+  resp_body_json() |>
+  map_chr("full_name")
 
-last_response() |>
-  resp_status()
+request("https://api.github.com/orgs/tidyverse/repos") |>
+  req_url_query(page=2) |>
+  req_perform() |>
+  resp_body_json() |>
+  map_chr("full_name")
 
-last_response() |>
-  resp_status_desc()
+request("https://api.github.com/orgs/tidyverse/repos") |>
+  req_url_query(per_page=100) |>
+  req_perform() |>
+  resp_body_json() |>
+  map_chr("full_name")
+
+resps = request("https://api.github.com/orgs/tidyverse/repos") |>
+  req_url_query(per_page=15) |>
+  req_perform_iterative(next_req = iterate_with_link_url())
+
+resps
+
+resps |>
+  map(resp_body_json) |>
+  purrr::list_flatten() |>
+  map_chr("full_name")
 
 
-
-### Auth User info ------
+### Error handling
 
 request("https://api.github.com/user") |>
-  req_perform() |>
-  resp_body_json()
+  req_perform()
 
-last_response() |>
-  resp_status()
+resp = request("https://api.github.com/user") |>
+  req_error(is_error = function(resp) FALSE) |>
+  req_perform()
 
-last_response() |>
-  resp_status_desc()
+resp |> resp_status()
+resp |> resp_status_desc()
+resp |> resp_body_json() |> str()
 
 
-gitcreds::gitcreds_set()
+## Demo 4 - Using Authentication
 
 request("https://api.github.com/user") |>
-  req_auth_bearer_token(gitcreds::gitcreds_get()$password) |> 
-  #req_dry_run() |>
-  req_perform() |> 
-  resp_body_json()
-
+  req_auth_bearer_token(gitcreds::gitcreds_get()$password) |>
+  req_perform() |>
+  resp_body_json() |>
+  str()
 
 request("https://api.github.com/user") |>
   req_headers(
     Authorization = paste("Bearer", gitcreds::gitcreds_get()$password)
   ) |>
   req_perform() |>
-  resp_body_json()
-
-
-### Org repos ------
-
-request("https://api.github.com/orgs/sta523-fa25/repos") |>
-  req_url_query(per_page = 100) |>
-  req_perform() |>
   resp_body_json() |>
-  map_chr("full_name")
-
-request("https://api.github.com/orgs/sta523-fa25/repos") |>
-  req_auth_bearer_token(gitcreds::gitcreds_get()$password) |>
-  #req_url_query(per_page = 100) |>
-  req_url_query(page = 2) |>
-  req_perform() |>
-  resp_body_json() |> 
-  map_chr("full_name")
-
-last_response() |> 
-  resp_headers("link")
+  str()
 
 
-### Create a gist ----
-
-# https://docs.github.com/en/rest/gists/gists?apiVersion=2022-11-28#create-a-gist
+## Demo 5 - POST Request
 
 gist = request("https://api.github.com/gists") |>
   req_auth_bearer_token(gitcreds::gitcreds_get()$password) |>
-  req_body_json( list(
+  req_body_json(list(
     description = "Testing 1 2 3 ...",
     files = list("test.R" = list(content = "print('hello world')\n")),
     public = TRUE
-  ) ) |>
-  req_perform()
+  ))
 
-resp_body_json(gist)
+gist |> req_dry_run()
 
-resp_body_json(gist)$html_url
+resp = gist |> req_perform()
+resp |> resp_status()
+resp |> resp_status_desc()
+resp |> resp_body_json() |> pluck("html_url")

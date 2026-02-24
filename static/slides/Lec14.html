@@ -1077,7 +1077,7 @@ Dr. Colin Rundel
 </div></aside></section>
 <section id="query-strings" class="slide level2">
 <h2>Query Strings</h2>
-<p>Provides named parameter(s) and value(s) that modify the behavior of the resulting page.</p>
+<p>Provides named argument(s) and value(s) that modify the behavior of the resulting page.</p>
 <p><br></p>
 <p>Format generally follows:</p>
 <div class="center large">
@@ -1233,21 +1233,23 @@ Dr. Colin Rundel
 <li><strong>Uniform interface</strong> - standard HTTP methods (GET, POST, PUT, DELETE)</li>
 <li><strong>Cacheable</strong> - responses can be cached to improve performance</li>
 </ul></li>
-<li><p>Resources are represented in standard formats (typically JSON or XML)</p></li>
+<li><p>Resources are represented in standard formats (typically JSON or XML) and delivered in the response body</p></li>
 </ul>
 </section>
 <section id="github-api" class="slide level2">
 <h2>GitHub API</h2>
 <p>GitHub provides a REST API that allows you to interact with most of the data available on the website.</p>
 <p>There is extensive documentation and a huge number of endpoints to use - almost anything that can be done on the website can also be done via the API.</p>
-<div class="center">
+<p><br></p>
+<div class="center large">
 <p><a href="https://docs.github.com/en/rest">GitHub REST API</a></p>
 </div>
 </section>
 <section id="demo-1---github-api---basic-access" class="slide level2">
 <h2>Demo 1 - GitHub API - Basic access</h2>
 <p><br><br></p>
-<p>For this demo we will be using the GitHub REST API to access public data about users and repositories. We will be making unauthenticated requests, which are subject to stricter rate limits (60 requests per hour) but do not require credentials.</p>
+<p>For this demo we will be using the GitHub REST API to access public data about users and repositories.</p>
+<p>We will be making unauthenticated requests, which are subject to stricter rate limits but do not require credentials.</p>
 <div class="center">
 <ul>
 <li><p><a href="https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28#get-a-user">Get a user</a></p></li>
@@ -1477,7 +1479,7 @@ Dr. Colin Rundel
 </section>
 <section id="pagination" class="slide level2">
 <h2>Pagination</h2>
-<p>Many REST APIs limit the number of results returned in a single response to manage server load and improve performance. When working with large datasets, you’ll need to make multiple requests to retrieve all results.</p>
+<p>Many REST APIs limit the number of results returned in a single response to manage server load and improve performance. When working with large(r) datasets, you’ll need to make multiple requests to retrieve all results.</p>
 <p>Common pagination approaches:</p>
 <ul>
 <li><p>Offset-based - specify starting position and number of items (<code>?offset=20&amp;limit=10</code>)</p></li>
@@ -1487,7 +1489,7 @@ Dr. Colin Rundel
 </ul>
 
 <aside><div>
-<p>The point is that there is no single standard for pagination in (REST) APIs, so always refer to the specific API documentation for details.</p>
+<p>There is no single standard for pagination in (REST) APIs, so always refer to the specific API documentation for details.</p>
 </div></aside></section>
 <section id="github-api-pagination" class="slide level2">
 <h2>GitHub API Pagination</h2>
@@ -1500,7 +1502,7 @@ Dr. Colin Rundel
 </ul></li>
 <li>Link header: GitHub includes a <code>Link</code> header in responses with URLs for:
 <ul>
-<li><code>next</code> - next page of results</li>
+<li><code>next</code> - next page</li>
 <li><code>prev</code> - previous page</li>
 <li><code>first</code> - first page</li>
 <li><code>last</code> - last page</li>
@@ -1574,8 +1576,8 @@ Dr. Colin Rundel
 </section>
 <section id="demo-2---authenticated-endpoints" class="slide level2">
 <h2>Demo 2 - Authenticated Endpoint(s)</h2>
-<p>The information we’ve been retriving is all public, but the GitHub API also has endpoints that require authentication (e.g. to access private user data, create repositories, etc.). This is why when requesting the <code>sta323-sp26</code> repos we get only 2 results (all of the private repos are hidden).</p>
-<p>Another example is the <code>/user</code> endpoint which returns information about the <em>authenticated</em> user. If we try to access this endpoint without authentication, we get an error:</p>
+<p>The information we’ve been retrieving is all public, but the GitHub API also has endpoints that require authentication (e.g. to access private user data, create repositories, etc.). This is why when requesting the <code>sta323-sp26</code> repos we get only 2 results (all of the private repos are hidden).</p>
+<p>One example of this is the <code>/user</code> endpoint which returns information about the <em>authenticated</em> user. If we try to access this endpoint without authentication, we get an error:</p>
 <div class="small">
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href></a>jsonlite<span class="sc">::</span><span class="fu">read_json</span>(<span class="st">&quot;https://api.github.com/user&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1628,7 +1630,6 @@ Dr. Colin Rundel
 </div></aside></section>
 <section id="http-methods-verbs" class="slide level2">
 <h2>HTTP Methods / Verbs</h2>
-<div class="small">
 <table class="caption-top">
 <colgroup>
 <col style="width: 13%">
@@ -1670,13 +1671,10 @@ Dr. Colin Rundel
 </tr>
 </tbody>
 </table>
-</div>
+<p><br></p>
 <p><code>GET</code> and <code>POST</code> are by far the most common when consuming APIs.</p>
 <p>Less common verbs: <code>HEAD</code>, <code>TRACE</code>, <code>OPTIONS</code>.</p>
-
-<aside><div>
-<p>Based on <a href="http://code.tutsplus.com/tutorials/http-the-protocol-every-web-developer-must-know-part-1--net-31177">HTTP: The Protocol Every Web Developer Must Know</a></p>
-</div></aside></section>
+</section>
 <section id="httr2-request-objects" class="slide level2">
 <h2>httr2 request objects</h2>
 <p>A new request object is constructed via <code>request()</code> which is then modified via <code>req_*()</code> functions</p>
@@ -1684,11 +1682,39 @@ Dr. Colin Rundel
 <ul>
 <li><p><code>request()</code> - initialize a request object</p></li>
 <li><p><code>req_method()</code> - set HTTP method</p></li>
-<li><p><code>req_url_query()</code> - add query parameters to URL (e.g. <code>GET</code>, <code>POST</code>, etc.)</p></li>
+<li><p><code>req_url_query()</code> - add query parameters to URL</p></li>
 <li><p><code>req_body_json()</code>, <code>req_body_raw()</code>, etc. - set body content (various formats and sources)</p></li>
 <li><p><code>req_user_agent()</code> - set request user-agent header</p></li>
 <li><p><code>req_dry_run()</code> - shows the exact request that will be made</p></li>
 </ul>
+</section>
+<section id="example" class="slide level2">
+<h2>Example</h2>
+<div class="small">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href></a>req <span class="ot">=</span> <span class="fu">request</span>(<span class="st">&quot;https://api.github.com/orgs/tidyverse/repos&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb36-2"><a href></a>  <span class="fu">req_url_query</span>(<span class="at">per_page=</span><span class="dv">100</span>) <span class="sc">|&gt;</span></span>
+<span id="cb36-3"><a href></a>  <span class="fu">req_user_agent</span>(<span class="st">&quot;Sta323 Demo Client/0.1&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href></a>req</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;httr2_request&gt;
+GET https://api.github.com/orgs/tidyverse/repos?per_page=100
+Body: empty
+Options:
+* useragent: &quot;Sta323 Demo Client/0.1&quot;</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href></a>req <span class="sc">|&gt;</span> <span class="fu">req_dry_run</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>GET /orgs/tidyverse/repos HTTP/1.1
+accept: */*
+accept-encoding: deflate, gzip
+host: api.github.com
+user-agent: Sta323 Demo Client/0.1</code></pre>
+</div>
+</div>
+</div>
 </section>
 <section id="structure-of-an-http-response" class="slide level2">
 <h2>Structure of an HTTP Response</h2>
@@ -1700,7 +1726,7 @@ Dr. Colin Rundel
 </div>
 
 <aside><div>
-<p><a href="https://www3.ntu.edu.sg/home/ehchua/programming/webprogramming/http_basics.html">Source</a></p>
+<p>Source - <a href="https://www3.ntu.edu.sg/home/ehchua/programming/webprogramming/http_basics.html">web programming (http basics)</a></p>
 </div></aside></section>
 <section id="status-codes" class="slide level2">
 <h2>Status Codes</h2>
@@ -1815,19 +1841,19 @@ Dr. Colin Rundel
 <h2>Basic Request</h2>
 <div class="small">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href></a>resp <span class="ot">=</span> <span class="fu">request</span>(<span class="st">&quot;https://api.github.com/users/rundel&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb36-2"><a href></a>  <span class="fu">req_perform</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href></a>resp <span class="ot">=</span> <span class="fu">request</span>(<span class="st">&quot;https://api.github.com/users/rundel&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb41-2"><a href></a>  <span class="fu">req_perform</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href></a>resp <span class="sc">|&gt;</span> <span class="fu">resp_status</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href></a>resp <span class="sc">|&gt;</span> <span class="fu">resp_status</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 200</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href></a>resp <span class="sc">|&gt;</span> <span class="fu">resp_status_desc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href></a>resp <span class="sc">|&gt;</span> <span class="fu">resp_status_desc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] &quot;OK&quot;</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href></a>resp <span class="sc">|&gt;</span> <span class="fu">resp_content_type</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href></a>resp <span class="sc">|&gt;</span> <span class="fu">resp_content_type</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] &quot;application/json&quot;</code></pre>
 </div>
@@ -1836,7 +1862,7 @@ Dr. Colin Rundel
 <div class="fragment">
 <div class="small">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href></a>resp <span class="sc">|&gt;</span> <span class="fu">resp_body_json</span>() <span class="sc">|&gt;</span> <span class="fu">str</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href></a>resp <span class="sc">|&gt;</span> <span class="fu">resp_body_json</span>() <span class="sc">|&gt;</span> <span class="fu">str</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>List of 33
  $ login              : chr &quot;rundel&quot;
@@ -1881,11 +1907,11 @@ Dr. Colin Rundel
 <h2>Pagination w/ httr2</h2>
 <div class="small">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href></a><span class="fu">request</span>(<span class="st">&quot;https://api.github.com/orgs/tidyverse/repos&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb45-2"><a href></a>  <span class="fu">req_auth_bearer_token</span>(gitcreds<span class="sc">::</span><span class="fu">gitcreds_get</span>()<span class="sc">$</span>password) <span class="sc">|&gt;</span></span>
-<span id="cb45-3"><a href></a>  <span class="fu">req_perform</span>() <span class="sc">|&gt;</span></span>
-<span id="cb45-4"><a href></a>  <span class="fu">resp_body_json</span>() <span class="sc">|&gt;</span></span>
-<span id="cb45-5"><a href></a>  <span class="fu">map_chr</span>(<span class="st">&quot;full_name&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href></a><span class="fu">request</span>(<span class="st">&quot;https://api.github.com/orgs/tidyverse/repos&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb50-2"><a href></a>  <span class="fu">req_auth_bearer_token</span>(gitcreds<span class="sc">::</span><span class="fu">gitcreds_get</span>()<span class="sc">$</span>password) <span class="sc">|&gt;</span></span>
+<span id="cb50-3"><a href></a>  <span class="fu">req_perform</span>() <span class="sc">|&gt;</span></span>
+<span id="cb50-4"><a href></a>  <span class="fu">resp_body_json</span>() <span class="sc">|&gt;</span></span>
+<span id="cb50-5"><a href></a>  <span class="fu">map_chr</span>(<span class="st">&quot;full_name&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] &quot;tidyverse/ggplot2&quot;         &quot;tidyverse/lubridate&quot;      
  [3] &quot;tidyverse/stringr&quot;         &quot;tidyverse/dplyr&quot;          
@@ -1911,11 +1937,11 @@ Dr. Colin Rundel
 <div class="columns small">
 <div class="column">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href></a><span class="fu">request</span>(<span class="st">&quot;https://api.github.com/orgs/tidyverse/repos&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb47-2"><a href></a>  <span class="fu">req_url_query</span>(<span class="at">page=</span><span class="dv">2</span>) <span class="sc">|&gt;</span></span>
-<span id="cb47-3"><a href></a>  <span class="fu">req_perform</span>() <span class="sc">|&gt;</span></span>
-<span id="cb47-4"><a href></a>  <span class="fu">resp_body_json</span>() <span class="sc">|&gt;</span></span>
-<span id="cb47-5"><a href></a>  <span class="fu">map_chr</span>(<span class="st">&quot;full_name&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href></a><span class="fu">request</span>(<span class="st">&quot;https://api.github.com/orgs/tidyverse/repos&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb52-2"><a href></a>  <span class="fu">req_url_query</span>(<span class="at">page=</span><span class="dv">2</span>) <span class="sc">|&gt;</span></span>
+<span id="cb52-3"><a href></a>  <span class="fu">req_perform</span>() <span class="sc">|&gt;</span></span>
+<span id="cb52-4"><a href></a>  <span class="fu">resp_body_json</span>() <span class="sc">|&gt;</span></span>
+<span id="cb52-5"><a href></a>  <span class="fu">map_chr</span>(<span class="st">&quot;full_name&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] &quot;tidyverse/tidyversedashboard&quot;
  [2] &quot;tidyverse/dsbox&quot;             
@@ -1936,11 +1962,11 @@ Dr. Colin Rundel
 </div>
 </div><div class="column">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href></a><span class="fu">request</span>(<span class="st">&quot;https://api.github.com/orgs/tidyverse/repos&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb49-2"><a href></a>  <span class="fu">req_url_query</span>(<span class="at">per_page=</span><span class="dv">100</span>) <span class="sc">|&gt;</span></span>
-<span id="cb49-3"><a href></a>  <span class="fu">req_perform</span>() <span class="sc">|&gt;</span></span>
-<span id="cb49-4"><a href></a>  <span class="fu">resp_body_json</span>() <span class="sc">|&gt;</span></span>
-<span id="cb49-5"><a href></a>  <span class="fu">map_chr</span>(<span class="st">&quot;full_name&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href></a><span class="fu">request</span>(<span class="st">&quot;https://api.github.com/orgs/tidyverse/repos&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb54-2"><a href></a>  <span class="fu">req_url_query</span>(<span class="at">per_page=</span><span class="dv">100</span>) <span class="sc">|&gt;</span></span>
+<span id="cb54-3"><a href></a>  <span class="fu">req_perform</span>() <span class="sc">|&gt;</span></span>
+<span id="cb54-4"><a href></a>  <span class="fu">resp_body_json</span>() <span class="sc">|&gt;</span></span>
+<span id="cb54-5"><a href></a>  <span class="fu">map_chr</span>(<span class="st">&quot;full_name&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] &quot;tidyverse/ggplot2&quot;           
  [2] &quot;tidyverse/lubridate&quot;         
@@ -1996,13 +2022,16 @@ Dr. Colin Rundel
 <p>Pagination bookkeeping is annoying - this can (sometimes) be handled automatically with <code>req_perform_iterative()</code> - see <code>?iterate_with_offset</code> for pre-built helpers.</p>
 <div class="xsmall">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href></a>resps <span class="ot">=</span> <span class="fu">request</span>(<span class="st">&quot;https://api.github.com/orgs/tidyverse/repos&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb51-2"><a href></a>  <span class="fu">req_url_query</span>(<span class="at">per_page=</span><span class="dv">15</span>) <span class="sc">|&gt;</span></span>
-<span id="cb51-3"><a href></a>  <span class="fu">req_perform_iterative</span>(<span class="at">next_req =</span> <span class="fu">iterate_with_link_url</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href></a>resps <span class="ot">=</span> <span class="fu">request</span>(<span class="st">&quot;https://api.github.com/orgs/tidyverse/repos&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb56-2"><a href></a>  <span class="fu">req_url_query</span>(<span class="at">per_page=</span><span class="dv">15</span>) <span class="sc">|&gt;</span></span>
+<span id="cb56-3"><a href></a>  <span class="fu">req_perform_iterative</span>(<span class="at">next_req =</span> <span class="fu">iterate_with_link_url</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>iterating ■■■■■                             15% | ETA:  6s</code></pre>
+<pre><code>iterating ■■■■                              10% | ETA:  9s</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href></a>resps</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>iterating ■■■■■                             15% | ETA:  8s</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href></a>resps</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[[1]]
 &lt;httr2_response&gt;
@@ -2032,10 +2061,10 @@ Body: In memory (89916 bytes)</code></pre>
 <h2></h2>
 <div class="small">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href></a>resps <span class="sc">|&gt;</span></span>
-<span id="cb55-2"><a href></a>  <span class="fu">map</span>(resp_body_json) <span class="sc">|&gt;</span></span>
-<span id="cb55-3"><a href></a>  purrr<span class="sc">::</span><span class="fu">list_flatten</span>() <span class="sc">|&gt;</span></span>
-<span id="cb55-4"><a href></a>  <span class="fu">map_chr</span>(<span class="st">&quot;full_name&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href></a>resps <span class="sc">|&gt;</span></span>
+<span id="cb61-2"><a href></a>  <span class="fu">map</span>(resp_body_json) <span class="sc">|&gt;</span></span>
+<span id="cb61-3"><a href></a>  purrr<span class="sc">::</span><span class="fu">list_flatten</span>() <span class="sc">|&gt;</span></span>
+<span id="cb61-4"><a href></a>  <span class="fu">map_chr</span>(<span class="st">&quot;full_name&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] &quot;tidyverse/ggplot2&quot;            &quot;tidyverse/lubridate&quot;         
  [3] &quot;tidyverse/stringr&quot;            &quot;tidyverse/dplyr&quot;             
@@ -2067,10 +2096,10 @@ Body: In memory (89916 bytes)</code></pre>
 <section id="error-handling-in-httr2" class="slide level2">
 <h2>Error Handling in httr2</h2>
 <p>By default, <code>httr2</code> throws an R error for HTTP error responses (4xx and 5xx):</p>
-<div class="small">
+<div class="xsmall">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href></a><span class="fu">request</span>(<span class="st">&quot;https://api.github.com/user&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb57-2"><a href></a>  <span class="fu">req_perform</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href></a><span class="fu">request</span>(<span class="st">&quot;https://api.github.com/user&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb63-2"><a href></a>  <span class="fu">req_perform</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <pre><code>Error in `req_perform()`:
 ! HTTP 401 Unauthorized.</code></pre>
@@ -2078,23 +2107,22 @@ Body: In memory (89916 bytes)</code></pre>
 </div>
 </div>
 <div class="fragment">
-<p>Use <code>req_error()</code> to customize this behavior,</p>
-<div class="small">
+<div class="xsmall">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href></a>resp <span class="ot">=</span> <span class="fu">request</span>(<span class="st">&quot;https://api.github.com/user&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb59-2"><a href></a>  <span class="fu">req_error</span>(<span class="at">is_error =</span> <span class="cf">function</span>(resp) <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb59-3"><a href></a>  <span class="fu">req_perform</span>() </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href></a>resp <span class="ot">=</span> <span class="fu">request</span>(<span class="st">&quot;https://api.github.com/user&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb65-2"><a href></a>  <span class="fu">req_error</span>(<span class="at">is_error =</span> <span class="cf">function</span>(resp) <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb65-3"><a href></a>  <span class="fu">req_perform</span>() </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href></a>resp <span class="sc">|&gt;</span> <span class="fu">resp_status</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href></a>resp <span class="sc">|&gt;</span> <span class="fu">resp_status</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 401</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href></a>resp <span class="sc">|&gt;</span> <span class="fu">resp_status_desc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href></a>resp <span class="sc">|&gt;</span> <span class="fu">resp_status_desc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] &quot;Unauthorized&quot;</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href></a>resp <span class="sc">|&gt;</span> <span class="fu">resp_body_json</span>() <span class="sc">|&gt;</span> <span class="fu">str</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href></a>resp <span class="sc">|&gt;</span> <span class="fu">resp_body_json</span>() <span class="sc">|&gt;</span> <span class="fu">str</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>List of 3
  $ message          : chr &quot;Requires authentication&quot;
@@ -2127,6 +2155,7 @@ Body: In memory (89916 bytes)</code></pre>
 </div></aside></section>
 <section id="github-personal-access-tokens-pats" class="slide level2">
 <h2>GitHub Personal Access Tokens (PATs)</h2>
+<div class="medium">
 <p>A PAT is a secure alternative to using passwords for API authentication:</p>
 <ul>
 <li>Generated on GitHub: Settings → Developer settings → Personal access tokens</li>
@@ -2144,19 +2173,22 @@ Body: In memory (89916 bytes)</code></pre>
 <li>Use packages like <code>gitcreds</code> or <code>credentials</code> to manage tokens securely</li>
 <li>Set expiration dates and rotate tokens regularly</li>
 </ul>
+</div>
 <div class="fragment">
+<div class="medium">
 <p>For all of the following examples, I have created a PAT and added via <code>gitcreds::gitcreds_set()</code> to store it securely.</p>
+</div>
 </div>
 </section>
 <section id="demo-4---using-authentication" class="slide level2">
 <h2>Demo 4 - Using Authentication</h2>
-<div class="small">
+<div class="xsmall">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href></a><span class="fu">request</span>(<span class="st">&quot;https://api.github.com/user&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb66-2"><a href></a>  <span class="fu">req_auth_bearer_token</span>(gitcreds<span class="sc">::</span><span class="fu">gitcreds_get</span>()<span class="sc">$</span>password) <span class="sc">|&gt;</span></span>
-<span id="cb66-3"><a href></a>  <span class="fu">req_perform</span>() <span class="sc">|&gt;</span></span>
-<span id="cb66-4"><a href></a>  <span class="fu">resp_body_json</span>() <span class="sc">|&gt;</span></span>
-<span id="cb66-5"><a href></a>  <span class="fu">str</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href></a><span class="fu">request</span>(<span class="st">&quot;https://api.github.com/user&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb72-2"><a href></a>  <span class="fu">req_auth_bearer_token</span>(gitcreds<span class="sc">::</span><span class="fu">gitcreds_get</span>()<span class="sc">$</span>password) <span class="sc">|&gt;</span></span>
+<span id="cb72-3"><a href></a>  <span class="fu">req_perform</span>() <span class="sc">|&gt;</span></span>
+<span id="cb72-4"><a href></a>  <span class="fu">resp_body_json</span>() <span class="sc">|&gt;</span></span>
+<span id="cb72-5"><a href></a>  <span class="fu">str</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>List of 41
  $ login                    : chr &quot;rundel&quot;
@@ -2188,7 +2220,7 @@ Body: In memory (89916 bytes)</code></pre>
  $ twitter_username         : chr &quot;rundel&quot;
  $ notification_email       : chr &quot;rundel@gmail.com&quot;
  $ public_repos             : int 126
- $ public_gists             : int 32
+ $ public_gists             : int 37
  $ followers                : int 220
  $ following                : int 0
  $ created_at               : chr &quot;2010-05-12T01:12:52Z&quot;
@@ -2210,15 +2242,15 @@ Body: In memory (89916 bytes)</code></pre>
 </section>
 <section id="section-6" class="slide level2">
 <h2></h2>
-<div class="small">
+<div class="xsmall">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href></a><span class="fu">request</span>(<span class="st">&quot;https://api.github.com/user&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb68-2"><a href></a>  <span class="fu">req_headers</span>(</span>
-<span id="cb68-3"><a href></a>    <span class="at">Authorization =</span> <span class="fu">paste</span>(<span class="st">&quot;Bearer&quot;</span>, gitcreds<span class="sc">::</span><span class="fu">gitcreds_get</span>()<span class="sc">$</span>password)</span>
-<span id="cb68-4"><a href></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb68-5"><a href></a>  <span class="fu">req_perform</span>() <span class="sc">|&gt;</span></span>
-<span id="cb68-6"><a href></a>  <span class="fu">resp_body_json</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb68-7"><a href></a>  <span class="fu">str</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href></a><span class="fu">request</span>(<span class="st">&quot;https://api.github.com/user&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb74-2"><a href></a>  <span class="fu">req_headers</span>(</span>
+<span id="cb74-3"><a href></a>    <span class="at">Authorization =</span> <span class="fu">paste</span>(<span class="st">&quot;Bearer&quot;</span>, gitcreds<span class="sc">::</span><span class="fu">gitcreds_get</span>()<span class="sc">$</span>password)</span>
+<span id="cb74-4"><a href></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb74-5"><a href></a>  <span class="fu">req_perform</span>() <span class="sc">|&gt;</span></span>
+<span id="cb74-6"><a href></a>  <span class="fu">resp_body_json</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb74-7"><a href></a>  <span class="fu">str</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>List of 41
  $ login                    : chr &quot;rundel&quot;
@@ -2250,7 +2282,7 @@ Body: In memory (89916 bytes)</code></pre>
  $ twitter_username         : chr &quot;rundel&quot;
  $ notification_email       : chr &quot;rundel@gmail.com&quot;
  $ public_repos             : int 126
- $ public_gists             : int 32
+ $ public_gists             : int 37
  $ followers                : int 220
  $ following                : int 0
  $ created_at               : chr &quot;2010-05-12T01:12:52Z&quot;
@@ -2272,17 +2304,17 @@ Body: In memory (89916 bytes)</code></pre>
 </section>
 <section id="demo-5---post-request" class="slide level2">
 <h2>Demo 5 - POST Request</h2>
-<div class="small">
+<div class="xsmall">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href></a>gist <span class="ot">=</span> <span class="fu">request</span>(<span class="st">&quot;https://api.github.com/gists&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb70-2"><a href></a>  <span class="fu">req_auth_bearer_token</span>(gitcreds<span class="sc">::</span><span class="fu">gitcreds_get</span>()<span class="sc">$</span>password) <span class="sc">|&gt;</span></span>
-<span id="cb70-3"><a href></a>  <span class="fu">req_body_json</span>(<span class="fu">list</span>(</span>
-<span id="cb70-4"><a href></a>    <span class="at">description =</span> <span class="st">&quot;Testing 1 2 3 ...&quot;</span>,</span>
-<span id="cb70-5"><a href></a>    <span class="at">files =</span> <span class="fu">list</span>(<span class="st">&quot;test.R&quot;</span> <span class="ot">=</span> <span class="fu">list</span>(<span class="at">content =</span> <span class="st">&quot;print(&#39;hello world&#39;)</span><span class="sc">\n</span><span class="st">&quot;</span>)),</span>
-<span id="cb70-6"><a href></a>    <span class="at">public =</span> <span class="cn">TRUE</span></span>
-<span id="cb70-7"><a href></a>  ))</span>
-<span id="cb70-8"><a href></a></span>
-<span id="cb70-9"><a href></a>gist <span class="sc">|&gt;</span> <span class="fu">req_dry_run</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href></a>gist <span class="ot">=</span> <span class="fu">request</span>(<span class="st">&quot;https://api.github.com/gists&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb76-2"><a href></a>  <span class="fu">req_auth_bearer_token</span>(gitcreds<span class="sc">::</span><span class="fu">gitcreds_get</span>()<span class="sc">$</span>password) <span class="sc">|&gt;</span></span>
+<span id="cb76-3"><a href></a>  <span class="fu">req_body_json</span>(<span class="fu">list</span>(</span>
+<span id="cb76-4"><a href></a>    <span class="at">description =</span> <span class="st">&quot;Testing 1 2 3 ...&quot;</span>,</span>
+<span id="cb76-5"><a href></a>    <span class="at">files =</span> <span class="fu">list</span>(<span class="st">&quot;test.R&quot;</span> <span class="ot">=</span> <span class="fu">list</span>(<span class="at">content =</span> <span class="st">&quot;print(&#39;hello world&#39;)</span><span class="sc">\n</span><span class="st">&quot;</span>)),</span>
+<span id="cb76-6"><a href></a>    <span class="at">public =</span> <span class="cn">TRUE</span></span>
+<span id="cb76-7"><a href></a>  ))</span>
+<span id="cb76-8"><a href></a></span>
+<span id="cb76-9"><a href></a>gist <span class="sc">|&gt;</span> <span class="fu">req_dry_run</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>POST /gists HTTP/1.1
 accept: */*
@@ -2310,18 +2342,18 @@ user-agent: httr2/1.2.2 r-curl/7.0.0 libcurl/8.14.1
 <h2></h2>
 <div class="small">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href></a>resp <span class="ot">=</span> gist <span class="sc">|&gt;</span> <span class="fu">req_perform</span>()</span>
-<span id="cb72-2"><a href></a>resp <span class="sc">|&gt;</span> <span class="fu">resp_status</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb78"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href></a>resp <span class="ot">=</span> gist <span class="sc">|&gt;</span> <span class="fu">req_perform</span>()</span>
+<span id="cb78-2"><a href></a>resp <span class="sc">|&gt;</span> <span class="fu">resp_status</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 201</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href></a>resp <span class="sc">|&gt;</span> <span class="fu">resp_status_desc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb80"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href></a>resp <span class="sc">|&gt;</span> <span class="fu">resp_status_desc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] &quot;Created&quot;</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href></a>resp <span class="sc">|&gt;</span> <span class="fu">resp_body_json</span>() <span class="sc">|&gt;</span> <span class="fu">pluck</span>(<span class="st">&quot;html_url&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb82"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href></a>resp <span class="sc">|&gt;</span> <span class="fu">resp_body_json</span>() <span class="sc">|&gt;</span> <span class="fu">pluck</span>(<span class="st">&quot;html_url&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] &quot;https://gist.github.com/rundel/e7a9329d2a3bc0d4ec527720adda4a1b&quot;</code></pre>
+<pre><code>[1] &quot;https://gist.github.com/rundel/c6ff9d3e96cfe56ece328ed710c3be71&quot;</code></pre>
 </div>
 </div>
 </div>
@@ -2336,13 +2368,13 @@ user-agent: httr2/1.2.2 r-curl/7.0.0 libcurl/8.14.1
 <p>APIs enforce rate limits — exceeding them results in <code>429 Too Many Requests</code> or similar errors. <code>req_throttle()</code> automatically inserts delays between requests to stay within a limit:</p>
 <div class="small">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb78"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href></a><span class="co"># At most 30 requests per minute</span></span>
-<span id="cb78-2"><a href></a>req <span class="ot">=</span> <span class="fu">request</span>(<span class="st">&quot;https://api.github.com&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb78-3"><a href></a>  <span class="fu">req_throttle</span>(<span class="at">rate =</span> <span class="dv">30</span> <span class="sc">/</span> <span class="dv">60</span>)</span>
-<span id="cb78-4"><a href></a></span>
-<span id="cb78-5"><a href></a><span class="co"># Each req_perform() call on this request will wait if needed</span></span>
-<span id="cb78-6"><a href></a>req <span class="sc">|&gt;</span> <span class="fu">req_url_path</span>(<span class="st">&quot;/users/rundel&quot;</span>) <span class="sc">|&gt;</span> <span class="fu">req_perform</span>()</span>
-<span id="cb78-7"><a href></a>req <span class="sc">|&gt;</span> <span class="fu">req_url_path</span>(<span class="st">&quot;/users/hadley&quot;</span>)  <span class="sc">|&gt;</span> <span class="fu">req_perform</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb84"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href></a><span class="co"># At most 30 requests per minute</span></span>
+<span id="cb84-2"><a href></a>req <span class="ot">=</span> <span class="fu">request</span>(<span class="st">&quot;https://api.github.com&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb84-3"><a href></a>  <span class="fu">req_throttle</span>(<span class="at">rate =</span> <span class="dv">30</span> <span class="sc">/</span> <span class="dv">60</span>)</span>
+<span id="cb84-4"><a href></a></span>
+<span id="cb84-5"><a href></a><span class="co"># Each req_perform() call on this request will wait if needed</span></span>
+<span id="cb84-6"><a href></a>req <span class="sc">|&gt;</span> <span class="fu">req_url_path</span>(<span class="st">&quot;/users/rundel&quot;</span>) <span class="sc">|&gt;</span> <span class="fu">req_perform</span>()</span>
+<span id="cb84-7"><a href></a>req <span class="sc">|&gt;</span> <span class="fu">req_url_path</span>(<span class="st">&quot;/users/hadley&quot;</span>)  <span class="sc">|&gt;</span> <span class="fu">req_perform</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div class="fragment">
@@ -2357,12 +2389,12 @@ user-agent: httr2/1.2.2 r-curl/7.0.0 libcurl/8.14.1
 <p>Transient failures (network blips, <code>429</code>, <code>503</code>) can be retried automatically with <code>req_retry()</code>:</p>
 <div class="small">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href></a><span class="fu">request</span>(<span class="st">&quot;https://api.github.com/users/rundel&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb79-2"><a href></a>  <span class="fu">req_retry</span>(</span>
-<span id="cb79-3"><a href></a>    <span class="at">max_tries =</span> <span class="dv">5</span>,</span>
-<span id="cb79-4"><a href></a>    <span class="at">is_transient =</span> <span class="cf">function</span>(resp) {<span class="fu">resp_status</span>(resp) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">429</span>, <span class="dv">500</span>, <span class="dv">503</span>)}</span>
-<span id="cb79-5"><a href></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb79-6"><a href></a>  <span class="fu">req_perform</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href></a><span class="fu">request</span>(<span class="st">&quot;https://api.github.com/users/rundel&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb85-2"><a href></a>  <span class="fu">req_retry</span>(</span>
+<span id="cb85-3"><a href></a>    <span class="at">max_tries =</span> <span class="dv">5</span>,</span>
+<span id="cb85-4"><a href></a>    <span class="at">is_transient =</span> <span class="cf">function</span>(resp) {<span class="fu">resp_status</span>(resp) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">429</span>, <span class="dv">500</span>, <span class="dv">503</span>)}</span>
+<span id="cb85-5"><a href></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb85-6"><a href></a>  <span class="fu">req_perform</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div class="fragment">
@@ -2380,9 +2412,9 @@ user-agent: httr2/1.2.2 r-curl/7.0.0 libcurl/8.14.1
 <p><code>req_cache()</code> stores responses on disk and replays them for identical requests, respecting HTTP cache headers:</p>
 <div class="small">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb80"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href></a><span class="fu">request</span>(<span class="st">&quot;https://api.github.com/users/rundel&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb80-2"><a href></a>  <span class="fu">req_cache</span>(<span class="at">path =</span> <span class="st">&quot;api_cache/&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb80-3"><a href></a>  <span class="fu">req_perform</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb86"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href></a><span class="fu">request</span>(<span class="st">&quot;https://api.github.com/users/rundel&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb86-2"><a href></a>  <span class="fu">req_cache</span>(<span class="at">path =</span> <span class="st">&quot;api_cache/&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb86-3"><a href></a>  <span class="fu">req_perform</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div class="fragment">

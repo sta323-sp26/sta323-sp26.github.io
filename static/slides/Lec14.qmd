@@ -47,7 +47,7 @@ From [HTTP: The Protocol Every Web Developer Must Know](http://code.tutsplus.com
 
 ## Query Strings
 
-Provides named parameter(s) and value(s) that modify the behavior of the resulting page. 
+Provides named argument(s) and value(s) that modify the behavior of the resulting page. 
 
 <br/>
 
@@ -138,7 +138,7 @@ URLdecode("%CE%A3")
     - **Uniform interface** - standard HTTP methods (GET, POST, PUT, DELETE)
     - **Cacheable** - responses can be cached to improve performance
 
-* Resources are represented in standard formats (typically JSON or XML)
+* Resources are represented in standard formats (typically JSON or XML) and delivered in the response body
 
 
 
@@ -149,7 +149,9 @@ GitHub provides a REST API that allows you to interact with most of the data ava
 
 There is extensive documentation and a huge number of endpoints to use - almost anything that can be done on the website can also be done via the API.
 
-::: {.center}
+<br/>
+
+::: {.center .large}
 [GitHub REST API](https://docs.github.com/en/rest)
 :::
 
@@ -159,7 +161,9 @@ There is extensive documentation and a huge number of endpoints to use - almost 
 
 <br/><br/>
 
-For this demo we will be using the GitHub REST API to access public data about users and repositories. We will be making unauthenticated requests, which are subject to stricter rate limits (60 requests per hour) but do not require credentials.
+For this demo we will be using the GitHub REST API to access public data about users and repositories. 
+
+We will be making unauthenticated requests, which are subject to stricter rate limits but do not require credentials.
 
 ::: {.center}
 * [Get a user](https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28#get-a-user)
@@ -198,7 +202,7 @@ z |> map_chr("full_name")
 
 ## Pagination
 
-Many REST APIs limit the number of results returned in a single response to manage server load and improve performance. When working with large datasets, you'll need to make multiple requests to retrieve all results.
+Many REST APIs limit the number of results returned in a single response to manage server load and improve performance. When working with large(r) datasets, you'll need to make multiple requests to retrieve all results.
 
 Common pagination approaches:
 
@@ -211,7 +215,7 @@ Common pagination approaches:
 * Link header - server provides URLs to next/previous pages in response headers
 
 ::: aside
-The point is that there is no single standard for pagination in (REST) APIs, so always refer to the specific API documentation for details.
+There is no single standard for pagination in (REST) APIs, so always refer to the specific API documentation for details.
 :::
 
 ## GitHub API Pagination
@@ -223,7 +227,7 @@ GitHub uses page-based and link header pagination:
     - `page` - page number to retrieve (default: 1)
 
 * Link header: GitHub includes a `Link` header in responses with URLs for:
-    - `next` - next page of results
+    - `next` - next page
     - `prev` - previous page
     - `first` - first page
     - `last` - last page
@@ -260,9 +264,9 @@ z |> map_chr("full_name")
 
 ## Demo 2 - Authenticated Endpoint(s)
 
-The information we've been retriving is all public, but the GitHub API also has endpoints that require authentication (e.g. to access private user data, create repositories, etc.). This is why when requesting the `sta323-sp26` repos we get only 2 results (all of the private repos are hidden).
+The information we've been retrieving is all public, but the GitHub API also has endpoints that require authentication (e.g. to access private user data, create repositories, etc.). This is why when requesting the `sta323-sp26` repos we get only 2 results (all of the private repos are hidden).
 
-Another example is the `/user` endpoint which returns information about the *authenticated* user. If we try to access this endpoint without authentication, we get an error:
+One example of this is the `/user` endpoint which returns information about the *authenticated* user. If we try to access this endpoint without authentication, we get an error:
 
 ::: {.small}
 ```{r}
@@ -316,7 +320,6 @@ Source - [web programming (http basics)](https://www3.ntu.edu.sg/home/ehchua/pro
 
 ## HTTP Methods / Verbs
 
-::: {.small}
 | Verb     | Purpose                      | GitHub API example              |
 |:---------|:-----------------------------|:--------------------------------|
 | `GET`    | Fetch a resource             | Get a user, list org repos      |
@@ -324,15 +327,12 @@ Source - [web programming (http basics)](https://www3.ntu.edu.sg/home/ehchua/pro
 | `PUT`    | Full update of a resource    | Replace file contents in a repo |
 | `PATCH`  | Partial update of a resource | Update a repo's description     |
 | `DELETE` | Remove a resource            | Delete a gist                   |
-:::
+
+<br/>
 
 `GET` and `POST` are by far the most common when consuming APIs.
 
 Less common verbs: `HEAD`, `TRACE`, `OPTIONS`.
-
-::: {.aside}
-Based on [HTTP: The Protocol Every Web Developer Must Know](http://code.tutsplus.com/tutorials/http-the-protocol-every-web-developer-must-know-part-1--net-31177)
-:::
 
 
 ## httr2 request objects
@@ -345,13 +345,27 @@ Some useful functions:
 
 * `req_method()` - set HTTP method
 
-* `req_url_query()` - add query parameters to URL (e.g. `GET`, `POST`, etc.)
+* `req_url_query()` - add query parameters to URL
 
 * `req_body_json()`, `req_body_raw()`, etc. - set body content (various formats and sources)
 
 * `req_user_agent()` - set request user-agent header
 
 * `req_dry_run()` - shows the exact request that will be made
+
+## Example
+
+::: {.small}
+```{r}
+req = request("https://api.github.com/orgs/tidyverse/repos") |>
+  req_url_query(per_page=100) |>
+  req_user_agent("Sta323 Demo Client/0.1")
+```
+```{r}
+req
+req |> req_dry_run()
+```
+:::
 
 
 ## Structure of an HTTP Response
@@ -361,7 +375,7 @@ Some useful functions:
 ![](imgs/HTTP_Response.png){fig-align="center" width="100%"}
 
 ::: {.aside}
-[Source](https://www3.ntu.edu.sg/home/ehchua/programming/webprogramming/http_basics.html)
+Source - [web programming (http basics)](https://www3.ntu.edu.sg/home/ehchua/programming/webprogramming/http_basics.html)
 :::
 
 ## Status Codes
@@ -532,7 +546,7 @@ resps |>
 
 By default, `httr2` throws an R error for HTTP error responses (4xx and 5xx):
 
-::: {.small}
+::: {.xsmall}
 ```{r}
 #| cache: true
 #| error: true
@@ -543,9 +557,7 @@ request("https://api.github.com/user") |>
 
 . . .
 
-Use `req_error()` to customize this behavior,
-
-::: {.small}
+::: {.xsmall}
 ```{r}
 #| label: error-handling
 #| cache: true
@@ -588,6 +600,7 @@ Here `Authorization` is the request header and `Bearer <token>` is the value. Wi
 
 ## GitHub Personal Access Tokens (PATs)
 
+::: {.medium}
 A PAT is a secure alternative to using passwords for API authentication:
 
 * Generated on GitHub: Settings → Developer settings → Personal access tokens
@@ -602,14 +615,16 @@ Best practices:
 * Store in environment variables (e.g., `.Renviron`)
 * Use packages like `gitcreds` or `credentials` to manage tokens securely
 * Set expiration dates and rotate tokens regularly
-
+:::
 . . .
 
+::: {.medium}
 For all of the following examples, I have created a PAT and added via `gitcreds::gitcreds_set()` to store it securely.
+:::
 
 ## Demo 4 - Using Authentication
 
-::: {.small}
+::: {.xsmall}
 ```{r}
 #| cache: true
 request("https://api.github.com/user") |>
@@ -622,7 +637,7 @@ request("https://api.github.com/user") |>
 
 ##
 
-::: {.small}
+::: {.xsmall}
 ```{r}
 #| cache: true
 request("https://api.github.com/user") |>
@@ -639,7 +654,7 @@ request("https://api.github.com/user") |>
 
 ## Demo 5 - POST Request
 
-::: {.small}
+::: {.xsmall}
 ```{r}
 gist = request("https://api.github.com/gists") |>
   req_auth_bearer_token(gitcreds::gitcreds_get()$password) |>
