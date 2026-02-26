@@ -1146,10 +1146,10 @@ Dr. Colin Rundel
 <pre><code># A tibble: 4 × 6
   expression                 min   median `itr/sec` mem_alloc `gc/sec`
   &lt;bch:expr&gt;            &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-1 d[d$x &gt; 0.5, ]            73µs   87.1µs    11065.  235.86KB     31.4
-2 d[which(d$x &gt; 0.5), ]   76.1µs   95.7µs    10174.  270.72KB     60.2
-3 subset(d, x &gt; 0.5)      91.6µs  116.4µs     8370.  288.41KB     46.6
-4 filter(d, x &gt; 0.5)     239.9µs  284.9µs     3348.    1.48MB     18.9</code></pre>
+1 d[d$x &gt; 0.5, ]          72.9µs   85.1µs    11324.  236.56KB     33.4
+2 d[which(d$x &gt; 0.5), ]   74.1µs     92µs    10496.  271.98KB     57.9
+3 subset(d, x &gt; 0.5)      91.6µs  109.8µs     8778.  289.11KB     50.9
+4 filter(d, x &gt; 0.5)     241.4µs  275.4µs     3546.    1.48MB     19.0</code></pre>
 </div>
 </div>
 </div>
@@ -1175,10 +1175,10 @@ Dr. Colin Rundel
 <pre><code># A tibble: 4 × 6
   expression                 min   median `itr/sec` mem_alloc `gc/sec`
   &lt;bch:expr&gt;            &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-1 d[d$x &gt; 0.5, ]          6.76ms   7.62ms     132.     13.3MB    107. 
-2 d[which(d$x &gt; 0.5), ]   8.62ms   9.69ms     104.     24.8MB    138. 
-3 subset(d, x &gt; 0.5)     11.72ms  12.74ms      79.1    24.8MB     79.1
-4 filter(d, x &gt; 0.5)      9.43ms  10.23ms      98.4    24.8MB     63.0</code></pre>
+1 d[d$x &gt; 0.5, ]          7.24ms   7.62ms     131.     13.3MB    148. 
+2 d[which(d$x &gt; 0.5), ]   8.46ms   8.92ms     112.     24.8MB    136. 
+3 subset(d, x &gt; 0.5)     11.26ms   11.7ms      85.4    24.8MB     94.4
+4 filter(d, x &gt; 0.5)      8.86ms   9.56ms     105.     24.8MB    105. </code></pre>
 </div>
 </div>
 </div>
@@ -1192,10 +1192,10 @@ Dr. Colin Rundel
 <pre><code># A tibble: 4 × 6
   expression              min median `itr/sec` mem_alloc `gc/sec`
   &lt;bch:expr&gt;            &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-1 d[d$x &gt; 0.5, ]         1      1         1.67      1        1.71
-2 d[which(d$x &gt; 0.5), ]  1.27   1.27      1.31      1.86     2.20
-3 subset(d, x &gt; 0.5)     1.73   1.67      1         1.86     1.26
-4 filter(d, x &gt; 0.5)     1.40   1.34      1.24      1.86     1   </code></pre>
+1 d[d$x &gt; 0.5, ]         1      1         1.54      1        1.56
+2 d[which(d$x &gt; 0.5), ]  1.17   1.17      1.31      1.86     1.44
+3 subset(d, x &gt; 0.5)     1.55   1.54      1         1.86     1   
+4 filter(d, x &gt; 0.5)     1.22   1.26      1.23      1.86     1.11</code></pre>
 </div>
 </div>
 </div>
@@ -1210,11 +1210,11 @@ Dr. Colin Rundel
 <p>An awful lot of statistics is at its core linear algebra.</p>
 <p>For example:</p>
 <ul>
-<li>Linear regression models: find</li>
+<li>Linear regression:</li>
 </ul>
 <p><span class="math display">\[ \hat{\beta} = (X^T X)^{-1} X^Ty \]</span></p>
 <ul>
-<li><p>Principal component analysis</p>
+<li><p>Principal component analysis:</p>
 <ul>
 <li><p>Find <span class="math inline">\(T = XW\)</span> where <span class="math inline">\(W\)</span> is a matrix whose columns are the eigenvectors of <span class="math inline">\(X^TX\)</span>.</p></li>
 <li><p>Often solved via SVD - Let <span class="math inline">\(X = U\Sigma W^T\)</span> then <span class="math inline">\(T = U\Sigma\)</span>.</p></li>
@@ -1462,17 +1462,17 @@ loaded via a namespace (and not attached):
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href></a><span class="fu">system.time</span>(<span class="fu">pvec</span>(<span class="dv">1</span><span class="sc">:</span><span class="fl">1e7</span>, sqrt, <span class="at">mc.cores =</span> <span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.014   0.011   0.028 </code></pre>
+  0.011   0.006   0.017 </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href></a><span class="fu">system.time</span>(<span class="fu">pvec</span>(<span class="dv">1</span><span class="sc">:</span><span class="fl">1e7</span>, sqrt, <span class="at">mc.cores =</span> <span class="dv">4</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.164   0.176   0.305 </code></pre>
+  0.111   0.081   0.145 </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href></a><span class="fu">system.time</span>(<span class="fu">pvec</span>(<span class="dv">1</span><span class="sc">:</span><span class="fl">1e7</span>, sqrt, <span class="at">mc.cores =</span> <span class="dv">8</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.068   0.170   0.134 </code></pre>
+  0.066   0.131   0.103 </code></pre>
 </div>
 </div>
 </div>
@@ -1482,7 +1482,7 @@ loaded via a namespace (and not attached):
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href></a><span class="fu">system.time</span>(<span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">:</span><span class="fl">1e7</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.013   0.014   0.026 </code></pre>
+  0.057   0.007   0.063 </code></pre>
 </div>
 </div>
 </div>
@@ -1497,7 +1497,7 @@ loaded via a namespace (and not attached):
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href></a>bench<span class="sc">::</span><span class="fu">system_time</span>(<span class="fu">Sys.sleep</span>(.<span class="dv">5</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>process    real 
-   27µs   494ms </code></pre>
+   45µs   497ms </code></pre>
 </div>
 </div>
 </div><div class="column">
@@ -1515,22 +1515,22 @@ loaded via a namespace (and not attached):
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href></a>bench<span class="sc">::</span><span class="fu">system_time</span>(<span class="fu">pvec</span>(<span class="dv">1</span><span class="sc">:</span><span class="fl">1e7</span>, sqrt, <span class="at">mc.cores =</span> <span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>process    real 
- 20.3ms    20ms </code></pre>
+ 16.8ms  16.6ms </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href></a>bench<span class="sc">::</span><span class="fu">system_time</span>(<span class="fu">pvec</span>(<span class="dv">1</span><span class="sc">:</span><span class="fl">1e7</span>, sqrt, <span class="at">mc.cores =</span> <span class="dv">4</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>process    real 
-  166ms   183ms </code></pre>
+  140ms   151ms </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href></a>bench<span class="sc">::</span><span class="fu">system_time</span>(<span class="fu">pvec</span>(<span class="dv">1</span><span class="sc">:</span><span class="fl">1e7</span>, sqrt, <span class="at">mc.cores =</span> <span class="dv">8</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>process    real 
-  229ms   261ms </code></pre>
+  174ms   187ms </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href></a>bench<span class="sc">::</span><span class="fu">system_time</span>(<span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">:</span><span class="fl">1e7</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>process    real 
- 76.7ms  76.6ms </code></pre>
+ 65.9ms  64.9ms </code></pre>
 </div>
 </div>
 </div>
@@ -1584,7 +1584,7 @@ loaded via a namespace (and not attached):
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href></a><span class="fu">system.time</span>(<span class="fu">rnorm</span>(<span class="fl">1e7</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.143   0.004   0.148 </code></pre>
+  0.146   0.004   0.150 </code></pre>
 </div>
 </div>
 </div>
@@ -1594,7 +1594,7 @@ loaded via a namespace (and not attached):
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href></a><span class="fu">system.time</span>(<span class="fu">unlist</span>(<span class="fu">mclapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="cf">function</span>(x) <span class="fu">rnorm</span>(<span class="fl">1e6</span>), <span class="at">mc.cores =</span> <span class="dv">2</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.225   0.113   0.246 </code></pre>
+  0.231   0.094   0.223 </code></pre>
 </div>
 </div>
 </div>
@@ -1605,7 +1605,7 @@ loaded via a namespace (and not attached):
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href></a><span class="fu">system.time</span>(<span class="fu">unlist</span>(<span class="fu">mclapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="cf">function</span>(x) <span class="fu">rnorm</span>(<span class="fl">1e6</span>), <span class="at">mc.cores =</span> <span class="dv">4</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.186   0.108   0.141 </code></pre>
+  0.179   0.088   0.111 </code></pre>
 </div>
 </div>
 </div>
@@ -1616,7 +1616,7 @@ loaded via a namespace (and not attached):
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href></a><span class="fu">system.time</span>(<span class="fu">unlist</span>(<span class="fu">mclapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="cf">function</span>(x) <span class="fu">rnorm</span>(<span class="fl">1e6</span>), <span class="at">mc.cores =</span> <span class="dv">8</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.183   0.143   0.138 </code></pre>
+  0.183   0.128   0.107 </code></pre>
 </div>
 </div>
 </div>
@@ -1627,7 +1627,7 @@ loaded via a namespace (and not attached):
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href></a><span class="fu">system.time</span>(<span class="fu">unlist</span>(<span class="fu">mclapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="cf">function</span>(x) <span class="fu">rnorm</span>(<span class="fl">1e6</span>), <span class="at">mc.cores =</span> <span class="dv">10</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.188   0.169   0.150 </code></pre>
+  0.184   0.129   0.100 </code></pre>
 </div>
 </div>
 </div>
@@ -1646,14 +1646,14 @@ loaded via a namespace (and not attached):
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href></a><span class="fu">str</span>(m)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>List of 2
- $ pid: int 7718
+ $ pid: int 39763
  $ fd : int [1:2] 5 8
  - attr(*, &quot;class&quot;)= chr [1:3] &quot;parallelJob&quot; &quot;childProcess&quot; &quot;process&quot;</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href></a><span class="fu">str</span>(n)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>List of 2
- $ pid: int 7719
+ $ pid: int 39764
  $ fd : int [1:2] 6 10
  - attr(*, &quot;class&quot;)= chr [1:3] &quot;parallelJob&quot; &quot;childProcess&quot; &quot;process&quot;</code></pre>
 </div>
@@ -1668,9 +1668,9 @@ loaded via a namespace (and not attached):
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href></a><span class="fu">str</span>(<span class="fu">mccollect</span>(<span class="fu">list</span>(m,n,o)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>List of 3
- $ 7718: num [1:1000000] 0.687 -1.815 0.216 -1.36 1.752 ...
- $ 7719: num [1:1000000] 0.416 0.302 0.992 0.133 0.537 ...
- $ 7720: num [1:1000000] 0.267 0.159 2.867 2.054 1.116 ...</code></pre>
+ $ 39763: num [1:1000000] -0.535 -1.018 -1.177 -0.233 1.055 ...
+ $ 39764: num [1:1000000] 0.31818 0.73747 0.50345 0.65372 0.00436 ...
+ $ 39765: num [1:1000000] 0.0256 0.3477 0.476 3.6802 0.2522 ...</code></pre>
 </div>
 </div>
 </div>
@@ -1693,12 +1693,12 @@ loaded via a namespace (and not attached):
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href></a><span class="fu">mccollect</span>(p, <span class="at">wait =</span> <span class="cn">FALSE</span>, <span class="at">timeout =</span> <span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>$`7728`
-[1] -0.001928822</code></pre>
+<pre><code>$`39767`
+[1] -0.0005130489</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href></a><span class="fu">mccollect</span>(p, <span class="at">wait =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Warning in selectChildren(jobs, timeout): cannot wait for child 7728
+<pre><code>Warning in selectChildren(jobs, timeout): cannot wait for child 39767
 as it does not exist</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
@@ -1729,7 +1729,7 @@ as it does not exist</code></pre>
 <span id="cb64-4"><a href></a>) <span class="sc">|&gt;</span></span>
 <span id="cb64-5"><a href></a>  <span class="fu">unlist</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.9716484 1.0260644 1.0304322 1.0413186</code></pre>
+<pre><code>[1] 0.9601628 1.1122710 0.8769426 0.8081649</code></pre>
 </div>
 </div>
 </div><div class="column">
@@ -1740,7 +1740,7 @@ as it does not exist</code></pre>
 <span id="cb66-4"><a href></a>) <span class="sc">|&gt;</span></span>
 <span id="cb66-5"><a href></a>  <span class="fu">unlist</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 1.0510987 0.9721524 0.9445127 1.0336663</code></pre>
+<pre><code>[1] 0.9381518 1.0718231 1.0066621 1.0258944</code></pre>
 </div>
 </div>
 </div></div>
@@ -1883,11 +1883,11 @@ as it does not exist</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb83"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href></a>m[]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 2.947543 3.294553 5.204873 4.860101 4.192257</code></pre>
+<pre><code>[1] 3.690475 5.707177 5.880560 4.922528 4.661190</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href></a>m<span class="sc">$</span>data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 2.947543 3.294553 5.204873 4.860101 4.192257</code></pre>
+<pre><code>[1] 3.690475 5.707177 5.880560 4.922528 4.661190</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb87"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href></a>m</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -1950,7 +1950,35 @@ stop(&quot;Something went wrong!&quot;)</code></pre>
 </ul>
 <div class="fragment">
 <p>Similarly, if you are using functions from non-base packages you must use namespaced calls (e.g. <code>dplyr::select()</code>), or else the package should be loaded explicitly as part of <code>.expr</code>.</p>
-<p>Note that when using daemons the function <code>everywhere()</code> can be used to evaluate an expression on all connected daemons; this can be useful to load packages or set options.</p>
+</div>
+</section>
+<section id="example-1" class="slide level2">
+<h2>Example</h2>
+<div class="small">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb100"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href></a>big_data <span class="ot">=</span> <span class="fu">rnorm</span>(<span class="fl">1e5</span>)</span>
+<span id="cb100-2"><a href></a>my_fun <span class="ot">=</span> <span class="cf">function</span>(x, <span class="at">trim =</span> <span class="dv">0</span>) <span class="fu">mean</span>(x, <span class="at">trim =</span> trim)</span>
+<span id="cb100-3"><a href></a></span>
+<span id="cb100-4"><a href></a>m <span class="ot">=</span> <span class="fu">mirai</span>(</span>
+<span id="cb100-5"><a href></a>  { </span>
+<span id="cb100-6"><a href></a>    <span class="fu">my_fun</span>(</span>
+<span id="cb100-7"><a href></a>      data, <span class="at">trim =</span> trim_val</span>
+<span id="cb100-8"><a href></a>    ) </span>
+<span id="cb100-9"><a href></a>  },</span>
+<span id="cb100-10"><a href></a>  <span class="at">trim_val =</span> <span class="fl">0.1</span>,</span>
+<span id="cb100-11"><a href></a>  <span class="at">.args =</span> <span class="fu">list</span>(</span>
+<span id="cb100-12"><a href></a>    <span class="at">my_fun =</span> my_fun,</span>
+<span id="cb100-13"><a href></a>    <span class="at">data =</span> big_data</span>
+<span id="cb100-14"><a href></a>  )</span>
+<span id="cb100-15"><a href></a>)</span>
+<span id="cb100-16"><a href></a>m[]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -0.002274335</code></pre>
+</div>
+</div>
+</div>
+<div class="fragment">
+<p>Here <code>trim_val</code> is a simple scalar passed via <code>...</code>, while <code>my_fun</code> (a function) and <code>data</code> (a large vector) are passed via <code>.args</code>.</p>
 </div>
 </section>
 <section id="daemons" class="slide level2">
@@ -1961,31 +1989,10 @@ stop(&quot;Something went wrong!&quot;)</code></pre>
 <li><code>daemons(sync = TRUE)</code> runs all mirai calls synchronously in the current process — useful for debugging</li>
 </ul>
 </div>
-<div class="columns xsmall">
+<div class="columns xxsmall">
 <div class="column" style="width:33%;">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb100"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href></a><span class="fu">daemons</span>(<span class="dv">0</span>)</span>
-<span id="cb100-2"><a href></a>a <span class="ot">=</span> <span class="fu">mirai</span>({</span>
-<span id="cb100-3"><a href></a>  <span class="fu">Sys.sleep</span>(<span class="dv">3</span>)</span>
-<span id="cb100-4"><a href></a>})</span>
-<span id="cb100-5"><a href></a>b <span class="ot">=</span> <span class="fu">mirai</span>({</span>
-<span id="cb100-6"><a href></a>  <span class="fu">Sys.sleep</span>(<span class="dv">2</span>)</span>
-<span id="cb100-7"><a href></a>})</span>
-<span id="cb100-8"><a href></a>c <span class="ot">=</span> <span class="fu">mirai</span>({</span>
-<span id="cb100-9"><a href></a>  <span class="fu">Sys.sleep</span>(<span class="dv">1</span>)</span>
-<span id="cb100-10"><a href></a>})</span>
-<span id="cb100-11"><a href></a></span>
-<span id="cb100-12"><a href></a><span class="fu">system.time</span>(</span>
-<span id="cb100-13"><a href></a>  <span class="fu">call_mirai</span>(<span class="fu">list</span>(a, b, c)) </span>
-<span id="cb100-14"><a href></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   user  system elapsed 
-  0.000   0.001   3.080 </code></pre>
-</div>
-</div>
-</div><div class="column" style="width:33%;">
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb102"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href></a><span class="fu">daemons</span>(<span class="dv">1</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb102"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href></a><span class="fu">daemons</span>(<span class="dv">0</span>)</span>
 <span id="cb102-2"><a href></a>a <span class="ot">=</span> <span class="fu">mirai</span>({</span>
 <span id="cb102-3"><a href></a>  <span class="fu">Sys.sleep</span>(<span class="dv">3</span>)</span>
 <span id="cb102-4"><a href></a>})</span>
@@ -2001,12 +2008,12 @@ stop(&quot;Something went wrong!&quot;)</code></pre>
 <span id="cb102-14"><a href></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.000   0.000   5.972 </code></pre>
+  0.000   0.001   3.066 </code></pre>
 </div>
 </div>
 </div><div class="column" style="width:33%;">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb104"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb104-1"><a href></a><span class="fu">daemons</span>(<span class="dv">3</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb104"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb104-1"><a href></a><span class="fu">daemons</span>(<span class="dv">1</span>)</span>
 <span id="cb104-2"><a href></a>a <span class="ot">=</span> <span class="fu">mirai</span>({</span>
 <span id="cb104-3"><a href></a>  <span class="fu">Sys.sleep</span>(<span class="dv">3</span>)</span>
 <span id="cb104-4"><a href></a>})</span>
@@ -2022,102 +2029,34 @@ stop(&quot;Something went wrong!&quot;)</code></pre>
 <span id="cb104-14"><a href></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.000   0.000   2.959 </code></pre>
+  0.000   0.001   5.968 </code></pre>
+</div>
+</div>
+</div><div class="column" style="width:33%;">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb106"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb106-1"><a href></a><span class="fu">daemons</span>(<span class="dv">3</span>)</span>
+<span id="cb106-2"><a href></a>a <span class="ot">=</span> <span class="fu">mirai</span>({</span>
+<span id="cb106-3"><a href></a>  <span class="fu">Sys.sleep</span>(<span class="dv">3</span>)</span>
+<span id="cb106-4"><a href></a>})</span>
+<span id="cb106-5"><a href></a>b <span class="ot">=</span> <span class="fu">mirai</span>({</span>
+<span id="cb106-6"><a href></a>  <span class="fu">Sys.sleep</span>(<span class="dv">2</span>)</span>
+<span id="cb106-7"><a href></a>})</span>
+<span id="cb106-8"><a href></a>c <span class="ot">=</span> <span class="fu">mirai</span>({</span>
+<span id="cb106-9"><a href></a>  <span class="fu">Sys.sleep</span>(<span class="dv">1</span>)</span>
+<span id="cb106-10"><a href></a>})</span>
+<span id="cb106-11"><a href></a></span>
+<span id="cb106-12"><a href></a><span class="fu">system.time</span>(</span>
+<span id="cb106-13"><a href></a>  <span class="fu">call_mirai</span>(<span class="fu">list</span>(a, b, c)) </span>
+<span id="cb106-14"><a href></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   user  system elapsed 
+   0.00    0.00    2.96 </code></pre>
 </div>
 </div>
 </div></div>
-</section>
-<section id="with_daemons-local_daemons" class="slide level2">
-<h2><code>with_daemons()</code> &amp; <code>local_daemons()</code></h2>
-<p>Scoped daemon management using named compute profiles — a cleaner alternative to manually calling <code>daemons(0)</code> to clean up.</p>
-<p><code>with_daemons()</code> evaluates an expression within a profile:</p>
-<div class="xsmall">
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb106"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb106-1"><a href></a><span class="fu">daemons</span>(<span class="dv">4</span>, <span class="at">.compute =</span> <span class="st">&quot;work&quot;</span>)</span>
-<span id="cb106-2"><a href></a></span>
-<span id="cb106-3"><a href></a>result <span class="ot">=</span> <span class="fu">with_daemons</span>(<span class="st">&quot;work&quot;</span>, {</span>
-<span id="cb106-4"><a href></a>  <span class="fu">mirai_map</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>, \(x) <span class="fu">mean</span>(<span class="fu">rnorm</span>(<span class="fl">1e6</span>)))[]</span>
-<span id="cb106-5"><a href></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</div>
-<p><code>local_daemons()</code> activates a profile for the current scope:</p>
-<div class="xsmall">
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb107"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb107-1"><a href></a>f <span class="ot">=</span> <span class="cf">function</span>() {</span>
-<span id="cb107-2"><a href></a>  <span class="fu">local_daemons</span>(<span class="st">&quot;work&quot;</span>)</span>
-<span id="cb107-3"><a href></a>  <span class="fu">mirai_map</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, \(x) <span class="fu">mean</span>(<span class="fu">rnorm</span>(<span class="fl">1e6</span>)))[]</span>
-<span id="cb107-4"><a href></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</div>
 <div class="fragment">
-<p>Multiple named profiles (e.g. <code>&quot;cpu&quot;</code> and <code>&quot;gpu&quot;</code>) can coexist without conflicting</p>
+<p>Different pools of daemons can be created and used via <code>with_daemons()</code> &amp; <code>local_daemons()</code>.</p>
 </div>
-</section>
-<section id="call_mirai-vs-race_mirai" class="slide level2">
-<h2><code>call_mirai()</code> vs <code>race_mirai()</code></h2>
-<div class="small">
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb108"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb108-1"><a href></a><span class="fu">daemons</span>(<span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</div>
-<div class="columns">
-<div class="column">
-<p>Call waits for all tasks to complete</p>
-<div class="xxsmall">
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb109"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb109-1"><a href></a>a <span class="ot">=</span> <span class="fu">mirai</span>({</span>
-<span id="cb109-2"><a href></a>  <span class="fu">Sys.sleep</span>(<span class="dv">3</span>)</span>
-<span id="cb109-3"><a href></a>  <span class="st">&quot;A&quot;</span></span>
-<span id="cb109-4"><a href></a>})</span>
-<span id="cb109-5"><a href></a>b <span class="ot">=</span> <span class="fu">mirai</span>({</span>
-<span id="cb109-6"><a href></a>  <span class="fu">Sys.sleep</span>(<span class="dv">2</span>)</span>
-<span id="cb109-7"><a href></a>  <span class="st">&quot;B&quot;</span></span>
-<span id="cb109-8"><a href></a>})</span>
-<span id="cb109-9"><a href></a>c <span class="ot">=</span> <span class="fu">mirai</span>({</span>
-<span id="cb109-10"><a href></a>  <span class="fu">Sys.sleep</span>(<span class="dv">1</span>)</span>
-<span id="cb109-11"><a href></a>  <span class="st">&quot;C&quot;</span></span>
-<span id="cb109-12"><a href></a>})</span>
-<span id="cb109-13"><a href></a></span>
-<span id="cb109-14"><a href></a><span class="fu">call_mirai</span>(<span class="fu">list</span>(a, b, c))</span>
-<span id="cb109-15"><a href></a><span class="fu">c</span>(a<span class="sc">$</span>data, b<span class="sc">$</span>data, c<span class="sc">$</span>data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] &quot;A&quot; &quot;B&quot; &quot;C&quot;</code></pre>
-</div>
-</div>
-</div>
-</div><div class="column">
-<p>Race returns the index of the first completed task</p>
-<div class="xxsmall">
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb111"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a href></a>a <span class="ot">=</span> <span class="fu">mirai</span>({</span>
-<span id="cb111-2"><a href></a>  <span class="fu">Sys.sleep</span>(<span class="dv">3</span>)</span>
-<span id="cb111-3"><a href></a>  <span class="st">&quot;A&quot;</span></span>
-<span id="cb111-4"><a href></a>})</span>
-<span id="cb111-5"><a href></a>b <span class="ot">=</span> <span class="fu">mirai</span>({</span>
-<span id="cb111-6"><a href></a>  <span class="fu">Sys.sleep</span>(<span class="dv">2</span>)</span>
-<span id="cb111-7"><a href></a>  <span class="st">&quot;B&quot;</span></span>
-<span id="cb111-8"><a href></a>})</span>
-<span id="cb111-9"><a href></a>c <span class="ot">=</span> <span class="fu">mirai</span>({</span>
-<span id="cb111-10"><a href></a>  <span class="fu">Sys.sleep</span>(<span class="dv">1</span>)</span>
-<span id="cb111-11"><a href></a>  <span class="st">&quot;C&quot;</span></span>
-<span id="cb111-12"><a href></a>})</span>
-<span id="cb111-13"><a href></a></span>
-<span id="cb111-14"><a href></a>ml <span class="ot">=</span> <span class="fu">list</span>(a, b, c)</span>
-<span id="cb111-15"><a href></a>(<span class="at">i =</span> <span class="fu">race_mirai</span>(ml))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 3</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb113"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a href></a>ml[[i]]<span class="sc">$</span>data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] &quot;C&quot;</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb115"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb115-1"><a href></a><span class="fu">c</span>(a<span class="sc">$</span>data, b<span class="sc">$</span>data, c<span class="sc">$</span>data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] NA  NA  &quot;C&quot;</code></pre>
-</div>
-</div>
-</div>
-</div></div>
 </section>
 <section id="mirai_map" class="slide level2">
 <h2><code>mirai_map()</code></h2>
@@ -2145,59 +2084,59 @@ stop(&quot;Something went wrong!&quot;)</code></pre>
 <h2>Scheduling Examples</h2>
 <div class="xsmall">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb117"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb117-1"><a href></a><span class="fu">daemons</span>(<span class="dv">4</span>)</span>
-<span id="cb117-2"><a href></a>waits <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb108"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb108-1"><a href></a><span class="fu">daemons</span>(<span class="dv">4</span>)</span>
+<span id="cb108-2"><a href></a>waits <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div class="columns xsmall">
 <div class="column">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb118"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb118-1"><a href></a><span class="fu">system.time</span>(</span>
-<span id="cb118-2"><a href></a>  <span class="fu">mirai_map</span>(waits, Sys.sleep)[]</span>
-<span id="cb118-3"><a href></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb109"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb109-1"><a href></a><span class="fu">system.time</span>(</span>
+<span id="cb109-2"><a href></a>  <span class="fu">mirai_map</span>(waits, Sys.sleep)[]</span>
+<span id="cb109-3"><a href></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.001   0.000   6.017 </code></pre>
+  0.001   0.000   6.021 </code></pre>
 </div>
 </div>
 </div><div class="column">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb120"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb120-1"><a href></a><span class="fu">system.time</span>(</span>
-<span id="cb120-2"><a href></a>  <span class="fu">mclapply</span>(waits, Sys.sleep, <span class="at">mc.cores =</span> <span class="dv">4</span>)</span>
-<span id="cb120-3"><a href></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb111"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a href></a><span class="fu">system.time</span>(</span>
+<span id="cb111-2"><a href></a>  <span class="fu">mclapply</span>(waits, Sys.sleep, <span class="at">mc.cores =</span> <span class="dv">4</span>)</span>
+<span id="cb111-3"><a href></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.001   0.025   8.023 </code></pre>
+  0.003   0.023   8.022 </code></pre>
 </div>
 </div>
 </div></div>
 <div class="fragment">
 <div class="xsmall">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb122"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb122-1"><a href></a><span class="fu">daemons</span>(<span class="dv">4</span>)</span>
-<span id="cb122-2"><a href></a>n <span class="ot">=</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>)</span>
-<span id="cb122-3"><a href></a>f <span class="ot">=</span> <span class="cf">function</span>(n) <span class="fu">mean</span>(<span class="fu">rnorm</span>(<span class="dv">10</span><span class="sc">^</span>n))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb113"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a href></a><span class="fu">daemons</span>(<span class="dv">4</span>)</span>
+<span id="cb113-2"><a href></a>n <span class="ot">=</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>)</span>
+<span id="cb113-3"><a href></a>f <span class="ot">=</span> <span class="cf">function</span>(n) <span class="fu">mean</span>(<span class="fu">rnorm</span>(<span class="dv">10</span><span class="sc">^</span>n))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div class="columns xsmall">
 <div class="column">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb123"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb123-1"><a href></a><span class="fu">system.time</span>(</span>
-<span id="cb123-2"><a href></a>  <span class="fu">mirai_map</span>(n, f)[]</span>
-<span id="cb123-3"><a href></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb114"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb114-1"><a href></a><span class="fu">system.time</span>(</span>
+<span id="cb114-2"><a href></a>  <span class="fu">mirai_map</span>(n, f)[]</span>
+<span id="cb114-3"><a href></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.000   0.001   2.632 </code></pre>
+  0.000   0.000   2.566 </code></pre>
 </div>
 </div>
 </div><div class="column">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb125"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb125-1"><a href></a><span class="fu">system.time</span>(</span>
-<span id="cb125-2"><a href></a>  <span class="fu">mclapply</span>(n, f, <span class="at">mc.cores =</span> <span class="dv">2</span>)</span>
-<span id="cb125-3"><a href></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb116"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb116-1"><a href></a><span class="fu">system.time</span>(</span>
+<span id="cb116-2"><a href></a>  <span class="fu">mclapply</span>(n, f, <span class="at">mc.cores =</span> <span class="dv">4</span>)</span>
+<span id="cb116-3"><a href></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.030   0.014   3.099 </code></pre>
+  0.258   0.032   2.672 </code></pre>
 </div>
 </div>
 </div></div>
@@ -2209,48 +2148,48 @@ stop(&quot;Something went wrong!&quot;)</code></pre>
 <div class="columns xsmall">
 <div class="column">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb127"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb127-1"><a href></a><span class="fu">system.time</span>({</span>
-<span id="cb127-2"><a href></a>  x <span class="ot">=</span> <span class="fu">mclapply</span>(</span>
-<span id="cb127-3"><a href></a>    <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>,</span>
-<span id="cb127-4"><a href></a>    \(x) <span class="fu">rnorm</span>(<span class="fl">1e6</span>),</span>
-<span id="cb127-5"><a href></a>    <span class="at">mc.cores =</span> <span class="dv">5</span></span>
-<span id="cb127-6"><a href></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb127-7"><a href></a>    <span class="fu">unlist</span>()</span>
-<span id="cb127-8"><a href></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb118"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb118-1"><a href></a><span class="fu">system.time</span>({</span>
+<span id="cb118-2"><a href></a>  x <span class="ot">=</span> <span class="fu">mclapply</span>(</span>
+<span id="cb118-3"><a href></a>    <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>,</span>
+<span id="cb118-4"><a href></a>    \(x) <span class="fu">rnorm</span>(<span class="fl">1e6</span>),</span>
+<span id="cb118-5"><a href></a>    <span class="at">mc.cores =</span> <span class="dv">5</span></span>
+<span id="cb118-6"><a href></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb118-7"><a href></a>    <span class="fu">unlist</span>()</span>
+<span id="cb118-8"><a href></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.369   0.108   0.228 </code></pre>
+  0.368   0.125   0.242 </code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb129"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb129-1"><a href></a><span class="fu">mean</span>(x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb120"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb120-1"><a href></a><span class="fu">mean</span>(x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 7.349909e-05</code></pre>
+<pre><code>[1] -0.0004500124</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb131"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb131-1"><a href></a><span class="fu">sd</span>(x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb122"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb122-1"><a href></a><span class="fu">sd</span>(x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 1.000287</code></pre>
+<pre><code>[1] 0.9997999</code></pre>
 </div>
 </div>
 </div><div class="column">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb133"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb133-1"><a href></a><span class="fu">daemons</span>(<span class="dv">5</span>)</span>
-<span id="cb133-2"><a href></a><span class="fu">system.time</span>({</span>
-<span id="cb133-3"><a href></a>  x <span class="ot">=</span> <span class="fu">map</span>(</span>
-<span id="cb133-4"><a href></a>    <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>,</span>
-<span id="cb133-5"><a href></a>    <span class="fu">in_parallel</span>(\(x) <span class="fu">rnorm</span>(<span class="fl">1e6</span>))</span>
-<span id="cb133-6"><a href></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb133-7"><a href></a>    <span class="fu">unlist</span>()</span>
-<span id="cb133-8"><a href></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb124"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb124-1"><a href></a><span class="fu">daemons</span>(<span class="dv">5</span>)</span>
+<span id="cb124-2"><a href></a><span class="fu">system.time</span>({</span>
+<span id="cb124-3"><a href></a>  x <span class="ot">=</span> <span class="fu">map</span>(</span>
+<span id="cb124-4"><a href></a>    <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>,</span>
+<span id="cb124-5"><a href></a>    <span class="fu">in_parallel</span>(\(x) <span class="fu">rnorm</span>(<span class="fl">1e6</span>))</span>
+<span id="cb124-6"><a href></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb124-7"><a href></a>    <span class="fu">unlist</span>()</span>
+<span id="cb124-8"><a href></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.077   0.130   0.281 </code></pre>
+  0.079   0.132   0.279 </code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb135"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb135-1"><a href></a><span class="fu">mean</span>(x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb126"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb126-1"><a href></a><span class="fu">mean</span>(x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.0003887193</code></pre>
+<pre><code>[1] 6.218135e-05</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb137"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb137-1"><a href></a><span class="fu">sd</span>(x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb128"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb128-1"><a href></a><span class="fu">sd</span>(x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 1.000248</code></pre>
+<pre><code>[1] 0.9997214</code></pre>
 </div>
 </div>
 </div></div>
@@ -2261,17 +2200,17 @@ stop(&quot;Something went wrong!&quot;)</code></pre>
 <div class="fragment">
 <div class="small">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb139"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb139-1"><a href></a><span class="fu">set.seed</span>(<span class="dv">3212016</span>)</span>
-<span id="cb139-2"><a href></a>d <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">runif</span>(<span class="dv">250</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb139-3"><a href></a>  <span class="fu">mutate</span>(<span class="at">y =</span> <span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>x) <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="fu">length</span>(x)))</span>
-<span id="cb139-4"><a href></a></span>
-<span id="cb139-5"><a href></a>l <span class="ot">=</span> <span class="fu">loess</span>(y <span class="sc">~</span> x, <span class="at">data=</span>d)</span>
-<span id="cb139-6"><a href></a>p <span class="ot">=</span> <span class="fu">predict</span>(l, <span class="at">se=</span><span class="cn">TRUE</span>)</span>
-<span id="cb139-7"><a href></a></span>
-<span id="cb139-8"><a href></a>d <span class="ot">=</span> d <span class="sc">|&gt;</span> <span class="fu">mutate</span>(</span>
-<span id="cb139-9"><a href></a>  <span class="at">pred_y =</span> p<span class="sc">$</span>fit,</span>
-<span id="cb139-10"><a href></a>  <span class="at">pred_y_se =</span> p<span class="sc">$</span>se.fit</span>
-<span id="cb139-11"><a href></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb130"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb130-1"><a href></a><span class="fu">set.seed</span>(<span class="dv">3212016</span>)</span>
+<span id="cb130-2"><a href></a>d <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">runif</span>(<span class="dv">250</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb130-3"><a href></a>  <span class="fu">mutate</span>(<span class="at">y =</span> <span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>x) <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="fu">length</span>(x)))</span>
+<span id="cb130-4"><a href></a></span>
+<span id="cb130-5"><a href></a>l <span class="ot">=</span> <span class="fu">loess</span>(y <span class="sc">~</span> x, <span class="at">data=</span>d)</span>
+<span id="cb130-6"><a href></a>p <span class="ot">=</span> <span class="fu">predict</span>(l, <span class="at">se=</span><span class="cn">TRUE</span>)</span>
+<span id="cb130-7"><a href></a></span>
+<span id="cb130-8"><a href></a>d <span class="ot">=</span> d <span class="sc">|&gt;</span> <span class="fu">mutate</span>(</span>
+<span id="cb130-9"><a href></a>  <span class="at">pred_y =</span> p<span class="sc">$</span>fit,</span>
+<span id="cb130-10"><a href></a>  <span class="at">pred_y_se =</span> p<span class="sc">$</span>se.fit</span>
+<span id="cb130-11"><a href></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -2280,15 +2219,15 @@ stop(&quot;Something went wrong!&quot;)</code></pre>
 <h2></h2>
 <div class="small">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb140"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb140-1"><a href></a><span class="fu">ggplot</span>(d, <span class="fu">aes</span>(x,y)) <span class="sc">+</span></span>
-<span id="cb140-2"><a href></a>  <span class="fu">geom_point</span>(<span class="at">color=</span><span class="st">&quot;gray50&quot;</span>) <span class="sc">+</span></span>
-<span id="cb140-3"><a href></a>  <span class="fu">geom_ribbon</span>(</span>
-<span id="cb140-4"><a href></a>    <span class="fu">aes</span>(<span class="at">ymin =</span> pred_y <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> pred_y_se, </span>
-<span id="cb140-5"><a href></a>        <span class="at">ymax =</span> pred_y <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> pred_y_se), </span>
-<span id="cb140-6"><a href></a>    <span class="at">fill=</span><span class="st">&quot;red&quot;</span>, <span class="at">alpha=</span><span class="fl">0.25</span></span>
-<span id="cb140-7"><a href></a>  ) <span class="sc">+</span></span>
-<span id="cb140-8"><a href></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y=</span>pred_y)) <span class="sc">+</span></span>
-<span id="cb140-9"><a href></a>  <span class="fu">theme_bw</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb131"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb131-1"><a href></a><span class="fu">ggplot</span>(d, <span class="fu">aes</span>(x,y)) <span class="sc">+</span></span>
+<span id="cb131-2"><a href></a>  <span class="fu">geom_point</span>(<span class="at">color=</span><span class="st">&quot;gray50&quot;</span>) <span class="sc">+</span></span>
+<span id="cb131-3"><a href></a>  <span class="fu">geom_ribbon</span>(</span>
+<span id="cb131-4"><a href></a>    <span class="fu">aes</span>(<span class="at">ymin =</span> pred_y <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> pred_y_se, </span>
+<span id="cb131-5"><a href></a>        <span class="at">ymax =</span> pred_y <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> pred_y_se), </span>
+<span id="cb131-6"><a href></a>    <span class="at">fill=</span><span class="st">&quot;red&quot;</span>, <span class="at">alpha=</span><span class="fl">0.25</span></span>
+<span id="cb131-7"><a href></a>  ) <span class="sc">+</span></span>
+<span id="cb131-8"><a href></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y=</span>pred_y)) <span class="sc">+</span></span>
+<span id="cb131-9"><a href></a>  <span class="fu">theme_bw</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>

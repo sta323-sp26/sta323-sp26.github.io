@@ -160,11 +160,11 @@ An awful lot of statistics is at its core linear algebra.
 
 For example:
 
-* Linear regression models: find
+* Linear regression:
 
 $$ \hat{\beta} = (X^T X)^{-1} X^Ty $$
 
-* Principal component analysis
+* Principal component analysis:
 
     * Find $T = XW$ where $W$ is a matrix whose columns are the eigenvectors of $X^TX$.
     
@@ -755,7 +755,33 @@ The expression passed to `mirai()` will be evaluated in *a separate R process in
 
 Similarly, if you are using functions from non-base packages you must use namespaced calls (e.g. `dplyr::select()`), or else the package should be loaded explicitly as part of `.expr`.
 
-Note that when using daemons the function `everywhere()` can be used to evaluate an expression on all connected daemons; this can be useful to load packages or set options.
+
+## Example
+
+::: {.small}
+```{r}
+big_data = rnorm(1e5)
+my_fun = function(x, trim = 0) mean(x, trim = trim)
+
+m = mirai(
+  { 
+    my_fun(
+      data, trim = trim_val
+    ) 
+  },
+  trim_val = 0.1,
+  .args = list(
+    my_fun = my_fun,
+    data = big_data
+  )
+)
+m[]
+```
+:::
+
+. . .
+
+Here `trim_val` is a simple scalar passed via `...`, while `my_fun` (a function) and `data` (a large vector) are passed via `.args`.
 
 
 ## `daemons()`
@@ -768,7 +794,7 @@ We can create persistent background processes to handle our `mirai()` requests, 
 
 :::
 
-::: {.columns .xsmall}
+::: {.columns .xxsmall}
 ::: {.column width=33%}
 ```{r}
 daemons(0)
@@ -830,104 +856,9 @@ system.time(
 daemons(0)
 ```
 
-
-## `with_daemons()` & `local_daemons()`
-
-Scoped daemon management using named compute profiles — a cleaner alternative to manually calling `daemons(0)` to clean up.
-
-
-`with_daemons()` evaluates an expression within a profile:
-
-::: {.xsmall}
-```{r}
-#| eval: false
-daemons(4, .compute = "work")
-
-result = with_daemons("work", {
-  mirai_map(1:8, \(x) mean(rnorm(1e6)))[]
-})
-```
-:::
-
-
-`local_daemons()` activates a profile for the current scope:
-
-::: {.xsmall}
-```{r}
-#| eval: false
-f = function() {
-  local_daemons("work")
-  mirai_map(1:4, \(x) mean(rnorm(1e6)))[]
-}
-```
-:::
-
 . . .
 
-Multiple named profiles (e.g. `"cpu"` and `"gpu"`) can coexist without conflicting
-
-
-## `call_mirai()` vs `race_mirai()`
-
-::: {.small}
-```{r}
-daemons(4)
-```
-:::
-
-::: {.columns}
-::: {.column}
-Call waits for all tasks to complete
-
-::: {.xxsmall}
-```{r}
-a = mirai({
-  Sys.sleep(3)
-  "A"
-})
-b = mirai({
-  Sys.sleep(2)
-  "B"
-})
-c = mirai({
-  Sys.sleep(1)
-  "C"
-})
-
-call_mirai(list(a, b, c))
-c(a$data, b$data, c$data)
-```
-:::
-
-:::
-::: {.column}
-Race returns the index of the first completed task
-
-::: {.xxsmall}
-```{r}
-a = mirai({
-  Sys.sleep(3)
-  "A"
-})
-b = mirai({
-  Sys.sleep(2)
-  "B"
-})
-c = mirai({
-  Sys.sleep(1)
-  "C"
-})
-
-ml = list(a, b, c)
-(i = race_mirai(ml))
-ml[[i]]$data
-c(a$data, b$data, c$data)
-```
-:::
-
-:::
-:::
-
+Different pools of daemons can be created and used via `with_daemons()` & `local_daemons()`.
 
 
 
@@ -1000,7 +931,7 @@ system.time(
 ::: {.column}
 ```{r}
 system.time(
-  mclapply(n, f, mc.cores = 2)
+  mclapply(n, f, mc.cores = 4)
 )
 ```
 :::

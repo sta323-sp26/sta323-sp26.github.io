@@ -1,3 +1,5 @@
+library(tidyverse)
+
 ## Setup
 
 set.seed(3212016)
@@ -24,7 +26,7 @@ ggplot(d, aes(x,y)) +
 
 ## Sequential implementation
 
-n = 5e3
+n = 5e2
 
 bs = purrr::map_dfr(
   seq_len(n),
@@ -32,12 +34,24 @@ bs = purrr::map_dfr(
     d |>
       select(x, y) |>
       slice_sample(prop = 1, replace = TRUE) |>
-      ( \(df) {
-        mutate(
-          df, iter = i,
-          pred = loess(y ~ x, data = df) |> predict()
-        )
-      })()
+      mutate(
+        iter = i,
+        pred = loess(y ~ x, data = pick(x,y)) |> predict()
+      )
+  },
+  .progress = TRUE
+)
+
+bs = purrr::map_dfr(
+  seq_len(n),
+  function(i) {
+    d |>
+      select(x, y) |>
+      slice_sample(prop = 1, replace = TRUE) |>
+      mutate(
+        iter = i,
+        pred = loess(y ~ x, data = pick(x,y)) |> predict()
+      )
   },
   .progress = TRUE
 ) |>
@@ -79,12 +93,10 @@ bs_mc = map_dfr(
       d |>
         dplyr::select(x, y) |>
         dplyr::slice_sample(prop = 1, replace = TRUE) |>
-        ( \(df) {
-          dplyr::mutate(
-            df, iter = i,
-            pred = loess(y ~ x, data = df) |> predict()
-          )
-        })()
+        dplyr::mutate(
+          iter = i,
+          pred = loess(y ~ x, data = dplyr::pick(x,y)) |> predict()
+        )
     },
     d = d
   ),
