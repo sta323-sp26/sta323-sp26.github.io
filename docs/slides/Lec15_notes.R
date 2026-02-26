@@ -3,10 +3,10 @@ library(tidyverse)
 ## Setup
 
 set.seed(3212016)
-d = data.frame(x = runif(250)) |>
-  mutate(y = sin(2*pi*x) + rnorm(length(x)))
+d = data.frame(x = runif(150, 0, 2)) |>
+  mutate(y = sin(3*pi*x) / (3*x+1) + rnorm(length(x), 0, 0.1))
 
-l = loess(y ~ x, data=d)
+l = loess(y ~ x, data=d, span=0.25)
 p = predict(l, se=TRUE)
 
 d = d |> mutate(
@@ -24,6 +24,7 @@ ggplot(d, aes(x,y)) +
   geom_line(aes(y=pred_y)) +
   theme_bw()
 
+
 ## Sequential implementation
 
 n = 5e2
@@ -36,7 +37,8 @@ bs = purrr::map_dfr(
       slice_sample(prop = 1, replace = TRUE) |>
       mutate(
         iter = i,
-        pred = loess(y ~ x, data = pick(x,y)) |> predict()
+        pred = loess(y ~ x, data=pick(x,y), span=0.25) |> 
+          predict()
       )
   },
   .progress = TRUE
@@ -80,7 +82,6 @@ ggplot(d, aes(x,y)) +
 
 ## Parallel implementation
 
-
 library(mirai)
 daemons(10)
 
@@ -95,7 +96,8 @@ bs_mc = map_dfr(
         dplyr::slice_sample(prop = 1, replace = TRUE) |>
         dplyr::mutate(
           iter = i,
-          pred = loess(y ~ x, data = dplyr::pick(x,y)) |> predict()
+          pred = loess(y ~ x, data=dplyr::pick(x,y), span=0.25) |> 
+            predict()
         )
     },
     d = d
