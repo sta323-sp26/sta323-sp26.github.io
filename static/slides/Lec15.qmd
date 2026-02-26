@@ -1,0 +1,1117 @@
+---
+title: Profiling & Parallelization
+subtitle: "Lecture 15"
+author: "Dr. Colin Rundel"
+footer: "Sta 323 - Spring 2026"
+format:
+  revealjs:
+    theme: slides.scss
+    transition: fade
+    slide-number: true
+    self-contained: true
+execute:
+  echo: true
+  warning: true
+engine: knitr
+---
+
+
+```{r setup}
+#| message: False
+#| warning: False
+#| include: False
+options(
+  htmltools.dir.version = FALSE, # for blogdown
+  width=70
+)
+
+knitr::opts_chunk$set(
+  fig.align = "center", fig.retina = 2, dpi = 150,
+  out.width = "100%"
+)
+
+library(tidyverse)
+library(parallel)
+
+ggplot2::theme_set(theme_bw())
+```
+
+
+# Profiling & Benchmarking
+
+## profvis - lm() demo
+
+::: {.small}
+```{r}
+#| eval: false
+n = 1e6
+d = tibble(
+  x1 = rt(n, df = 3),
+  x2 = rt(n, df = 3),
+  x3 = rt(n, df = 3),
+  x4 = rt(n, df = 3),
+  x5 = rt(n, df = 3),
+) |>
+  mutate(y = -2*x1 - 1*x2 + 0*x3 + 1*x4 + 2*x5 + rnorm(n))
+```
+:::
+
+. . .
+
+::: {.small}
+```{r}
+#| eval: false
+profvis::profvis({
+  lm(y~., data=d)
+})
+```
+:::
+
+
+## profvis - vector demo
+
+
+::: {.small}
+```{r}
+#| eval: false
+profvis::profvis({
+  data = data.frame(value = runif(5e4))
+
+  data$sum[1] = data$value[1]
+  for (i in seq(2, nrow(data))) {
+    data$sum[i] = data$sum[i-1] + data$value[i]
+  }
+})
+```
+:::
+
+. . .
+
+::: {.small}
+```{r}
+#| eval: false
+profvis::profvis({
+  x = runif(5e4)
+  sum = x[1]
+  for (i in seq(2, length(x))) {
+    sum[i] = sum[i-1] + x[i]
+  }
+})
+```
+:::
+
+::: aside
+Based on profvis [examples](https://profvis.r-lib.org/articles/examples.html#example-2) article.
+:::
+
+
+## Benchmarking - `bench`
+
+::: {.small}
+```{r}
+#| output-location: fragment
+d = tibble(
+  x = runif(10000),
+  y = runif(10000)
+)
+
+(b = bench::mark(
+  d[d$x > 0.5, ],
+  d[which(d$x > 0.5), ],
+  subset(d, x > 0.5),
+  filter(d, x > 0.5)
+))
+```
+:::
+
+## Larger n
+
+::: {.small}
+```{r}
+#| output-location: fragment
+d = tibble(
+  x = runif(1e6),
+  y = runif(1e6)
+)
+
+(b = bench::mark(
+  d[d$x > 0.5, ],
+  d[which(d$x > 0.5), ],
+  subset(d, x > 0.5),
+  filter(d, x > 0.5)
+))
+```
+:::
+
+## `bench` - relative results
+
+::: {.small}
+```{r}
+summary(b, relative=TRUE)
+```
+:::
+
+
+# Example - BLAS and LAPACK
+
+## Statistics and Linear Algebra
+
+An awful lot of statistics is at its core linear algebra.
+
+For example:
+
+* Linear regression models: find
+
+$$ \hat{\beta} = (X^T X)^{-1} X^Ty $$
+
+* Principal component analysis
+
+    * Find $T = XW$ where $W$ is a matrix whose columns are the eigenvectors of $X^TX$.
+    
+    * Often solved via SVD - Let $X = U\Sigma W^T$ then $T = U\Sigma$.
+
+## Numerical Linear Algebra
+
+Not unique to Statistics, these are the type of problems that come up across all areas of numerical computing.
+
+* Numerical linear algebra $\ne$ mathematical linear algebra
+
+* Efficiency and stability of numerical algorithms matter
+
+    * Designing and implementing these algorithms is hard
+
+* Don't reinvent the wheel - common core linear algebra tools (well defined API)
+
+
+## BLAS and LAPACK
+
+Low level algorithms for common linear algebra operations
+
+#### BLAS
+
+* **B**asic **L**inear **A**lgebra **S**ubprograms
+
+* Copying, scaling, multiplying vectors and matrices
+
+* Origins go back to 1979, written in Fortran
+
+#### LAPACK
+
+* **L**inear **A**lgebra **Pack**age
+
+* Higher level functionality building on BLAS.
+
+* Linear solvers, eigenvalues, and matrix decompositions
+
+* Origins go back to 1992, mostly Fortran (expanded on LINPACK, EISPACK)
+
+
+## Modern variants?
+
+Most default BLAS and LAPACK implementations (like R's defaults) are somewhat dated
+
+* Written in Fortran and designed for a single cpu core  
+
+* Certain (potentially non-optimal) hard coded defaults (e.g. block size).
+
+Multithreaded alternatives:
+
+* ATLAS - Automatically Tuned Linear Algebra Software
+
+* OpenBLAS - fork of GotoBLAS from TACC at UTexas
+
+* Intel MKL - Math Kernel Library, part of Intel's commercial compiler tools
+
+* cuBLAS / Magma - GPU libraries from Nvidia and UTK respectively
+
+* Accelerate / vecLib - Apple's framework for GPU and multicore computing
+
+
+## R & BLAS / LAPACK
+
+::: {.small}
+```{r}
+sessionInfo()
+```
+:::
+
+## OpenBLAS Matrix Multiply Performance
+
+::: {.small}
+```{r, eval=FALSE}
+x = matrix(runif(5000^2),ncol=5000)
+
+sizes = c(100,500,1000,2000,3000,4000,5000)
+cores = c(1,2,4,8,16)
+
+sapply(
+  cores, 
+  function(n_cores) {
+    flexiblas::flexiblas_set_num_threads(n_cores)
+    sapply(
+      sizes, 
+      function(s) {
+        y = x[1:s,1:s]
+        system.time(y %*% y)[3]
+      }
+    )
+  }
+)
+```
+:::
+
+##
+
+|  n   | 1 core | 2 cores | 4 cores | 8 cores | 16 cores |
+|------|-----:|-----:|-----:|-----:|------:|
+| 100  | 0.000| 0.000| 0.000| 0.000| 0.000 |
+| 500  | 0.004| 0.003| 0.002| 0.002| 0.004 |
+| 1000 | 0.028| 0.016| 0.010| 0.007| 0.009 |
+| 2000 | 0.207| 0.110| 0.058| 0.035| 0.039 |
+| 3000 | 0.679| 0.352| 0.183| 0.103| 0.081 |
+| 4000 | 1.587| 0.816| 0.418| 0.227| 0.145 |
+| 5000 | 3.104| 1.583| 0.807| 0.453| 0.266 |
+
+##
+
+```{r echo=FALSE, fig.width=8, out.width="66%", message=FALSE}
+d = tribble(
+  ~"n",  ~"1 core", ~"2 cores", ~"4 cores", ~"8 cores", ~"16 cores", ~"P100 (GPU)", ~ "A4000 (GPU)",
+  500,  0.004, 0.003, 0.002, 0.002, 0.004, NA     , NA,
+  1000, 0.028, 0.016, 0.010, 0.007, 0.009, 0.00269, 0.00290,
+  2000, 0.207, 0.110, 0.058, 0.035, 0.039, 0.00346, 0.00173,
+  3000, 0.679, 0.352, 0.183, 0.103, 0.081, 0.00872, 0.00535,
+  4000, 1.587, 0.816, 0.418, 0.227, 0.145, 0.01934, 0.01218,
+  5000, 3.104, 1.583, 0.807, 0.453, 0.266, 0.3790 , 0.02318
+) |> 
+  pivot_longer(-n, names_to = "cores", values_to = "time") |>
+  mutate(cores = as_factor(cores))
+  
+
+d |> 
+  ggplot(aes(x=n, y=time, color=cores)) +
+    geom_point(na.rm=TRUE) +
+    geom_line(na.rm=TRUE) +
+    labs(y="time (s)", title = "Matrix Multiply of (n x n) matrices")
+```
+
+##
+
+```{r echo=FALSE, fig.width=8, out.width="66%", message=FALSE}
+d |>
+  ggplot(aes(x=n, y=time, color=cores)) +
+    geom_point(na.rm=TRUE) +
+    geom_line(na.rm=TRUE) +
+    scale_y_log10() +
+    labs(y="time (s)", title = "Matrix Multiply of (n x n) matrices")
+```
+
+
+
+
+
+# Parallelization in R
+
+## `parallel`
+
+Part of the base packages in R 
+
+* tools for the forking of R processes (some functions do not work on Windows)
+
+* Some core functions:
+    
+    * `detectCores`
+
+    * `pvec`
+
+    * `mclapply`
+
+    * `mcparallel` & `mccollect`
+
+* There are many other functions for creating and managing "clusters" of R processes, but we won't cover those here.
+
+
+
+
+## `detectCores`
+
+Surprisingly, this detects the number of cores of the current system.
+
+```{r}
+detectCores()
+```
+
+. . .
+
+<br/>
+
+Take the reported number with a grain of salt; it is important to know something about the hardware you are using. Modern CPUs are complicated and have many features (e.g. hyperthreading, P vs E cores, etc) that can make this number only part of the whole story.
+
+This number also is not aware of other users / processes on the system / job scheduling constraints - so be considerate & conservative when choosing how many cores to use for your parallel computations.
+
+## pvec
+
+Parallelizes a vectorized function call; `FUN` must be a vectorized *pure* function (i.e. no side effects) that returns a vector the same length as `x`.
+
+::: {.small}
+```{r pvec_sqrt}
+system.time(pvec(1:1e7, sqrt, mc.cores = 1))
+system.time(pvec(1:1e7, sqrt, mc.cores = 4))
+system.time(pvec(1:1e7, sqrt, mc.cores = 8))
+```
+
+:::
+
+. . .
+
+::: {.small}
+```{r}
+system.time(sqrt(1:1e7))
+```
+
+:::
+
+## pvec - `bench::system_time`
+
+If you need more precise timing information, `bench::system_time` is a good alternative.
+
+::: {.columns .xsmall}
+::: {.column}
+```{r bench_sleep1}
+bench::system_time(Sys.sleep(.5))
+```
+:::
+::: {.column}
+```{r bench_sleep2}
+system.time(Sys.sleep(.5))
+```
+:::
+:::
+
+. . .
+
+::: {.xsmall}
+```{r pvec_sqrt2}
+bench::system_time(pvec(1:1e7, sqrt, mc.cores = 1))
+bench::system_time(pvec(1:1e7, sqrt, mc.cores = 4))
+bench::system_time(pvec(1:1e7, sqrt, mc.cores = 8))
+bench::system_time(sqrt(1:1e7))
+```
+
+:::
+
+
+
+
+## Cores by size
+
+:::: {.columns .xsmall}
+::: {.column width='50%'}
+```{r pvec_grid}
+#| cache: true
+cores = c(1,4,6,8,10)
+order = 6:8
+f = function(x,y) {
+  system.time(
+    pvec(1:(10^y), sqrt, mc.cores = x)
+  )[3]
+}
+
+res = map(
+  cores, 
+  function(x) {
+     map_dbl(order, f, x = x) |>
+      setNames(paste0("10^",order))
+  }
+) |> 
+  bind_rows() |>
+  mutate(cores = cores) |>
+  relocate(cores)
+```
+:::
+
+::: {.column .fragment width='50%'}
+```{r}
+res
+```
+:::
+::::
+
+## mclapply
+
+Implements a parallelized version of `lapply`. It relies on forking and hence is not available on Windows unless `mc.cores = 1`.
+
+::: {.xsmall}
+```{r}
+system.time(rnorm(1e7))
+```
+:::
+
+. . .
+
+::: {.xsmall}
+```{r}
+system.time(unlist(mclapply(1:10, function(x) rnorm(1e6), mc.cores = 2)))
+```
+:::
+
+. . .
+
+::: {.xsmall}
+```{r}
+system.time(unlist(mclapply(1:10, function(x) rnorm(1e6), mc.cores = 4)))
+```
+:::
+
+. . .
+
+::: {.xsmall}
+```{r}
+system.time(unlist(mclapply(1:10, function(x) rnorm(1e6), mc.cores = 8)))
+```
+:::
+
+. . .
+
+::: {.xsmall}
+```{r}
+system.time(unlist(mclapply(1:10, function(x) rnorm(1e6), mc.cores = 10)))
+```
+:::
+
+
+## mcparallel
+
+Asynchronous evaluation of an R expression in a separate process
+
+::: {.small}
+```{r}
+m = mcparallel(rnorm(1e6))
+n = mcparallel(rbeta(1e6,1,1))
+o = mcparallel(rgamma(1e6,1,1))
+```
+
+```{r}
+str(m)
+str(n)
+```
+:::
+
+## mccollect
+
+Checks `mcparallel` objects for completion - if finished, the values are returned, otherwise the calling R process is blocked until they are done.
+
+::: {.small}
+```{r}
+str(mccollect(list(m,n,o)))
+```
+:::
+
+
+## mccollect - waiting
+
+If you don't want to block the calling R process, you can use the `wait = FALSE` argument. This will return `NULL` if the process is not yet complete.
+
+::: {.small}
+```{r}
+f = function(n) {
+  Sys.sleep(5)
+  mean(rnorm(n))
+}
+p = mcparallel(f(1e5))
+```
+
+```{r}
+mccollect(p, wait = FALSE)
+mccollect(p, wait = FALSE, timeout = 5)
+mccollect(p, wait = FALSE)
+```
+:::
+
+
+## Aside - RNG and Parallelization
+
+Random number generation in parallel contexts requires special consideration:
+
+* Multiple processes using the same RNG seed produce identical "random" sequences
+
+* Introducing correlation into our RNG invalidates statistical results (e.g., bootstrap, Monte Carlo)
+
+* For most `parallel` package functions, the default behavior ensures proper RNG handling, but be aware of this issue when writing custom parallel code.
+
+* "Reproducibility" can be a function of both your data and core / worker size.
+
+* When using `mirai`, pass `seed = <integer>` to `daemons()` for fully reproducible parallel RNG streams across runs.
+
+
+## Example
+
+::: {.columns .mxsmall}
+::: {.column}
+```{r}
+set.seed(1234)
+mclapply(
+  1:4, function(x) sd(rnorm(100)), mc.cores = 3
+) |>
+  unlist()
+```
+
+:::
+::: {.column}
+```{r}
+set.seed(1234)
+mclapply(
+  1:4, function(x) sd(rnorm(100)), mc.cores = 3
+) |>
+  unlist()
+```
+
+:::
+:::
+
+. . .
+
+
+::: {.columns .mxsmall}
+::: {.column}
+```{r}
+set.seed(1234)
+mclapply(
+  1:4, function(x) sd(rnorm(100)), 
+  mc.cores = 3, mc.set.seed = FALSE
+) |>
+  unlist()
+```
+
+:::
+::: {.column}
+```{r}
+set.seed(1234)
+mclapply(
+  1:4, function(x) sd(rnorm(100)), 
+  mc.cores = 3, mc.set.seed = FALSE
+) |>
+  unlist()
+```
+
+:::
+:::
+
+. . .
+
+
+::: {.columns .mxsmall}
+::: {.column}
+```{r}
+RNGkind("L'Ecuyer-CMRG")
+set.seed(1234)
+mclapply(
+  1:4, function(x) sd(rnorm(100)), mc.cores = 3
+) |>
+  unlist()
+```
+
+:::
+::: {.column}
+```{r}
+RNGkind("L'Ecuyer-CMRG")
+set.seed(1234)
+mclapply(
+  1:4, function(x) sd(rnorm(100)), mc.cores = 3
+) |>
+  unlist()
+```
+
+:::
+:::
+
+
+::: {.aside}
+How did I know to use `L'Ecuyer-CMRG`? By reading the documentation for `mclapply` and `mcparallel`.
+:::
+
+
+# parallel alternatives & predecessors
+
+## Historical landscape
+
+::: {.medium}
+#### Early packages
+
+* `snow` (2003) - Simple Network of Workstations, cluster-based parallelization
+* `multicore` (2009-2014) - Fork-based parallelization for Unix-like systems
+* `foreach` (2009) - Iterative parallel execution with pluggable backends
+
+#### Consolidation
+
+* `parallel` - Merged `snow` and `multicore` into base R (R 2.14.0)
+
+#### Modern alternatives
+
+* `foreach` + backends (`doParallel`, `doMC`, `doFuture`) - Still widely used w/ flexible backends
+* `future` (2015) - Modern async framework, support for local/remote/cluster computing
+* `mirai` (2022) - Lightweight async evaluation, powers modern tidyverse parallelization
+:::
+
+## mirai
+
+is a modern framework for asynchronous parallel computing in R
+
+* Built on nanonext & NNG messaging (IPC, TCP, TLS)
+
+* Scales to millions of tasks with minimal overhead
+
+* Transparent evaluation with error handling
+
+* Works locally, remote (SSH), and on HPC clusters
+
+. . .
+
+Core functions:
+
+* `mirai()` - evaluate R expressions asynchronously
+* `daemons()` - persistent background processes
+* `mirai_map()` - parallel map operations
+
+::: {.aside}
+See [mirai.r-lib.org/](https://mirai.r-lib.org/)
+:::
+
+
+## Basic `mirai()` usage
+
+Just like `mcparallel`, we can evaluate R expressions without blocking the session:
+
+::: {.columns .small}
+::: {.column}
+```{r}
+library(mirai)
+m = mirai(
+  {
+    Sys.sleep(time)
+    rnorm(5L, mean)
+  },
+  time = 2L,
+  mean = 4.5
+)
+```
+:::
+::: {.column .fragment}
+```{r}
+m
+m$data
+unresolved(m)
+m[]
+m$data
+m
+```
+:::
+:::
+
+
+## mirai objects
+
+> A mirai is either unresolved if the result has yet to be received, or resolved if it has. unresolved() is a helper function to check the state of a mirai.
+>
+> The result of a mirai m is available at `m$data` once it has resolved. Normally this will be the return value of the evaluated expression. If the expression errored, crashed, or timed out then this will be an ‘errorValue’ instead. See the section Error Handling below.
+> 
+> Rather than repeatedly checking unresolved(m), it is more efficient to wait for and collect its value by using m[].
+> 
+> ...
+>
+> If execution in a mirai fails, the error message is returned as a character string of class ‘miraiError’ and ‘errorValue’ to facilitate debugging.
+>
+> `is_mirai_error()` may be used to test for mirai execution errors.
+
+
+## Error handling
+
+Failed evaluations return `miraiError` objects,
+
+::: {.small}
+```{r}
+m = mirai({
+  stop("Something went wrong!")
+})
+```
+```{r}
+m[]
+is_mirai_error(m$data)
+m$data$message
+m$data$stack.trace
+m$data$condition.class
+```
+:::
+
+## Notes on evaluation
+
+The expression passed to `mirai()` will be evaluated in *a separate R process in a clean environment (not the global environment)*. Any variables, functions or other objects that are needed must be supplied via `...` and/or `.args`.
+
+* Use `...` for simple arguments that are substituted into the expression before interpretation
+
+* Use `.args` for functions, large objects, etc.
+
+. . .
+
+Similarly, if you are using functions from non-base packages you must use namespaced calls (e.g. `dplyr::select()`), or else the package should be loaded explicitly as part of `.expr`.
+
+Note that when using daemons the function `everywhere()` can be used to evaluate an expression on all connected daemons; this can be useful to load packages or set options.
+
+
+## `daemons()`
+
+::: {.medium}
+
+We can create persistent background processes to handle our `mirai()` requests, this reduces startup overhead for each task.
+
+* `daemons(sync = TRUE)` runs all mirai calls synchronously in the current process — useful for debugging
+
+:::
+
+::: {.columns .xsmall}
+::: {.column width=33%}
+```{r}
+daemons(0)
+a = mirai({
+  Sys.sleep(3)
+})
+b = mirai({
+  Sys.sleep(2)
+})
+c = mirai({
+  Sys.sleep(1)
+})
+
+system.time(
+  call_mirai(list(a, b, c)) 
+)
+```
+:::
+::: {.column width=33%}
+```{r}
+daemons(1)
+a = mirai({
+  Sys.sleep(3)
+})
+b = mirai({
+  Sys.sleep(2)
+})
+c = mirai({
+  Sys.sleep(1)
+})
+
+system.time(
+  call_mirai(list(a, b, c)) 
+)
+```
+:::
+::: {.column width=33%}
+```{r}
+daemons(3)
+a = mirai({
+  Sys.sleep(3)
+})
+b = mirai({
+  Sys.sleep(2)
+})
+c = mirai({
+  Sys.sleep(1)
+})
+
+system.time(
+  call_mirai(list(a, b, c)) 
+)
+```
+:::
+:::
+
+```{r}
+#| include: false
+daemons(0)
+```
+
+
+## `with_daemons()` & `local_daemons()`
+
+Scoped daemon management using named compute profiles — a cleaner alternative to manually calling `daemons(0)` to clean up.
+
+
+`with_daemons()` evaluates an expression within a profile:
+
+::: {.xsmall}
+```{r}
+#| eval: false
+daemons(4, .compute = "work")
+
+result = with_daemons("work", {
+  mirai_map(1:8, \(x) mean(rnorm(1e6)))[]
+})
+```
+:::
+
+
+`local_daemons()` activates a profile for the current scope:
+
+::: {.xsmall}
+```{r}
+#| eval: false
+f = function() {
+  local_daemons("work")
+  mirai_map(1:4, \(x) mean(rnorm(1e6)))[]
+}
+```
+:::
+
+. . .
+
+Multiple named profiles (e.g. `"cpu"` and `"gpu"`) can coexist without conflicting
+
+
+## `call_mirai()` vs `race_mirai()`
+
+::: {.small}
+```{r}
+daemons(4)
+```
+:::
+
+::: {.columns}
+::: {.column}
+Call waits for all tasks to complete
+
+::: {.xxsmall}
+```{r}
+a = mirai({
+  Sys.sleep(3)
+  "A"
+})
+b = mirai({
+  Sys.sleep(2)
+  "B"
+})
+c = mirai({
+  Sys.sleep(1)
+  "C"
+})
+
+call_mirai(list(a, b, c))
+c(a$data, b$data, c$data)
+```
+:::
+
+:::
+::: {.column}
+Race returns the index of the first completed task
+
+::: {.xxsmall}
+```{r}
+a = mirai({
+  Sys.sleep(3)
+  "A"
+})
+b = mirai({
+  Sys.sleep(2)
+  "B"
+})
+c = mirai({
+  Sys.sleep(1)
+  "C"
+})
+
+ml = list(a, b, c)
+(i = race_mirai(ml))
+ml[[i]]$data
+c(a$data, b$data, c$data)
+```
+:::
+
+:::
+:::
+
+
+
+
+## `mirai_map()`
+
+::: {.small}
+> This function is similar to `purrr::map()`, but instead of a list of values, returns a ‘mirai_map’ object, which is a list of mirai.
+>
+> A `mirai_map()` call returns almost immediately. The results of a mirai_map x may be collected using `x[]` or `collect_mirai(x)`, the same as for a mirai. This waits for all asynchronous operations to complete if still in progress.
+:::
+
+. . .
+
+::: {.small}
+> ### Key advantages
+>
+> 1. Returns immediately with all evaluations taking place asynchronously. Printing a ‘mirai map’ object shows the current completion progress.
+>
+> 2. The ‘.promise’ argument allows a promise action to be registered against each iteration. This can be used to perform side-effects when each iteration completes (such as checkpointing or recording a progress update).
+>
+> 3. Returns evaluation errors as ‘miraiError’ or ‘errorValue’ as the case may be, rather than causing the entire map to fail. This allows more efficient recovery from partial failure.
+>
+> 4. Does not rely on a ‘chunking’ algorithm that attempts to split work into batches according to the number of available daemons, as implemented for instance in the parallel package. Chunking cannot take into account varying or unpredictable compute times over the indices, which mirai scheduling is designed to deal with optimally.
+:::
+
+## Scheduling Examples
+
+::: {.xsmall}
+```{r}
+daemons(4)
+waits = c(1, 1, 4, 4, 1, 1, 1, 4)
+```
+:::
+
+::: {.columns .xsmall}
+::: {.column}
+```{r}
+system.time(
+  mirai_map(waits, Sys.sleep)[]
+)
+```
+:::
+::: {.column}
+```{r}
+system.time(
+  mclapply(waits, Sys.sleep, mc.cores = 4)
+)
+```
+:::
+:::
+
+. . .
+
+::: {.xsmall}
+```{r}
+daemons(4)
+n = sample(1:8)
+f = function(n) mean(rnorm(10^n))
+```
+:::
+
+::: {.columns .xsmall}
+::: {.column}
+```{r}
+system.time(
+  mirai_map(n, f)[]
+)
+```
+:::
+::: {.column}
+```{r}
+system.time(
+  mclapply(n, f, mc.cores = 2)
+)
+```
+:::
+:::
+
+
+```{r}
+#| include: false
+daemons(0)
+```
+
+
+
+## purrr's `in_parallel()` (experimental)
+
+Enables parallel computation in purrr map functions using mirai,
+
+::: {.columns .xsmall}
+::: {.column}
+```{r}
+system.time({
+  x = mclapply(
+    1:10,
+    \(x) rnorm(1e6),
+    mc.cores = 5
+  ) |>
+    unlist()
+})
+
+mean(x)
+sd(x)
+```
+:::
+::: {.column}
+```{r}
+daemons(5)
+system.time({
+  x = map(
+    1:10,
+    in_parallel(\(x) rnorm(1e6))
+  ) |>
+    unlist()
+})
+
+mean(x)
+sd(x)
+```
+:::
+:::
+
+
+## Example - Bootstrapping
+
+Bootstrapping is a resampling scheme where the original data is repeatedly reconstructed by taking samples of size *n* (with replacement) from the original data, and using that to repeat an analysis procedure of interest. Below is an example of fitting a local regression (`loess`) to some synthetic data, we will construct a bootstrap prediction interval for this model.
+
+. . .
+
+::: {.small}
+```{r}
+set.seed(3212016)
+d = data.frame(x = runif(250)) |>
+  mutate(y = sin(2*pi*x) + rnorm(length(x)))
+
+l = loess(y ~ x, data=d)
+p = predict(l, se=TRUE)
+
+d = d |> mutate(
+  pred_y = p$fit,
+  pred_y_se = p$se.fit
+)
+```
+:::
+
+##
+
+::: {.small}
+```{r}
+#| out-width: 75%
+ggplot(d, aes(x,y)) +
+  geom_point(color="gray50") +
+  geom_ribbon(
+    aes(ymin = pred_y - 1.96 * pred_y_se, 
+        ymax = pred_y + 1.96 * pred_y_se), 
+    fill="red", alpha=0.25
+  ) +
+  geom_line(aes(y=pred_y)) +
+  theme_bw()
+```
+:::
+
+
+##
+
+<br/> <br/> <br/> 
+
+::: {.giant .center}
+**Bootstrapping Demo**
+:::
+
+
+## What to use when?
+
+Optimal use of parallelization / multiple cores is hard, there isn't one best solution
+
+* Don't underestimate the overhead cost
+
+* Experimentation is key
+
+* Measure it or it didn't happen
+
+* Be aware of the trade off between developer time and run time
+
+
+

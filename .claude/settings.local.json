@@ -8,7 +8,8 @@
       "Bash(mkdir:*)",
       "Bash(Rscript:*)",
       "Bash(tree:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "WebFetch(domain:mirai.r-lib.org)"
     ],
     "deny": []
   }
