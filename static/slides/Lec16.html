@@ -1087,7 +1087,7 @@ Dr. Colin Rundel
 <span id="cb1-3"><a href></a>/boot/grub/grub.conf</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><br></p>
 <h4 id="relative-path-examples">Relative path examples</h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource shell number-lines code-with-copy"><code class="sourceCode"><span id="cb2-1"><a href></a>Sta523/filesystem/</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource shell number-lines code-with-copy"><code class="sourceCode"><span id="cb2-1"><a href></a>Sta323/filesystem/</span>
 <span id="cb2-2"><a href></a>data/access.log</span>
 <span id="cb2-3"><a href></a>filesystem/nelle/pizza.cfg</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
@@ -1138,10 +1138,50 @@ Dr. Colin Rundel
 <section id="home-directory-and" class="slide level2">
 <h2>Home directory and <code>~</code></h2>
 <p>Tilde (<code>~</code>) is a shortcut that expands to the name of your home directory on unix-like systems.</p>
+<div class="xsmall">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href></a><span class="fu">dir</span>(<span class="at">path =</span> <span class="st">&quot;~/Desktop/Sta523-Sp25/website/&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href></a><span class="fu">dir</span>(<span class="at">path =</span> <span class="st">&quot;~/Desktop/Sta323-Sp26/website/static/slides&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>character(0)</code></pre>
+<pre><code> [1] &quot;data&quot;                      &quot;imgs&quot;                     
+ [3] &quot;Lec01_notes.R&quot;             &quot;Lec01.html&quot;               
+ [5] &quot;Lec01.pdf&quot;                 &quot;Lec01.qmd&quot;                
+ [7] &quot;Lec02_notes.R&quot;             &quot;Lec02.html&quot;               
+ [9] &quot;Lec02.pdf&quot;                 &quot;Lec02.qmd&quot;                
+[11] &quot;Lec03.html&quot;                &quot;Lec03.pdf&quot;                
+[13] &quot;Lec03.qmd&quot;                 &quot;Lec04_notes.R&quot;            
+[15] &quot;Lec04.html&quot;                &quot;Lec04.pdf&quot;                
+[17] &quot;Lec04.qmd&quot;                 &quot;Lec05_notes.R&quot;            
+[19] &quot;Lec05.html&quot;                &quot;Lec05.pdf&quot;                
+[21] &quot;Lec05.qmd&quot;                 &quot;Lec06.html&quot;               
+[23] &quot;Lec06.pdf&quot;                 &quot;Lec06.qmd&quot;                
+[25] &quot;Lec07_cache&quot;               &quot;Lec07_files&quot;              
+[27] &quot;Lec07.html&quot;                &quot;Lec07.pdf&quot;                
+[29] &quot;Lec07.qmd&quot;                 &quot;Lec08_notes.R&quot;            
+[31] &quot;Lec08.html&quot;                &quot;Lec08.pdf&quot;                
+[33] &quot;Lec08.qmd&quot;                 &quot;Lec09_notes.R&quot;            
+[35] &quot;Lec09.html&quot;                &quot;Lec09.pdf&quot;                
+[37] &quot;Lec09.qmd&quot;                 &quot;Lec10_notes.R&quot;            
+[39] &quot;Lec10.html&quot;                &quot;Lec10.pdf&quot;                
+[41] &quot;Lec10.qmd&quot;                 &quot;Lec11_cache&quot;              
+[43] &quot;Lec11_files&quot;               &quot;Lec11.html&quot;               
+[45] &quot;Lec11.pdf&quot;                 &quot;Lec11.qmd&quot;                
+[47] &quot;Lec12_notes.R&quot;             &quot;Lec12.html&quot;               
+[49] &quot;Lec12.pdf&quot;                 &quot;Lec12.qmd&quot;                
+[51] &quot;Lec13_notes.R&quot;             &quot;Lec13.html&quot;               
+[53] &quot;Lec13.pdf&quot;                 &quot;Lec13.qmd&quot;                
+[55] &quot;Lec14_cache&quot;               &quot;Lec14_notes.R&quot;            
+[57] &quot;Lec14.html&quot;                &quot;Lec14.pdf&quot;                
+[59] &quot;Lec14.qmd&quot;                 &quot;Lec15_cache&quot;              
+[61] &quot;Lec15_files&quot;               &quot;Lec15_notes.R&quot;            
+[63] &quot;Lec15.html&quot;                &quot;Lec15.pdf&quot;                
+[65] &quot;Lec15.qmd&quot;                 &quot;Lec16_notes.R&quot;            
+[67] &quot;Lec16.html&quot;                &quot;Lec16.pdf&quot;                
+[69] &quot;Lec16.qmd&quot;                 &quot;Lec16.rmarkdown&quot;          
+[71] &quot;Lec17_notes.txt&quot;           &quot;Lec17.html&quot;               
+[73] &quot;Lec17.pdf&quot;                 &quot;Lec17.qmd&quot;                
+[75] &quot;prev&quot;                      &quot;slides.Rproj&quot;             
+[77] &quot;slides.scss&quot;               &quot;testthat_slide_summary.md&quot;</code></pre>
+</div>
 </div>
 </div>
 </section>
@@ -1240,9 +1280,9 @@ Dr. Colin Rundel
 <div class="fragment">
 <div class="small">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href></a><span class="fu">path</span>(<span class="st">&quot;~&quot;</span>, <span class="st">&quot;Desktop/&quot;</span>, <span class="st">&quot;/Sta523-Fa25&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href></a><span class="fu">path</span>(<span class="st">&quot;~&quot;</span>, <span class="st">&quot;Desktop/&quot;</span>, <span class="st">&quot;/Sta323-Fa25&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>~/Desktop/Sta523-Fa25</code></pre>
+<pre><code>~/Desktop/Sta323-Fa25</code></pre>
 </div>
 </div>
 </div>
@@ -1264,7 +1304,7 @@ Dr. Colin Rundel
 <section id="listing-files-and-directories" class="slide level2">
 <h2>Listing files and directories</h2>
 <p><code>dir_ls()</code> lists directory contents with more information than <code>dir()</code>:</p>
-<div class="xsmall">
+<div class="xxsmall">
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href></a><span class="fu">dir_ls</span>(<span class="st">&quot;data/&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -1276,7 +1316,7 @@ data/pvec_res.Rdata     data/us                 </code></pre>
 </div>
 <div class="fragment">
 <p>file lists can also be filtered via glob, regex, or type:,</p>
-<div class="xsmall">
+<div class="xxsmall">
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href></a><span class="fu">dir_ls</span>(<span class="st">&quot;data/&quot;</span>, <span class="at">glob =</span> <span class="st">&quot;*.csv&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -1286,7 +1326,7 @@ data/pvec_res.Rdata     data/us                 </code></pre>
 </div>
 </div>
 <div class="fragment">
-<div class="xsmall">
+<div class="xxsmall">
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href></a><span class="fu">dir_ls</span>(<span class="st">&quot;data/&quot;</span>, <span class="at">type =</span> <span class="st">&quot;file&quot;</span>, <span class="at">recurse =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">

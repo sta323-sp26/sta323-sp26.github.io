@@ -68,7 +68,7 @@ Paths can either be absolute or relative, and the difference is very important. 
 #### Relative path examples
 
 ```shell
-Sta523/filesystem/
+Sta323/filesystem/
 data/access.log
 filesystem/nelle/pizza.cfg
 ```
@@ -103,9 +103,11 @@ dir(path = "../../")
 
 Tilde (`~`) is a shortcut that expands to the name of your home directory on unix-like systems.
 
+::: {.xsmall}
 ```{r}
-dir(path = "~/Desktop/Sta523-Sp25/website/")
+dir(path = "~/Desktop/Sta323-Sp26/website/static/slides")
 ```
+:::
 
 ## Why `~`?
 
@@ -206,7 +208,7 @@ path("data", "myfile.csv")
 
 ::: {.small}
 ```{r}
-path("~", "Desktop/", "/Sta523-Fa25")
+path("~", "Desktop/", "/Sta323-Fa25")
 ```
 :::
 
@@ -227,7 +229,7 @@ Other useful path functions:
 
 `dir_ls()` lists directory contents with more information than `dir()`:
 
-::: {.xsmall}
+::: {.xxsmall}
 ```{r}
 dir_ls("data/")
 ```
@@ -237,7 +239,7 @@ dir_ls("data/")
 
 file lists can also be filtered via glob, regex, or type:,
 
-::: {.xsmall}
+::: {.xxsmall}
 ```{r}
 dir_ls("data/", glob = "*.csv")
 ```
@@ -245,7 +247,7 @@ dir_ls("data/", glob = "*.csv")
 
 . . .
 
-::: {.xsmall}
+::: {.xxsmall}
 ```{r}
 dir_ls("data/", type = "file", recurse = TRUE)
 ```
