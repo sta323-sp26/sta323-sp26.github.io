@@ -213,7 +213,7 @@ schedule:
 - week: 8
   day: 2
   lecture: "filesystems, Dennys & LQ scraping"
-  slides:
+  slides: Lec16
   readings:
     - text: Project-oriented workflow
       link: https://rstats.wtf/project-oriented-workflow.html
