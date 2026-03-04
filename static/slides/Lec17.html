@@ -4011,11 +4011,14 @@ Dr. Colin Rundel
 </section>
 <section id="variables" class="slide level2">
 <h2>Variables</h2>
-<p>Like R or other languages we can define variables</p>
+<p>Like R or other languages we can define variables, this can help avoid repetition.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode numberSource make number-lines code-with-copy"><code class="sourceCode"><span id="cb3-1"><a href></a>R_OPTS=--no-save --no-restore --no-site-file --no-init-file --no-environ</span>
 <span id="cb3-2"><a href></a></span>
 <span id="cb3-3"><a href></a>fig1/fig.png: fig1/fig.R</span>
-<span id="cb3-4"><a href></a>    cd fig1;Rscript $(R_OPTS) fig.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-4"><a href></a>    cd fig1;Rscript $(R_OPTS) fig.R</span>
+<span id="cb3-5"><a href></a></span>
+<span id="cb3-6"><a href></a>fig2/fig.png: fig2/fig.R</span>
+<span id="cb3-7"><a href></a>    cd fig2;Rscript $(R_OPTS) fig.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="special-targets" class="slide level2">
 <h2>Special Targets</h2>
@@ -4028,6 +4031,7 @@ Dr. Colin Rundel
 </ul>
 <p>Optionally, we specify all phony targets by including a line with <code>.PHONY</code> as the target and the phony targets as dependencies, i.e.:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource make number-lines code-with-copy"><code class="sourceCode"><span id="cb4-1"><a href></a>.PHONY: all clean install</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This can help avoid rare cases where a file with the same name as a phony target exists in the directory, which can cause <code>make</code> to skip the steps for that target.</p>
 </div>
 </section>
 <section id="builtin-automatic-variables" class="slide level2">
