@@ -40,7 +40,7 @@ knitr::opts_chunk$set(
 
 * Originally created by Stuart Feldman in 1976 at Bell Labs
 
-* Almost universally available (all flavors of unix / linux / macOS / Windows via RTools)
+* Almost universally available (all flavors of unix / linux / macOS / Windows)
 
 * Dependencies are specified using a text-based `Makefile` with a simple syntax
 
@@ -71,8 +71,8 @@ In the above example `target*` and `depend*` are all just files (given by a rela
 ## Makefile (basic example)
 
 ```make
-paper.html: paper.Rmd fig1/fig.png fig2/fig.png
-	Rscript -e "rmarkdown::render('paper.Rmd')"
+paper.html: paper.qmd fig1/fig.png fig2/fig.png
+	quarto render paper.qmd
 
 fig1/fig.png: fig1/fig.R
 	Rscript fig1/fig.R
@@ -89,7 +89,7 @@ Because the `Makefile` specifies the dependency structure `make` knows when a fi
 
 <br />
 
-* After running `make` the first time, I edit `paper.Rmd`, what steps run if I run `make` again?
+* After running `make` the first time, I edit `paper.qmd`, what steps run if I run `make` again?
 
 * What about editing `fig1/fig.R`?
 
@@ -177,8 +177,8 @@ fig%/fig.png: fig%/fig.R
 ```make
 all: paper.html
 
-paper.html: paper.Rmd fig1/fig.png fig2/fig.png
-    Rscript -e "library(rmarkdown);render('paper.Rmd')"
+paper.html: paper.qmd fig1/fig.png fig2/fig.png
+    quarto render paper.qmd
 
 fig%/fig.png: fig%/fig.R
     cd $(<D);Rscript $(<F)

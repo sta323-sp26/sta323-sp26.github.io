@@ -3970,7 +3970,7 @@ Dr. Colin Rundel
 <li>Almost any process that has files as input and outputs can be automated via make</li>
 </ul></li>
 <li><p>Originally created by Stuart Feldman in 1976 at Bell Labs</p></li>
-<li><p>Almost universally available (all flavors of unix / linux / macOS / Windows via RTools)</p></li>
+<li><p>Almost universally available (all flavors of unix / linux / macOS / Windows)</p></li>
 <li><p>Dependencies are specified using a text-based <code>Makefile</code> with a simple syntax</p></li>
 </ul>
 </section>
@@ -3991,8 +3991,8 @@ Dr. Colin Rundel
 </section>
 <section id="makefile-basic-example" class="slide level2">
 <h2>Makefile (basic example)</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource make number-lines code-with-copy"><code class="sourceCode"><span id="cb2-1"><a href></a>paper.html: paper.Rmd fig1/fig.png fig2/fig.png</span>
-<span id="cb2-2"><a href></a>    Rscript -e &quot;rmarkdown::render(&#39;paper.Rmd&#39;)&quot;</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource make number-lines code-with-copy"><code class="sourceCode"><span id="cb2-1"><a href></a>paper.html: paper.qmd fig1/fig.png fig2/fig.png</span>
+<span id="cb2-2"><a href></a>    quarto render paper.qmd</span>
 <span id="cb2-3"><a href></a></span>
 <span id="cb2-4"><a href></a>fig1/fig.png: fig1/fig.R</span>
 <span id="cb2-5"><a href></a>    Rscript fig1/fig.R</span>
@@ -4005,7 +4005,7 @@ Dr. Colin Rundel
 <p>Because the <code>Makefile</code> specifies the dependency structure <code>make</code> knows when a file has changed (by examining the file’s modification timestamp) and only runs the steps that depend on the file(s) that have changed.</p>
 <p><br></p>
 <ul>
-<li><p>After running <code>make</code> the first time, I edit <code>paper.Rmd</code>, what steps run if I run <code>make</code> again?</p></li>
+<li><p>After running <code>make</code> the first time, I edit <code>paper.qmd</code>, what steps run if I run <code>make</code> again?</p></li>
 <li><p>What about editing <code>fig1/fig.R</code>?</p></li>
 </ul>
 </section>
@@ -4062,8 +4062,8 @@ Dr. Colin Rundel
 <h2>Makefile (fancier example)</h2>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode numberSource make number-lines code-with-copy"><code class="sourceCode"><span id="cb7-1"><a href></a>all: paper.html</span>
 <span id="cb7-2"><a href></a></span>
-<span id="cb7-3"><a href></a>paper.html: paper.Rmd fig1/fig.png fig2/fig.png</span>
-<span id="cb7-4"><a href></a>    Rscript -e &quot;library(rmarkdown);render(&#39;paper.Rmd&#39;)&quot;</span>
+<span id="cb7-3"><a href></a>paper.html: paper.qmd fig1/fig.png fig2/fig.png</span>
+<span id="cb7-4"><a href></a>    quarto render paper.qmd</span>
 <span id="cb7-5"><a href></a></span>
 <span id="cb7-6"><a href></a>fig%/fig.png: fig%/fig.R</span>
 <span id="cb7-7"><a href></a>    cd $(&lt;D);Rscript $(&lt;F)</span>
