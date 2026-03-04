@@ -3951,7 +3951,7 @@ z-index: 1000;
 
 <section id="title-slide" class="quarto-title-block center">
   <h1 class="title">make</h1>
-  <p class="subtitle">Lecture 15</p>
+  <p class="subtitle">Lecture 17</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -3970,13 +3970,13 @@ Dr. Colin Rundel
 <li>Almost any process that has files as input and outputs can be automated via make</li>
 </ul></li>
 <li><p>Originally created by Stuart Feldman in 1976 at Bell Labs</p></li>
-<li><p>Almost universally available (all flavors of unix / linux / MacOS / Windows via RTools)</p></li>
+<li><p>Almost universally available (all flavors of unix / linux / macOS / Windows via RTools)</p></li>
 <li><p>Dependencies are specified using a text-based <code>Makefile</code> with a simple syntax</p></li>
 </ul>
 </section>
 <section id="makefile" class="slide level2">
 <h2>Makefile</h2>
-<p>A <code>Makefile</code> provides a list of target files along, their dependencies, and the steps necessary to generate each of the targets from the dependencies.</p>
+<p>A <code>Makefile</code> provides a list of target files along with their dependencies, and the steps necessary to generate each of the targets from the dependencies.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource make number-lines code-with-copy"><code class="sourceCode"><span id="cb1-1"><a href></a>target1: depend1 depend2 depend3 ...</span>
 <span id="cb1-2"><a href></a>    step1</span>
 <span id="cb1-3"><a href></a>    step2</span>
@@ -4011,7 +4011,7 @@ Dr. Colin Rundel
 </section>
 <section id="variables" class="slide level2">
 <h2>Variables</h2>
-<p>Like R or other language we can define variables</p>
+<p>Like R or other languages we can define variables</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode numberSource make number-lines code-with-copy"><code class="sourceCode"><span id="cb3-1"><a href></a>R_OPTS=--no-save --no-restore --no-site-file --no-init-file --no-environ</span>
 <span id="cb3-2"><a href></a></span>
 <span id="cb3-3"><a href></a>fig1/fig.png: fig1/fig.R</span>
@@ -4065,12 +4065,12 @@ Dr. Colin Rundel
 <span id="cb7-3"><a href></a>paper.html: paper.Rmd fig1/fig.png fig2/fig.png</span>
 <span id="cb7-4"><a href></a>    Rscript -e &quot;library(rmarkdown);render(&#39;paper.Rmd&#39;)&quot;</span>
 <span id="cb7-5"><a href></a></span>
-<span id="cb7-6"><a href></a>Fig%/fig.png: Fig%/fig.R</span>
+<span id="cb7-6"><a href></a>fig%/fig.png: fig%/fig.R</span>
 <span id="cb7-7"><a href></a>    cd $(&lt;D);Rscript $(&lt;F)</span>
 <span id="cb7-8"><a href></a></span>
 <span id="cb7-9"><a href></a>clean:</span>
 <span id="cb7-10"><a href></a>    rm -f paper.html</span>
-<span id="cb7-11"><a href></a>    rm -f Fig*/*.png</span>
+<span id="cb7-11"><a href></a>    rm -f fig*/*.png</span>
 <span id="cb7-12"><a href></a></span>
 <span id="cb7-13"><a href></a>.PHONY: all clean</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
@@ -4270,7 +4270,7 @@ Dr. Colin Rundel
 <span id="cb8-19"><a href></a>    rm -f hw4.html</span>
 <span id="cb8-20"><a href></a>    rm -rf data/</span>
 <span id="cb8-21"><a href></a></span>
-<span id="cb8-22"><a href></a>.phony: all clean</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb8-22"><a href></a>.PHONY: all clean</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 </section></section>

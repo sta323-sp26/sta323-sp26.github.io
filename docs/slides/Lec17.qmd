@@ -1,6 +1,6 @@
 ---
 title: "make"
-subtitle: "Lecture 15"
+subtitle: "Lecture 17"
 author: "Dr. Colin Rundel"
 footer: "Sta 323 - Spring 2026"
 format:
@@ -40,7 +40,7 @@ knitr::opts_chunk$set(
 
 * Originally created by Stuart Feldman in 1976 at Bell Labs
 
-* Almost universally available (all flavors of unix / linux / MacOS / Windows via RTools)
+* Almost universally available (all flavors of unix / linux / macOS / Windows via RTools)
 
 * Dependencies are specified using a text-based `Makefile` with a simple syntax
 
@@ -48,7 +48,7 @@ knitr::opts_chunk$set(
 
 ## Makefile
 
-A `Makefile` provides a list of target files along, their dependencies, and the steps necessary to generate each of the targets from the dependencies.
+A `Makefile` provides a list of target files along with their dependencies, and the steps necessary to generate each of the targets from the dependencies.
 
 ```make
 target1: depend1 depend2 depend3 ...
@@ -97,7 +97,7 @@ Because the `Makefile` specifies the dependency structure `make` knows when a fi
 
 ## Variables
 
-Like R or other language we can define variables
+Like R or other languages we can define variables
 
 ```make
 R_OPTS=--no-save --no-restore --no-site-file --no-init-file --no-environ
@@ -180,12 +180,12 @@ all: paper.html
 paper.html: paper.Rmd fig1/fig.png fig2/fig.png
     Rscript -e "library(rmarkdown);render('paper.Rmd')"
 
-Fig%/fig.png: Fig%/fig.R
+fig%/fig.png: fig%/fig.R
     cd $(<D);Rscript $(<F)
 
 clean:
     rm -f paper.html
-    rm -f Fig*/*.png
+    rm -f fig*/*.png
 
 .PHONY: all clean
 ```
@@ -341,6 +341,6 @@ clean:
 	rm -f hw4.html
 	rm -rf data/
 
-.phony: all clean
+.PHONY: all clean
 ```
 :::
