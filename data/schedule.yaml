@@ -223,7 +223,7 @@ schedule:
 
 - week: 8
   day: 4
-  lecture: "make (<i>async</i>)"
+  lecture: "<a href='https://youtu.be/Ct5tkEByoQg'>make (<i>async</i>)</a>"
   slides: Lec17
   readings:
     - text: Minimal make
