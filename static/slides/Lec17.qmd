@@ -190,9 +190,130 @@ clean:
 .PHONY: all clean
 ```
 
+# HW4 Makefile
+
+## {.center}
+
+```{mermaid}
+%%| echo: false
+flowchart RL
+    classDef script fill:#E69F00,stroke:#D55E00,color:#000
+    classDef data   fill:#56B4E9,stroke:#0072B2,color:#000
+    classDef output fill:#009E73,stroke:#006B4F,color:#fff
+    html[hw4.html]:::output
+```
+
+## {.center}
+
+```{mermaid}
+%%| echo: false
+flowchart RL
+    classDef script fill:#E69F00,stroke:#D55E00,color:#000
+    classDef data   fill:#56B4E9,stroke:#0072B2,color:#000
+    classDef output fill:#009E73,stroke:#006B4F,color:#fff
+    qmd([hw4.qmd]):::script
+    html[hw4.html]:::output
+    qmd      --> html
+```
+
+## {.center}
+
+```{mermaid}
+%%| echo: false
+flowchart RL
+    classDef script fill:#E69F00,stroke:#D55E00,color:#000
+    classDef data   fill:#56B4E9,stroke:#0072B2,color:#000
+    classDef output fill:#009E73,stroke:#006B4F,color:#fff
+    qmd([hw4.qmd]):::script
+    lqrds[data/lq.rds]:::data
+    dennyrds[data/dennys.rds]:::data
+    html[hw4.html]:::output
+    lqrds    --> qmd
+    dennyrds --> qmd
+    qmd      --> html
+```
 
 
-# Live Demo <br/> HW4 Makefile
+## {.center}
+
+```{mermaid}
+%%| echo: false
+flowchart RL
+    classDef script fill:#E69F00,stroke:#D55E00,color:#000
+    classDef data   fill:#56B4E9,stroke:#0072B2,color:#000
+    classDef output fill:#009E73,stroke:#006B4F,color:#fff
+    parselq([parse_lq.R]):::script
+    lqrds[data/lq.rds]:::data
+    parsedennys([parse_dennys.R]):::script
+    dennyrds[data/dennys.rds]:::data
+    qmd([hw4.qmd]):::script
+    html[hw4.html]:::output
+    parselq      --> lqrds
+    lqrds        --> qmd
+    parsedennys  --> dennyrds
+    dennyrds     --> qmd
+    qmd          --> html
+```
+
+
+
+## {.center}
+
+```{mermaid}
+%%| echo: false
+flowchart RL
+    classDef script fill:#E69F00,stroke:#D55E00,color:#000
+    classDef data   fill:#56B4E9,stroke:#0072B2,color:#000
+    classDef output fill:#009E73,stroke:#006B4F,color:#fff
+    parselq([parse_lq.R]):::script
+    lqhtml[data/lq/*.html]:::data
+    lqrds[data/lq.rds]:::data
+    parsedennys([parse_dennys.R]):::script
+    dennyshtml[data/dennys/*.html]:::data
+    dennyrds[data/dennys.rds]:::data
+    qmd([hw4.qmd]):::script
+    html[hw4.html]:::output
+    lqhtml       --> parselq
+    parselq      --> lqrds
+    lqrds        --> qmd
+    dennyshtml   --> parsedennys
+    parsedennys  --> dennyrds
+    dennyrds     --> qmd
+    qmd          --> html
+```
+
+
+## {.center}
+
+```{mermaid}
+%%| echo: false
+flowchart RL
+    classDef script fill:#E69F00,stroke:#D55E00,color:#000
+    classDef data   fill:#56B4E9,stroke:#0072B2,color:#000
+    classDef output fill:#009E73,stroke:#006B4F,color:#fff
+    getlq([get_lq.R]):::script
+    parselq([parse_lq.R]):::script
+    lqhtml[data/lq/*.html]:::data
+    lqrds[data/lq.rds]:::data
+    getdennys([get_dennys.R]):::script
+    parsedennys([parse_dennys.R]):::script
+    dennyshtml[data/dennys/*.html]:::data
+    dennyrds[data/dennys.rds]:::data
+    qmd([hw4.qmd]):::script
+    html[hw4.html]:::output
+    getlq        --> lqhtml
+    lqhtml       --> parselq
+    parselq      --> lqrds
+    lqrds        --> qmd
+    getdennys    --> dennyshtml
+    dennyshtml   --> parsedennys
+    parsedennys  --> dennyrds
+    dennyrds     --> qmd
+    qmd          --> html
+```
+
+
+## Live Demo {.center}
 
 
 ## HW4 Makefile
@@ -207,11 +328,11 @@ hw4.html: hw4.qmd data/lq.rds data/dennys.rds
 data/lq.rds: parse_lq.R data/lq/*.html
 	Rscript parse_lq.R
 
-data/lq/*.html: get_lq.R
-	Rscript get_lq.R
-
 data/dennys.rds: parse_dennys.R data/dennys/*.html
 	Rscript parse_dennys.R
+
+data/lq/*.html: get_lq.R
+	Rscript get_lq.R
 
 data/dennys/*.html: get_dennys.R
 	Rscript get_dennys.R
@@ -223,133 +344,3 @@ clean:
 .phony: all clean
 ```
 :::
-
-
-# {.center-image}
-
-![](imgs/hex_targets.png){fig-align="center"}
-
-
-## Why targets?
-
-`make` is great, but has some limitations for data analysis pipelines:
-
-* File-based dependencies only (what about R objects in memory?)
-* Limited insight into what changed and why
-* Limited support for parallel execution
-* Syntax is shell based
-
-. . . 
-
-The [`targets`](https://docs.ropensci.org/targets/) package provides a modern R-native alternative:
-
-* Define pipelines in R code
-* Track both files and R objects
-* Automatic parallel execution
-* Better debugging and visualization
-* Integration with R ecosystem (Quarto, R Markdown, etc.)
-
-
-
-
-## Getting started with targets
-
-::: {.small}
-```r
-# Create a new targets project
-use_targets()
-
-# Explore your pipeline
-tar_visnetwork()
-tar_manifest()
-
-# Run the pipeline
-tar_make()
-
-# Check what needs updating
-tar_outdated()
-
-# Access a target from storage
-tar_read()
-
-# To reset / clean-up
-tar_invalidate()
-tar_prune()
-tar_destroy()
-```
-:::
-
-::: {.aside}
-Learn more: <https://docs.ropensci.org/targets/> and the [targets manual](https://books.ropensci.org/targets/)
-:::
-
-
-## Basic targets workflow
-
-A `targets` pipeline is defined in a `_targets.R` file:
-
-::: {.small}
-```r
-library(targets)
-
-tar_option_set(packages = c("tibble", "dplyr"))
-
-list(
-  tar_target(file, "data.csv", format = "file"),
-  tar_target(raw_data, read.csv(file)),
-  tar_target(clean_data, raw_data |> filter(!is.na(value))),
-  tar_target(summary, summarize(clean_data, mean = mean(value)))
-)
-```
-:::
-
-<br/>
-
-Run the pipeline:
-
-::: {.small}
-```r
-tar_visnetwork()
-tar_make()
-tar_read(summary)
-```
-:::
-
-
-## HW4 pipeline with targets
-
-::: {.small}
-```r
-# _targets.R
-library(targets)
-
-list(
-  # Get La Quinta data
-  tar_target(lq_html_files, {
-    source("get_lq.R")
-    list.files("data/lq", pattern = "*.html", full.names = TRUE)
-  }),
-
-  tar_target(lq_data, {
-    source("parse_lq.R")
-    readRDS("data/lq.rds")
-  }, depend_on = lq_html_files),
-
-  # Get Denny's data
-  tar_target(dennys_html_files, {
-    source("get_dennys.R")
-    list.files("data/dennys", pattern = "*.html", full.names = TRUE)
-  }),
-
-  tar_target(dennys_data, {
-    source("parse_dennys.R")
-    readRDS("data/dennys.rds")
-  }, depend_on = dennys_html_files),
-
-  # Render final report
-  tar_quarto(hw4, "hw4.qmd")
-)
-```
-:::
-
-

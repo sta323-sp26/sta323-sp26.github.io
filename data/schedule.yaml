@@ -224,7 +224,7 @@ schedule:
 - week: 8
   day: 4
   lecture: "make (<i>async</i>)"
-  slides:
+  slides: Lec17
   readings:
     - text: Minimal make
       link: https://kbroman.org/minimal_make/
