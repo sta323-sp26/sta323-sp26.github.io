@@ -81,7 +81,7 @@ server = function(input, output, session) {
       unname()
     
     g = ggplot(d(), aes(x=p, y=density, color=distribution)) +
-    geom_line(size=1.5) +
+    geom_line(linewidth=1.5) +
     geom_ribbon(aes(ymax=density, fill=distribution), ymin=0, alpha=0.5) +
     scale_color_manual(values = color_pal) +
     scale_fill_manual(values = color_pal)
