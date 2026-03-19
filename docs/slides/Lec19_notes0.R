@@ -11,7 +11,6 @@ ui = page_sidebar(
     h4("Prior:"),
     numericInput("alpha", "Prior # of head", min=0, value=5),
     numericInput("beta", "Prior # of tails", min=0, value=5),
-    checkboxInput("options", "Show Options", value = FALSE)
   ),
   plotOutput("plot"),
   tableOutput("table")
