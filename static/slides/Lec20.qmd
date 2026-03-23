@@ -62,7 +62,9 @@ Jeff Dean's original [talk](http://static.googleusercontent.com/media/research.g
 
 ## Implications for big data
 
-Lets imagine we have a *10 GB* flat data file and that we want to select certain rows based on a particular criterion. This requires a sequential read across the entire data set.
+Let's imagine we have a *10 GB* flat data file and that we want to select certain rows based on a particular criterion (filtering). 
+
+This requires a sequential read across the entire data set.
 
 
 | File Location    | Performance                        | Time        |
@@ -73,12 +75,10 @@ Lets imagine we have a *10 GB* flat data file and that we want to select certain
 
 <br/>
 
-This is just for *reading* sequential data, if we make any modifications (*writing*) or the data is fragmented things are much worse. 
+This is just for *reading* the sequential data, if we make any modifications (*writing*) or the data is fragmented things are much worse. 
 
 
 ## Blocks
-
-<br/>
 
 #### Cost:
 ::: {.center}
@@ -94,19 +94,21 @@ Disk <<< SSD << Memory
 <br/>
 
 ::: {.fragment}
-So usually possible to grow our disk storage to accommodate our data. However, memory is usually the limiting resource, and if we can't fit everything into memory?
+Disk is cheap but slow; memory is fast but limited. 
+
+What do we do when our data doesn't fit in memory?
 :::
 
-<p/>
-
 ::: {.fragment}
-Create *blocks* - group related data (i.e. rows) and read in multiple rows at a time. Optimal size will depend on the task and the properties of the disk.
+Create *blocks* — group related rows and read multiple rows at a time, loading only what's needed (skip what we dont want). 
+
+Optimal block size depends on the task and the storage medium.
 :::
 
 
 ## Linear vs Binary Search
 
-Even with blocks, any kind of querying / subsetting of rows requires a linear search, which requires $\mathcal{O}(N)$ reads.
+Blocks reduce I/O, but any query still requires scanning all of them — a linear search requiring $\mathcal{O}(N)$ reads.
 
 . . .
 
@@ -120,33 +122,60 @@ We can do better if we are careful about how we structure our data, specifically
 
 * In databases these "sorted" columns are referred to as *indexes*.
 
-* Indexes require additional storage, but usually small enough to be kept in memory even if blocks need to stay on disk.
+* Indexes require additional storage, but are usually small enough to be kept in memory even when the blocks need to stay on disk.
 
 
-## and then?
+## So why databases?
 
-This is just barely scratching the surface,
+Implementing blocks, indexes, and query optimization correctly is hard:
 
-* Efficiency gains are not just for disk, access is access
+* The optimal strategy depends on your queries — and they change
 
-* In general, trade off between storage and efficiency
+* Data is modified (inserts, updates, deletes) — structures must stay consistent
 
-* Reality is a lot more complicated for everything mentioned so far, lots of very smart people have spent a lot of time thinking about and implementing tools
+* Multiple users may access data simultaneously — concurrency must be managed
 
-* Different tasks with different requirements require different implementations and have different criteria for optimization
+* Failures happen — data must remain correct and recoverable
+
+::: {.fragment}
+A database management system (DBMS) handles all of this for you, plus provides a standard query language (SQL) to express what you want, not how to get it.
+:::
 
 
 # Databases
 
+## SQLite
+
+SQLite is a lightweight, serverless, relational database engine:
+
+* Self-contained — the entire database lives in a single file (or in memory)
+
+* No separate server process — the library runs inside your application
+
+* Accessible directly via a CLI (`sqlite3`) or through language bindings (R, Python, etc.)
+
+* Full SQL support — joins, indexes, transactions, views, and more
+
+* Ubiquitous — embedded in browsers, phones, operating systems, and countless apps — likely the most widely deployed database engine in the world
+
+. . .
+
+It is not designed for high-concurrency or multi-user write workloads, but is an excellent tool for learning SQL and for single-user / embedded use cases.
+
+::: {.aside}
+See [sqlite.org](https://www.sqlite.org/) for more details
+:::
+
+
 ## R & databases - the DBI package
 
-Low level package for interfacing R with Database management systems (DBMS) that provides a common interface to achieve the following functionality:
+DBI provides a consistent R interface to any relational database. Rather than learning a different API for each database, DBI gives you one set of functions for:
 
-* connect/disconnect from DB
-* create and execute statements in the DB
-* extract results/output from statements
+* connecting/disconnecting from a DB
+* creating and executing statements
+* extracting results
 * error/exception handling
-* information (meta-data) from database objects
+* reading database metadata
 * transaction management (optional)
 
 
@@ -155,28 +184,9 @@ See [r-dbi.org](https://www.r-dbi.org/) for more details
 :::
 
 
-## DBI Backends
-
-DBI is a specification, not an implementation, and there are a number of packages that implement the DBI specification for different database systems. [Backends for R-DBI](https://r-dbi.org/backends/) lists all available backends, but some notable ones include:
-
-* `RPostgres`
-
-* `RMariaDB`
-
-* `RSQLite`
-
-* `odbc`
-
-* `bigrquery`
-
-* `duckdb`
-
-* `sparklyr`
-
-
 ## RSQLite
 
-Provides the implementation necessary to use DBI to interface with an SQLite database.
+RSQLite provides the backend needed to use DBI with SQLite databases. We'll use it throughout — Postgres, MySQL, DuckDB, and [many others](https://r-dbi.org/backends/) follow identical DBI patterns.
 
 ::: {.small}
 ```{r}
@@ -184,22 +194,32 @@ library(RSQLite)
 ```
 :::
 
-This package also loads the necessary DBI functions as well (via re-exporting).
+It re-exports DBI functions, so `library(RSQLite)` is all you need.
 
 . . .
 
-Once loaded we can create a connection to our database,
+Once loaded, create a connection to your database:
+
+```{r include=FALSE}
+unlink("employees.sqlite")
+```
 
 ::: {.small}
 ```{r}
-con = dbConnect(RSQLite::SQLite(), ":memory:")
+con = dbConnect(RSQLite::SQLite(), "employees.sqlite")
 str(con)
 ```
 :::
 
+::: {.aside}
+If `employees.sqlite` does not exist it will be created; if it does exist the existing database will be opened.
+:::
+
 
 ## Example Table
- 
+
+Let's walk through DBI operations using a simple employee table.
+
 ::: {.small}
 ```{r}
 employees = tibble(
@@ -253,7 +273,7 @@ dbListTables(con)
 
 ## Querying Tables
 
-Databases queries are transactional (see [ACID](https://en.wikipedia.org/wiki/ACID)) and are broken up into 3 steps:
+Database queries are transactional (see [ACID](https://en.wikipedia.org/wiki/ACID)) and follow three steps:
 
 ::: {.small}
 ```{r}
@@ -280,7 +300,7 @@ dbClearResult(res)
 
 ## For convenience
 
-There is also `dbGetQuery()` which combines all three steps,
+`dbGetQuery()` combines all three steps:
 
 ::: {.small}
 ```{r}
@@ -302,7 +322,7 @@ dbCreateTable(con, "iris", iris)
 
 ## Adding to tables
 
-Data can be added to an existing table via `dbAppendTable()`.
+Use `dbAppendTable()` to add data to an existing table.
 
 ::: {.small}
 ```{r}
@@ -321,6 +341,8 @@ dbGetQuery(con, "select * from iris") |>
 
 
 ## Closing the connection
+
+We can explicitly close the connection to the database when we're done with it, but R will automatically close it when the connection object is garbage collected.
 
 ::: {.small}
 ```{r}
@@ -347,9 +369,18 @@ con
 unlink("flights.sqlite")
 ```
 
-::: {.small}
+We will now create a new SQLite database,
+
+::: {.xsmall}
 ```{r}
-db = DBI::dbConnect(RSQLite::SQLite(), "flights.sqlite")
+db = DBI::dbConnect(RSQLite::SQLite(), "flights.sqlite") # New flights database
+```
+:::
+
+and copy data into using `dplyr`'s convenience functions
+
+::: {.xsmall}
+```{r}
 ( flight_tbl = dplyr::copy_to(
     db, nycflights13::flights, name = "flights", temporary = FALSE) )
 ```
@@ -371,7 +402,7 @@ pryr::object_size(nycflights13::flights)
 ```
 :::
 
-## File size
+. . .
 
 ::: {.small}
 ```{r}
@@ -381,7 +412,7 @@ fs::dir_info(glob = "*.sqlite") |>
 :::
 
 
-## What is `flight_tbl`?
+## What is `flight_tbl`? {.scrollable}
 
 ::: {.xsmall}
 ```{r}
@@ -401,6 +432,8 @@ str(flight_tbl)
 
 ## Accessing existing tables
 
+If we have a database with an existing table, we can create a reference to it using `dplyr::tbl()`,
+
 ::: {.small}
 ```{r}
 dplyr::tbl(db, "flights")
@@ -409,6 +442,8 @@ dplyr::tbl(db, "flights")
 
 
 ## Using dplyr with sqlite 
+
+Just like with local data frames, dplyr can be used to manipulate data in the database.
 
 :::: {.columns .small}
 ::: {.column width='50%'}
@@ -438,7 +473,7 @@ dplyr / dbplyr uses lazy evaluation as much as possible, particularly when worki
 
 * Therefore, by default `dplyr`
 
-    * won't connect and query the database until absolutely necessary (e.g. show output),
+    * won't connect and query the database until absolutely necessary (e.g. showing output),
 
     * and unless explicitly told to, will only query a handful of rows to give a sense of what the result will look like.
     
@@ -494,7 +529,7 @@ class(oct_21)
 ```
 
 ```{r}
-show_query(oct_21)
+dplyr::show_query(oct_21)
 ```
 :::
 
@@ -515,7 +550,7 @@ oct_21 |>
   summarize(
     n=n(), .by = c(origin, dest)
   ) |> 
-  show_query()
+  dplyr::show_query()
 ```
 :::
 ::::
@@ -526,13 +561,15 @@ oct_21 |>
 ```{r}
 oct_21 |> 
   count(origin, dest) |> 
-  show_query()
+  dplyr::show_query()
 ```
 :::
 
 ## SQL Translation 
 
-In general, dplyr / dbplyr knows how to translate basic math, logical, and summary functions from R to SQL. dbplyr has a function, `translate_sql()`, that lets you experiment with how R functions are translated to SQL. 
+In general, dplyr / dbplyr knows how to translate basic math, logical, and summary functions from R to SQL. 
+
+dbplyr has the function, `translate_sql()`, that lets you experiment with how R functions are translated to SQL. 
 
 . . .
 
@@ -543,10 +580,13 @@ con = dbplyr::simulate_dbi()
 dbplyr::translate_sql(x == 1 & (y < 2 | z > 3), con=con)
 dbplyr::translate_sql(x ^ 2 < 10, con=con)
 dbplyr::translate_sql(x %% 2 == 10, con=con)
+dbplyr::translate_sql(sd(x), con=con)
 ```
 :::
 
-. . .
+
+##
+
 
 ::: {.xsmall}
 ```{r}
@@ -556,12 +596,12 @@ dbplyr::translate_sql(mean(x, na.rm=TRUE), con=con)
 ```
 :::
 
-##
+. . .
 
 ::: {.xsmall}
 ```{r}
 #| error: True
-dbplyr::translate_sql(sd(x), con=con)
+
 dbplyr::translate_sql(paste(x,y), con=con)
 dbplyr::translate_sql(cumsum(x), con=con)
 dbplyr::translate_sql(lag(x), con=con)
@@ -582,7 +622,13 @@ dbplyr::translate_sql(lag(x), con = db)
 :::
 
 
+::: {.aside}
+`db` here is our SQLite connection to the flights database, so the translations are specific to SQLite's SQL dialect.
+:::
+
 ## Complications?
+
+No all R functions have a translation to SQL, and not all translations are perfect - when `dbplyr` encounters a function it doesn't know how to translate, it will include the function verbatim and hope for the best.
 
 ::: {.small}
 ```{r}
@@ -594,6 +640,103 @@ oct_21 |> mutate(tailnum_n_prefix = grepl("^N", tailnum))
 oct_21 |> mutate(tailnum_n_prefix = grepl("^N", tailnum)) |> show_query()
 ```
 :::
+
+
+## Joins
+
+```{r include=FALSE}
+dplyr::copy_to(db, nycflights13::airlines, name = "airlines", temporary = FALSE, overwrite = TRUE)
+airlines_tbl = dplyr::tbl(db, "airlines")
+```
+
+Join verbs (`left_join()`, `inner_join()`, etc.) work with database tables exactly as they do with data frames:
+
+:::: {.columns .xsmall}
+::: {.column width='50%'}
+```{r}
+flight_tbl |>
+  left_join(airlines_tbl, by = "carrier") |>
+  count(name, origin) |>
+  arrange(desc(n))
+```
+:::
+::: {.column width='50%' .fragment}
+```{r}
+flight_tbl |>
+  left_join(airlines_tbl, by = "carrier") |>
+  count(name, origin) |>
+  arrange(desc(n)) |>
+  show_query()
+```
+:::
+::::
+
+
+## Computation happens in the database {.scrollable}
+
+::: {.medium}
+All dplyr operations on a database table are translated to SQL and executed by the database — no R computation happens until you `collect()`.
+:::
+
+. . .
+
+::: {.medium}
+This means you cannot mix local objects with database tables:
+:::
+
+::: {.xsmall}
+```{r}
+#| error: true
+local_df = data.frame(origin = c("JFK", "LGA"))
+flight_tbl |> inner_join(local_df, by = "origin")
+```
+:::
+
+. . .
+
+::: {.medium}
+To work around this, either `collect()` the database table first, or copy the local object into the database:
+:::
+
+::: {.xsmall}
+```{r}
+flight_tbl |> inner_join(local_df, by = "origin", copy = TRUE)
+```
+:::
+
+
+## Window functions
+
+::: {.medium}
+Window functions compute a value for each row using values from a surrounding partition. Within a `group_by()` + `mutate()`, dplyr translates these to SQL `OVER()` clauses:
+:::
+
+:::: {.columns .xxsmall}
+::: {.column width='50%'}
+```{r}
+flight_tbl |>
+  filter(!is.na(dep_delay)) |>
+  group_by(origin) |>
+  mutate(delay_rank = min_rank(desc(dep_delay))) |>
+  filter(delay_rank <= 3) |>
+  select(origin, dest, dep_delay, delay_rank) |>
+  arrange(origin, delay_rank)
+```
+:::
+::: {.column width='50%' .fragment}
+```{r}
+flight_tbl |>
+  filter(!is.na(dep_delay)) |>
+  group_by(origin) |>
+  mutate(delay_rank = min_rank(desc(dep_delay))) |>
+  filter(delay_rank <= 3) |>
+  select(origin, dest, dep_delay, delay_rank) |>
+  arrange(origin, delay_rank) |>
+  show_query()
+```
+:::
+::::
+
 
 
 # SQL to R / dplyr
@@ -653,7 +796,7 @@ tidyquery::show_dplyr(
 
 ## sqldf
 
-:::: {.columns .small}
+:::: {.columns .xsmall}
 ::: {.column width='50%'}
 ```{r}
 sqldf::sqldf(
@@ -677,6 +820,30 @@ sqldf::sqldf(
 ```
 :::
 ::::
+
+
+# Conclusions
+
+
+## dplyr / dbplyr vs DBI
+
+dplyr / dbplyr translates R expressions into SQL **SELECT** queries — it is a read-only interface:
+
+::: {.small}
+| Operation                  | dplyr / dbplyr | DBI                                      |
+|:---------------------------|:--------------:|:-----------------------------------------|
+| Query / filter / summarize | ✓              | ✓                                        |
+| Insert rows                | ✗              | ✓ (`dbAppendTable()`, `dbExecute()`)     |
+| Update rows                | ✗              | ✓ (`dbExecute()`)                        |
+| Delete rows                | ✗              | ✓ (`dbExecute()`)                        |
+| Create / drop tables       | ✗              | ✓ (`dbCreateTable()`, `dbRemoveTable()`) |
+:::
+
+<br/>
+
+::: {.fragment}
+For anything beyond reading data, go through DBI directly.
+:::
 
 
 ## Closing thoughts
