@@ -167,16 +167,16 @@ See [sqlite.org](https://www.sqlite.org/) for more details
 :::
 
 
-## R & databases - the DBI package
+## R & databases - DBI
 
-DBI provides a consistent R interface to any relational database. Rather than learning a different API for each database, DBI gives you one set of functions for:
+The DBI package provides a consistent R interface to most relational database. Rather than learning a different API for each database, DBI gives you one set of functions for:
 
-* connecting/disconnecting from a DB
+* connecting/disconnecting
 * creating and executing statements
 * extracting results
 * error/exception handling
 * reading database metadata
-* transaction management (optional)
+* transaction management
 
 
 ::: {.aside}
@@ -186,15 +186,15 @@ See [r-dbi.org](https://www.r-dbi.org/) for more details
 
 ## RSQLite
 
-RSQLite provides the backend needed to use DBI with SQLite databases. We'll use it throughout — Postgres, MySQL, DuckDB, and [many others](https://r-dbi.org/backends/) follow identical DBI patterns.
+RSQLite provides the backend needed to use DBI with SQLite databases. Postgres, MySQL, DuckDB, and [many others](https://r-dbi.org/backends/) follow similar DBI patterns.
 
-::: {.small}
+::: {.xsmall}
 ```{r}
 library(RSQLite)
 ```
 :::
 
-It re-exports DBI functions, so `library(RSQLite)` is all you need.
+`RSQLite` re-exports DBI functions so we do not need to load `DBI` as well.
 
 . . .
 
@@ -204,7 +204,7 @@ Once loaded, create a connection to your database:
 unlink("employees.sqlite")
 ```
 
-::: {.small}
+::: {.xsmall}
 ```{r}
 con = dbConnect(RSQLite::SQLite(), "employees.sqlite")
 str(con)
@@ -238,12 +238,14 @@ employees = tibble(
 
 ::: {.small}
 ```{r}
+# Show current tables
 dbListTables(con)
 ```
 :::
 
 ::: {.small}
 ```{r}
+# Create a new table and populate it
 dbWriteTable(con, name = "employees", value = employees)
 dbListTables(con)
 ```
@@ -254,6 +256,7 @@ dbListTables(con)
 
 ::: {.small}
 ```{r}
+# Create employs
 dbWriteTable(con, "employs", employees)
 dbListTables(con)
 ```
@@ -265,6 +268,7 @@ dbListTables(con)
 
 ::: {.small}
 ```{r}
+# Delete employs
 dbRemoveTable(con,"employs")
 dbListTables(con)
 ```
@@ -273,7 +277,7 @@ dbListTables(con)
 
 ## Querying Tables
 
-Database queries are transactional (see [ACID](https://en.wikipedia.org/wiki/ACID)) and follow three steps:
+Database queries are transactional (see [ACID](https://en.wikipedia.org/wiki/ACID)) and follow the steps:
 
 ::: {.small}
 ```{r}
@@ -286,6 +290,7 @@ Database queries are transactional (see [ACID](https://en.wikipedia.org/wiki/ACI
 ::: {.small}
 ```{r}
 dbFetch(res)
+dbHasCompleted(res)
 ```
 :::
 
@@ -300,7 +305,7 @@ dbClearResult(res)
 
 ## For convenience
 
-`dbGetQuery()` combines all three steps:
+`dbGetQuery()` combines all the preceeding steps:
 
 ::: {.small}
 ```{r}
@@ -371,15 +376,15 @@ unlink("flights.sqlite")
 
 We will now create a new SQLite database,
 
-::: {.xsmall}
+::: {.mxsmall}
 ```{r}
 db = DBI::dbConnect(RSQLite::SQLite(), "flights.sqlite") # New flights database
 ```
 :::
 
-and copy data into using `dplyr`'s convenience functions
+and copy data using `dplyr`'s convenience functions
 
-::: {.xsmall}
+::: {.mxsmall}
 ```{r}
 ( flight_tbl = dplyr::copy_to(
     db, nycflights13::flights, name = "flights", temporary = FALSE) )
@@ -628,7 +633,7 @@ dbplyr::translate_sql(lag(x), con = db)
 
 ## Complications?
 
-No all R functions have a translation to SQL, and not all translations are perfect - when `dbplyr` encounters a function it doesn't know how to translate, it will include the function verbatim and hope for the best.
+Not all R functions have a translation to SQL, and not all translations are perfect - when `dbplyr` encounters a function it doesn't know how to translate, it will include the function verbatim and hope for the best.
 
 ::: {.small}
 ```{r}
@@ -684,7 +689,7 @@ All dplyr operations on a database table are translated to SQL and executed by t
 This means you cannot mix local objects with database tables:
 :::
 
-::: {.xsmall}
+::: {.mxsmall}
 ```{r}
 #| error: true
 local_df = data.frame(origin = c("JFK", "LGA"))
@@ -698,7 +703,7 @@ flight_tbl |> inner_join(local_df, by = "origin")
 To work around this, either `collect()` the database table first, or copy the local object into the database:
 :::
 
-::: {.xsmall}
+::: {.mxsmall}
 ```{r}
 flight_tbl |> inner_join(local_df, by = "origin", copy = TRUE)
 ```
@@ -711,7 +716,7 @@ flight_tbl |> inner_join(local_df, by = "origin", copy = TRUE)
 Window functions compute a value for each row using values from a surrounding partition. Within a `group_by()` + `mutate()`, dplyr translates these to SQL `OVER()` clauses:
 :::
 
-:::: {.columns .xxsmall}
+:::: {.columns .mxsmall}
 ::: {.column width='50%'}
 ```{r}
 flight_tbl |>
