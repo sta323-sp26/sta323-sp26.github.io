@@ -56,7 +56,7 @@ pre.shell > code > span > a::after {
 }
 ```
 
-Structures Query Language is a special purpose language for interacting with (querying and modifying) indexed tabular data. 
+Structured Query Language is a special purpose language for interacting with (querying and modifying) indexed tabular data.
 
 * ANSI Standard but with dialect divergence (MySql, Postgres, SQLite, etc.)
 
@@ -67,7 +67,7 @@ Structures Query Language is a special purpose language for interacting with (qu
 
 ## DuckDB
 
-> DuckDB is an open-source column-oriented relational database management system (RDBMS) originally developed by Mark Raasveldt and Hannes Mühleisen at the Centrum Wiskunde & Informatica (CWI) in the Netherlands and first released in 2019. The project has over 6 million downloads per month. It is designed to provide high performance on complex queries against large databases in embedded configuration, such as combining tables with hundreds of columns and billions of rows. Unlike other embedded databases (for example, SQLite) DuckDB is not focusing on transactional (OLTP) applications and instead is specialized for online analytical processing (OLAP) workloads.
+> DuckDB is an open-source column-oriented relational database management system (RDBMS) originally developed by Mark Raasveldt and Hannes Mühleisen at the Centrum Wiskunde & Informatica (CWI) in the Netherlands and first released in 2019. The project has over 6 million downloads per month. It is designed to provide high performance on complex queries against large databases in embedded configuration, such as combining tables with hundreds of columns and billions of rows. Unlike other embedded databases (for example, SQLite) DuckDB is not focusing on transactional (OLTP) applications and instead is specialized for *online analytical processing (OLAP)* workloads.
 
 From [Wikipedia - DuckDB](https://en.wikipedia.org/wiki/DuckDB)
 
@@ -117,17 +117,19 @@ tbl(con, "flights") |>
 
 ## Connecting via CLI
 
+::: {.small}
 ```shell
 #| eval: false
 duckdb employees.duckdb
 ```
 ```
-v1.2.1 8e52ec4395
+DuckDB v1.5.1 (Variegata)
 Enter ".help" for usage hints.
 ```
 ```sql
  
 ```
+:::
 
 
 
@@ -140,7 +142,18 @@ Dot commands are expressions that begins with `.` and are specific to the DuckDB
 .tables
 ```
 ```
-## employees
+ ── employees ─── 
+ ───── main ───── 
+┌────────────────┐
+│   employees    │
+│                │
+│ name   varchar │
+│ email  varchar │
+│ salary double  │
+│ dept   varchar │
+│                │
+│     6 rows     │
+└────────────────┘
 ```
 :::
 
@@ -170,7 +183,7 @@ Dot commands are expressions that begins with `.` and are specific to the DuckDB
 
 <br/>
 
-A full list of available dot commands can be found [here](https://duckdb.org/docs/api/cli/dot_commands.html) or listed via `.help` in the CLI.
+A full list of available dot commands can be found [here](https://duckdb.org/docs/stable/clients/cli/dot_commands.html) or listed via `.help` in the CLI.
 
 
 ## SELECT Statements
@@ -188,14 +201,14 @@ SELECT * FROM employees;
 ## │ Carol   │ carol@company.com │ 30000.0 │ Sales      │
 ## │ Dave    │ dave@company.com  │ 33000.0 │ Accounting │
 ## │ Eve     │ eve@company.com   │ 44000.0 │ Sales      │
-## │ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │
+## │ Frank   │ frank@company.com │ 37000.0 │ Sales      │
 ## └─────────┴───────────────────┴─────────┴────────────┘
 ```
 
 
 ## Output formats
 
-The format of duckdb's output (in the CLI) is controled via `.mode` -  the default is `duckbox`, see possible [output formats](https://duckdb.org/docs/api/cli/output_formats.html). 
+The format of duckdb's output (in the CLI) is controlled via `.mode` -  the default is `duckbox`, see possible [output formats](https://duckdb.org/docs/stable/clients/cli/output_formats.html). 
 
 :::: {.columns .xxsmall}
 ::: {.column width='50%'}
@@ -210,7 +223,7 @@ SELECT * FROM employees;
 ## Carol,carol@company.com,30000.0,Sales
 ## Dave,dave@company.com,33000.0,Accounting
 ## Eve,eve@company.com,44000.0,Sales
-## Frank,frank@comany.com,37000.0,Sales
+## Frank,frank@company.com,37000.0,Sales
 ```
 :::
 
@@ -228,7 +241,7 @@ SELECT * FROM employees;
 ## | Carol | carol@company.com | 30000.0 | Sales      |
 ## | Dave  | dave@company.com  | 33000.0 | Accounting |
 ## | Eve   | eve@company.com   | 44000.0 | Sales      |
-## | Frank | frank@comany.com  | 37000.0 | Sales      |
+## | Frank | frank@company.com | 37000.0 | Sales      |
 ```
 :::
 ::::
@@ -245,7 +258,7 @@ SELECT * FROM employees;
 ## {"name":"Carol","email":"carol@company.com","salary":30000.0,"dept":"Sales"},
 ## {"name":"Dave","email":"dave@company.com","salary":33000.0,"dept":"Accounting"},
 ## {"name":"Eve","email":"eve@company.com","salary":44000.0,"dept":"Sales"},
-## {"name":"Frank","email":"frank@comany.com","salary":37000.0,"dept":"Sales"}]
+## {"name":"Frank","email":"frank@company.com","salary":37000.0,"dept":"Sales"}]
 ```
 :::
 
@@ -260,7 +273,7 @@ INSERT INTO "table"("name",email,salary,dept) VALUES('Bob','bob@company.com',400
 INSERT INTO "table"("name",email,salary,dept) VALUES('Carol','carol@company.com',30000.0,'Sales');
 INSERT INTO "table"("name",email,salary,dept) VALUES('Dave','dave@company.com',33000.0,'Accounting');
 INSERT INTO "table"("name",email,salary,dept) VALUES('Eve','eve@company.com',44000.0,'Sales');
-INSERT INTO "table"("name",email,salary,dept) VALUES('Frank','frank@comany.com',37000.0,'Sales');
+INSERT INTO "table"("name",email,salary,dept) VALUES('Frank','frank@company.com',37000.0,'Sales');
 ```
 :::
 ::::
@@ -269,13 +282,16 @@ INSERT INTO "table"("name",email,salary,dept) VALUES('Frank','frank@comany.com',
 # A brief tour of SQL
 
 
-## select() using SELECT
+## SELECT
 
-We can subset for certain columns (and rename them) using `SELECT`
+We can subset and rename columns, sort results, and limit output using `SELECT`, `ORDER BY`, and `LIMIT`.
 
 ::: {.small}
 ```sql
-SELECT name AS first_name, salary FROM employees;
+SELECT name AS first_name, salary
+FROM employees
+ORDER BY salary DESC
+LIMIT 3;
 ```
 ```
 ## ┌────────────┬─────────┐
@@ -283,62 +299,34 @@ SELECT name AS first_name, salary FROM employees;
 ## │  varchar   │ double  │
 ## ├────────────┼─────────┤
 ## │ Alice      │ 52000.0 │
-## │ Bob        │ 40000.0 │
-## │ Carol      │ 30000.0 │
-## │ Dave       │ 33000.0 │
 ## │ Eve        │ 44000.0 │
-## │ Frank      │ 37000.0 │
+## │ Bob        │ 40000.0 │
 ## └────────────┴─────────┘
 ```
 :::
 
+. . .
 
-## arrange() using ORDER BY
+`DISTINCT` removes duplicate values:
 
-
-We can sort our results by adding `ORDER BY` to our `SELECT` statement and reverse the ordering by include `DESC`.
-
-:::: {.columns .xxsmall}
-::: {.column width='50%'}
+::: {.small}
 ```sql
-SELECT name AS first_name, salary FROM employees 
-  ORDER BY salary;
+SELECT DISTINCT dept FROM employees;
 ```
 ```
-## ┌────────────┬─────────┐
-## │ first_name │ salary  │
-## │  varchar   │ double  │
-## ├────────────┼─────────┤
-## │ Carol      │ 30000.0 │
-## │ Dave       │ 33000.0 │
-## │ Frank      │ 37000.0 │
-## │ Bob        │ 40000.0 │
-## │ Eve        │ 44000.0 │
-## │ Alice      │ 52000.0 │
-## └────────────┴─────────┘
+## ┌────────────┐
+## │    dept    │
+## │  varchar   │
+## ├────────────┤
+## │ Accounting │
+## │ Sales      │
+## └────────────┘
 ```
 :::
 
-::: {.column width='50%'}
-```sql
-SELECT name AS first_name, salary FROM employees 
-  ORDER BY salary DESC;
-```
-```
-## ┌────────────┬─────────┐
-## │ first_name │ salary  │
-## │  varchar   │ double  │
-## ├────────────┼─────────┤
-## │ Alice      │ 52000.0 │
-## │ Eve        │ 44000.0 │
-## │ Bob        │ 40000.0 │
-## │ Frank      │ 37000.0 │
-## │ Dave       │ 33000.0 │
-## │ Carol      │ 30000.0 │
-## └────────────┴─────────┘
-```
+::: {.aside}
+SQL clauses are evaluated in a different order than they are written: `FROM` → `WHERE` → `GROUP BY` → `SELECT` → `ORDER BY` → `LIMIT`
 :::
-::::
 
 
 ## filter() using WHERE
@@ -356,7 +344,7 @@ SELECT * FROM employees WHERE salary < 40000;
 ## ├─────────┼───────────────────┼─────────┼────────────┤
 ## │ Carol   │ carol@company.com │ 30000.0 │ Sales      │
 ## │ Dave    │ dave@company.com  │ 33000.0 │ Accounting │
-## │ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │
+## │ Frank   │ frank@company.com │ 37000.0 │ Sales      │
 ## └─────────┴───────────────────┴─────────┴────────────┘
 ```
 
@@ -369,48 +357,46 @@ SELECT * FROM employees WHERE salary < 40000 AND dept = 'Sales';
 ## │ varchar │      varchar      │ double  │ varchar │
 ## ├─────────┼───────────────────┼─────────┼─────────┤
 ## │ Carol   │ carol@company.com │ 30000.0 │ Sales   │
-## │ Frank   │ frank@comany.com  │ 37000.0 │ Sales   │
+## │ Frank   │ frank@company.com │ 37000.0 │ Sales   │
 ## └─────────┴───────────────────┴─────────┴─────────┘
 ```
 :::
 
-## group_by() and summarize() via GROUP BY
+## GROUP BY and HAVING
 
-We can create groups for the purpose of summarizing using `GROUP BY`. 
+`GROUP BY` groups rows for aggregation; `HAVING` filters *after* aggregation (like `WHERE` but for grouped results).
 
 ::: {.small}
 ```sql
-SELECT dept, COUNT(*) AS n FROM employees GROUP BY dept;
+SELECT dept, COUNT(*) AS n, round(AVG(salary),2) AS avg_salary
+FROM employees GROUP BY dept;
 ```
 ```
-## ┌────────────┬───────┐
-## │    dept    │   n   │
-## │  varchar   │ int64 │
-## ├────────────┼───────┤
-## │ Sales      │     3 │
-## │ Accounting │     3 │
-## └────────────┴───────┘
+## ┌────────────┬───────┬────────────┐
+## │    dept    │   n   │ avg_salary │
+## │  varchar   │ int64 │   double   │
+## ├────────────┼───────┼────────────┤
+## │ Sales      │     3 │    37000.0 │
+## │ Accounting │     3 │  41666.67  │
+## └────────────┴───────┴────────────┘
 ```
 :::
 
-
-## head() using LIMIT
-
-We can limit the number of results we get by using `LIMIT` 
+. . .
 
 ::: {.small}
 ```sql
-SELECT * FROM employees LIMIT 3;
+SELECT dept, COUNT(*) AS n, round(AVG(salary),2) AS avg_salary
+FROM employees GROUP BY dept
+HAVING avg_salary > 38000;
 ```
 ```
-## ┌─────────┬───────────────────┬─────────┬────────────┐
-## │  name   │       email       │ salary  │    dept    │
-## │ varchar │      varchar      │ double  │  varchar   │
-## ├─────────┼───────────────────┼─────────┼────────────┤
-## │ Alice   │ alice@company.com │ 52000.0 │ Accounting │
-## │ Bob     │ bob@company.com   │ 40000.0 │ Accounting │
-## │ Carol   │ carol@company.com │ 30000.0 │ Sales      │
-## └─────────┴───────────────────┴─────────┴────────────┘
+## ┌────────────┬───────┬────────────┐
+## │    dept    │   n   │ avg_salary │
+## │  varchar   │ int64 │   double   │
+## ├────────────┼───────┼────────────┤
+## │ Accounting │     3 │  41666.67  │
+## └────────────┴───────┴────────────┘
 ```
 :::
 
@@ -425,15 +411,15 @@ Using duckdb calculate the following quantities for `employees.duckdb`,
 2. The average salary within each department
 
 ::: {.aside}
-[DuckDB's aggregation functions](https://duckdb.org/docs/sql/functions/aggregates)
+[DuckDB's aggregation functions](https://duckdb.org/docs/stable/sql/functions/aggregates.html)
 :::
 
 
 ## Reading from CSV files
 
-DuckDB has a neat trick in that it can treat files as tables (for supported formats), this lets you query them without having to explicitly create a table in the database and .
+DuckDB has a neat trick in that it can treat files as tables (for supported formats), this lets you query them without having to explicitly create a table in the database.
 
-We can also make this explicit by using the `read_csv()` function, which is useful if we need to use custom options (e.g. specify a different delimeter)
+We can also make this explicit by using the `read_csv()` function, which is useful if we need to use custom options (e.g. specify a different delimiter)
 
 :::: {.columns .xsmall}
 ::: {.column width='50%'}
@@ -481,7 +467,18 @@ If we wanted to explicitly create a table from the CSV file this is also possibl
 .tables
 ```
 ```
-## employees
+ ── employees ─── 
+ ───── main ───── 
+┌────────────────┐
+│   employees    │
+│                │
+│ name   varchar │
+│ email  varchar │
+│ salary double  │
+│ dept   varchar │
+│                │
+│     6 rows     │
+└────────────────┘
 ```
 :::
 
@@ -496,7 +493,18 @@ CREATE TABLE phone AS
 .tables
 ```
 ```
-## employees  phone
+ ─────────── employees ─────────── 
+ ───────────── main ────────────── 
+┌────────────────┐┌───────────────┐
+│   employees    ││     phone     │
+│                ││               │
+│ name   varchar ││ name  varchar │
+│ email  varchar ││ phone varchar │
+│ salary double  ││               │
+│ dept   varchar ││    4 rows     │
+│                │└───────────────┘
+│     6 rows     │
+└────────────────┘
 ```
 :::
 
@@ -521,14 +529,25 @@ SELECT * FROM phone;
 
 ## Views from CSV
 
-It is also possible to create a view from a file - this acts like a table but the data is not copied from the file.
+It is also possible to create a view from a file - this acts like a table but the data is not copied from the file. This means the file must remain accessible and is re-read on every query, but no storage is used within the database.
 
 ::: {.small .extra-pb}
 ```sql
 .tables
 ```
 ```
-## employees
+ ─────────── employees ─────────── 
+ ───────────── main ────────────── 
+┌────────────────┐┌───────────────┐
+│   employees    ││     phone     │
+│                ││               │
+│ name   varchar ││ name  varchar │
+│ email  varchar ││ phone varchar │
+│ salary double  ││               │
+│ dept   varchar ││    4 rows     │
+│                │└───────────────┘
+│     6 rows     │
+└────────────────┘
 ```
 :::
 
@@ -543,7 +562,18 @@ CREATE VIEW phone_view AS
 .tables
 ```
 ```
-## employees  phone  phone_view
+ ─────────────────── employees ──────────────────── 
+ ────────────────────── main ────────────────────── 
+┌────────────────┐┌───────────────┐┌───────────────┐
+│   employees    ││     phone     ││  phone_view   │
+│                ││               ││               │
+│ name   varchar ││ name  varchar ││ name  varchar │
+│ email  varchar ││ phone varchar ││ phone varchar │
+│ salary double  ││               │└───────────────┘
+│ dept   varchar ││    4 rows     │
+│                │└───────────────┘
+│     6 rows     │                 
+└────────────────┘  
 ```
 :::
 
@@ -565,6 +595,72 @@ SELECT * FROM phone_view;
 ## └─────────┴──────────────┘
 ```
 :::
+
+## Parquet
+
+Parquet is a binary, columnar file format widely used in data science and analytics.
+
+:::: {.columns}
+::: {.column width='50%'}
+**Row-oriented (CSV)**
+
+```
+name,  salary, dept
+Alice, 52000,  Accounting
+Bob,   40000,  Accounting
+Carol, 30000,  Sales
+```
+Reading one column requires reading every row.
+:::
+
+::: {.column width='50%'}
+**Column-oriented (Parquet)**
+
+```
+name:   [Alice, Bob, Carol, ...]
+salary: [52000, 40000, 30000, ...]
+dept:   [Accounting, Accounting, Sales, ...]
+```
+Reading one column skips all others entirely.
+:::
+::::
+
+Key advantages over CSV: **compressed** (much smaller files), **typed** (no schema inference), **fast for analytical queries** (only reads needed columns). Widely used with Spark, Arrow, Pandas, and cloud data warehouses.
+
+
+## Reading from Parquet files
+
+DuckDB can query Parquet files directly — no explicit import step needed.
+
+:::: {.columns .small}
+::: {.column width='50%'}
+```sql
+SELECT * FROM 'data.parquet' LIMIT 5;
+```
+:::
+::: {.column width='50%'}
+```sql
+SELECT * FROM 'data/*.parquet' LIMIT 5;
+```
+:::
+::::
+
+Glob patterns let you query multiple files as a single table — useful for partitioned datasets.
+
+. . .
+
+The same `CREATE TABLE` / `CREATE VIEW` pattern from CSV works with Parquet:
+
+::: {.small}
+```sql
+CREATE VIEW flights AS SELECT * FROM 'flights/*.parquet';
+```
+:::
+
+::: {.aside}
+DuckDB can also read remote Parquet files directly via HTTPS (with the `httpfs` extension), enabling queries over S3 or other cloud storage without downloading the file first.
+:::
+
 
 ## Deleting tables and views
 
@@ -598,70 +694,11 @@ DROP VIEW phone_view;
 :::
 
 
-## Joins - Default
+## Inner Join
 
-If not otherwise specified the default join in DuckDB will be an inner join.
-
-::: {.small}
-```sql
-SELECT * FROM employees JOIN phone;
-```
-```
-## Parser Error: syntax error at or near ";"
-## LINE 1: SELECT * FROM employees JOIN phone;
-```
-:::
-
-this error occurs because duckdb requires an `ON` or `USING` clause unless using `NATURAL`.
-
-. . .
-
+DuckDB requires an `ON` or `USING` clause for joins — `JOIN` alone is a syntax error.
 
 ::: {.small}
-```sql
-SELECT * FROM employees NATURAL JOIN phone;
-```
-```
-## ┌─────────┬───────────────────┬─────────┬────────────┬──────────────┐
-## │  name   │       email       │ salary  │    dept    │    phone     │
-## │ varchar │      varchar      │ double  │  varchar   │   varchar    │
-## ├─────────┼───────────────────┼─────────┼────────────┼──────────────┤
-## │ Bob     │ bob@company.com   │ 40000.0 │ Accounting │ 919 555-1111 │
-## │ Carol   │ carol@company.com │ 30000.0 │ Sales      │ 919 555-2222 │
-## │ Eve     │ eve@company.com   │ 44000.0 │ Sales      │ 919 555-3333 │
-## │ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │ 919 555-4444 │
-## └─────────┴───────────────────┴─────────┴────────────┴──────────────┘
-```
-:::
-
-
-
-## Inner Join - Explicit
-
-::: {.xsmall}
-```sql
-SELECT * FROM employees JOIN phone ON employees.name = phone.name;
-```
-```
-##┌─────────┬───────────────────┬─────────┬────────────┬─────────┬──────────────┐
-##│  name   │       email       │ salary  │    dept    │  name   │    phone     │
-##│ varchar │      varchar      │ double  │  varchar   │ varchar │   varchar    │
-##├─────────┼───────────────────┼─────────┼────────────┼─────────┼──────────────┤
-##│ Bob     │ bob@company.com   │ 40000.0 │ Accounting │ Bob     │ 919 555-1111 │
-##│ Carol   │ carol@company.com │ 30000.0 │ Sales      │ Carol   │ 919 555-2222 │
-##│ Eve     │ eve@company.com   │ 44000.0 │ Sales      │ Eve     │ 919 555-3333 │
-##│ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │ Frank   │ 919 555-4444 │
-##└─────────┴───────────────────┴─────────┴────────────┴─────────┴──────────────┘```
-```
-:::
-
-. . .
-
-::: {.small}
-to avoid the duplicate `name` column we can specify `USING` instead of `ON`
-:::
-
-::: {.xsmall}
 ```sql
 SELECT * FROM employees JOIN phone USING(name);
 ```
@@ -673,20 +710,22 @@ SELECT * FROM employees JOIN phone USING(name);
 ## │ Bob     │ bob@company.com   │ 40000.0 │ Accounting │ 919 555-1111 │
 ## │ Carol   │ carol@company.com │ 30000.0 │ Sales      │ 919 555-2222 │
 ## │ Eve     │ eve@company.com   │ 44000.0 │ Sales      │ 919 555-3333 │
-## │ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │ 919 555-4444 │
+## │ Frank   │ frank@company.com │ 37000.0 │ Sales      │ 919 555-4444 │
 ## └─────────┴───────────────────┴─────────┴────────────┴──────────────┘
 ```
 :::
 
 ::: {.aside}
-As a rule, the `USING` (or `NATURAL`) keyword is used if the column names match between tables, otherwise `ON` is needed.
+`USING(col)` joins on a named column (no duplicate column in result); `ON t1.col = t2.col` is needed when column names differ. `NATURAL JOIN` automatically matches all common column names — convenient but can produce unexpected results when tables share more columns than intended (more on this shortly).
 :::
 
-## Left Join - Natural
+## Left Join
+
+`LEFT JOIN` keeps all rows from the left table, filling `NULL` for unmatched rows in the right table.
 
 ::: {.small}
 ```sql
-SELECT * FROM employees NATURAL LEFT JOIN phone;
+SELECT * FROM employees LEFT JOIN phone USING(name);
 ```
 ```
 ## ┌─────────┬───────────────────┬─────────┬────────────┬──────────────┐
@@ -696,96 +735,22 @@ SELECT * FROM employees NATURAL LEFT JOIN phone;
 ## │ Bob     │ bob@company.com   │ 40000.0 │ Accounting │ 919 555-1111 │
 ## │ Carol   │ carol@company.com │ 30000.0 │ Sales      │ 919 555-2222 │
 ## │ Eve     │ eve@company.com   │ 44000.0 │ Sales      │ 919 555-3333 │
-## │ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │ 919 555-4444 │
+## │ Frank   │ frank@company.com │ 37000.0 │ Sales      │ 919 555-4444 │
 ## │ Alice   │ alice@company.com │ 52000.0 │ Accounting │              │
 ## │ Dave    │ dave@company.com  │ 33000.0 │ Accounting │              │
 ## └─────────┴───────────────────┴─────────┴────────────┴──────────────┘
 ```
 :::
-
-## Left Join - Explicit
-
-::: {.mxsmall}
-```sql
-SELECT * FROM employees LEFT JOIN phone ON employees.name = phone.name;
-```
-```
-## ┌─────────┬───────────────────┬─────────┬────────────┬─────────┬──────────────┐
-## │  name   │       email       │ salary  │    dept    │  name   │    phone     │
-## │ varchar │      varchar      │ double  │  varchar   │ varchar │   varchar    │
-## ├─────────┼───────────────────┼─────────┼────────────┼─────────┼──────────────┤
-## │ Bob     │ bob@company.com   │ 40000.0 │ Accounting │ Bob     │ 919 555-1111 │
-## │ Carol   │ carol@company.com │ 30000.0 │ Sales      │ Carol   │ 919 555-2222 │
-## │ Eve     │ eve@company.com   │ 44000.0 │ Sales      │ Eve     │ 919 555-3333 │
-## │ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │ Frank   │ 919 555-4444 │
-## │ Alice   │ alice@company.com │ 52000.0 │ Accounting │         │              │
-## │ Dave    │ dave@company.com  │ 33000.0 │ Accounting │         │              │
-## └─────────┴───────────────────┴─────────┴────────────┴─────────┴──────────────┘
-```
-:::
-
-. . .
-
-::: {.small}
-Duplicate `name` column can be avoided by more restrictive `SELECT`,
-:::
-
-::: {.mxsmall}
-```sql
-SELECT employees.*, phone FROM employees LEFT JOIN phone ON employees.name = phone.name;
-```
-```
-## ┌─────────┬───────────────────┬─────────┬────────────┬──────────────┐
-## │  name   │       email       │ salary  │    dept    │    phone     │
-## │ varchar │      varchar      │ double  │  varchar   │   varchar    │
-## ├─────────┼───────────────────┼─────────┼────────────┼──────────────┤
-## │ Bob     │ bob@company.com   │ 40000.0 │ Accounting │ 919 555-1111 │
-## │ Carol   │ carol@company.com │ 30000.0 │ Sales      │ 919 555-2222 │
-## │ Eve     │ eve@company.com   │ 44000.0 │ Sales      │ 919 555-3333 │
-## │ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │ 919 555-4444 │
-## │ Alice   │ alice@company.com │ 52000.0 │ Accounting │              │
-## │ Dave    │ dave@company.com  │ 33000.0 │ Accounting │              │
-## └─────────┴───────────────────┴─────────┴────────────┴──────────────┘
-```
-:::
-
-
-
 
 ## Other Joins
 
-As you would expect all other standard joins are supported including `RIGHT JOIN`, `FULL JOIN`, `CROSS JOIN`, `SEMI JOIN`, `ANTI JOIN`, etc.
+All other standard joins are supported: `RIGHT JOIN`, `FULL JOIN`, `CROSS JOIN`, `SEMI JOIN`, `ANTI JOIN`, etc.
 
-::: {.xxsmall}
+::: {.small}
 ```sql
-SELECT employees.*, phone FROM employees NATURAL FULL JOIN phone;
-```
-```
-## ┌─────────┬───────────────────┬─────────┬────────────┬──────────────┐
-## │  name   │       email       │ salary  │    dept    │    phone     │
-## │ varchar │      varchar      │ double  │  varchar   │   varchar    │
-## ├─────────┼───────────────────┼─────────┼────────────┼──────────────┤
-## │ Bob     │ bob@company.com   │ 40000.0 │ Accounting │ 919 555-1111 │
-## │ Carol   │ carol@company.com │ 30000.0 │ Sales      │ 919 555-2222 │
-## │ Eve     │ eve@company.com   │ 44000.0 │ Sales      │ 919 555-3333 │
-## │ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │ 919 555-4444 │
-## │ Alice   │ alice@company.com │ 52000.0 │ Accounting │              │
-## │ Dave    │ dave@company.com  │ 33000.0 │ Accounting │              │
-## └─────────┴───────────────────┴─────────┴────────────┴──────────────┘
-```
-```sql
-SELECT employees.*, phone FROM employees NATURAL RIGHT JOIN phone;
-```
-```
-## ┌─────────┬───────────────────┬─────────┬────────────┬──────────────┐
-## │  name   │       email       │ salary  │    dept    │    phone     │
-## │ varchar │      varchar      │ double  │  varchar   │   varchar    │
-## ├─────────┼───────────────────┼─────────┼────────────┼──────────────┤
-## │ Bob     │ bob@company.com   │ 40000.0 │ Accounting │ 919 555-1111 │
-## │ Carol   │ carol@company.com │ 30000.0 │ Sales      │ 919 555-2222 │
-## │ Eve     │ eve@company.com   │ 44000.0 │ Sales      │ 919 555-3333 │
-## │ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │ 919 555-4444 │
-## └─────────┴───────────────────┴─────────┴────────────┴──────────────┘
+SELECT * FROM employees FULL JOIN phone USING(name);
+SELECT * FROM employees RIGHT JOIN phone USING(name);
+SELECT * FROM employees ANTI JOIN phone USING(name);
 ```
 :::
 
@@ -822,7 +787,7 @@ SELECT * FROM (
 ## │ Bob     │ bob@company.com   │ 40000.0 │ Accounting │ 919 555-1111 │
 ## │ Carol   │ carol@company.com │ 30000.0 │ Sales      │ 919 555-2222 │
 ## │ Eve     │ eve@company.com   │ 44000.0 │ Sales      │ 919 555-3333 │
-## │ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │ 919 555-4444 │
+## │ Frank   │ frank@company.com  │ 37000.0 │ Sales      │ 919 555-4444 │
 ## └─────────┴───────────────────┴─────────┴────────────┴──────────────┘
 ```
 :::
@@ -830,20 +795,20 @@ SELECT * FROM (
 
 ## Exercise 2
 
-Lets try to create a table that has a new column - `abv_avg` which contains how much more (or less) than the average, for their department, each person is paid.
+Let's try to create a table that has a new column - `abv_avg` which contains how much more (or less) than the average, for their department, each person is paid.
 
 Hint - This will require joining a subquery.
 
 <!--
 ```sql
-SELECT *, round(salary-avg,2) AS diff 
+SELECT *, round(salary-avg,2) AS abv_avg
 FROM employees
 NATURAL JOIN  (
   SELECT dept, round(avg(salary),2) AS avg FROM employees GROUP BY dept
 ) dept_avg
-ORDER dept, diff;
+ORDER BY dept, abv_avg;
 ## ┌─────────┬───────────────────┬─────────┬────────────┬──────────┬─────────┐
-## │  name   │       email       │ salary  │    dept    │   avg    │  diff   │
+## │  name   │       email       │ salary  │    dept    │   avg    │ abv_avg │
 ## │ varchar │      varchar      │ double  │  varchar   │  double  │ double  │
 ## ├─────────┼───────────────────┼─────────┼────────────┼──────────┼─────────┤
 ## │ Alice   │ alice@company.com │ 52000.0 │ Accounting │ 41666.67 │ 10333.0 │
@@ -851,7 +816,7 @@ ORDER dept, diff;
 ## │ Carol   │ carol@company.com │ 30000.0 │ Sales      │  37000.0 │ -7000.0 │
 ## │ Dave    │ dave@company.com  │ 33000.0 │ Accounting │ 41666.67 │ -8667.0 │
 ## │ Eve     │ eve@company.com   │ 44000.0 │ Sales      │  37000.0 │  7000.0 │
-## │ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │  37000.0 │     0.0 │
+## │ Frank   │ frank@company.com │ 37000.0 │ Sales      │  37000.0 │     0.0 │
 ## └─────────┴───────────────────┴─────────┴────────────┴──────────┴─────────┘
 ```
 -->
@@ -861,7 +826,7 @@ ORDER dept, diff;
 
 ## Setup
 
-To give us a bit more variety (and data), we have created another SQLite database `flights.duckdb` that contains both `nycflights13::flights` and `nycflights13::planes`, the latter of which has details on the characteristics of the planes in the dataset as identified by their tail numbers.
+To give us a bit more variety (and data), we have created another DuckDB database `flights.duckdb` that contains both `nycflights13::flights` and `nycflights13::planes`, the latter of which has details on each plane identified by tail number.
 
 ::: {.small}
 ```{r}
