@@ -1086,7 +1086,7 @@ max-height: 520px !important;
 }
 </style>
 </div>
-<p>Structures Query Language is a special purpose language for interacting with (querying and modifying) indexed tabular data.</p>
+<p>Structured Query Language is a special purpose language for interacting with (querying and modifying) indexed tabular data.</p>
 <ul>
 <li><p>ANSI Standard but with dialect divergence (MySql, Postgres, SQLite, etc.)</p></li>
 <li><p>This functionality maps very closely (but not exactly) with the data manipulation verbs present in dplyr.</p></li>
@@ -1096,7 +1096,7 @@ max-height: 520px !important;
 <section id="duckdb" class="slide level2">
 <h2>DuckDB</h2>
 <blockquote>
-<p>DuckDB is an open-source column-oriented relational database management system (RDBMS) originally developed by Mark Raasveldt and Hannes Mühleisen at the Centrum Wiskunde &amp; Informatica (CWI) in the Netherlands and first released in 2019. The project has over 6 million downloads per month. It is designed to provide high performance on complex queries against large databases in embedded configuration, such as combining tables with hundreds of columns and billions of rows. Unlike other embedded databases (for example, SQLite) DuckDB is not focusing on transactional (OLTP) applications and instead is specialized for online analytical processing (OLAP) workloads.</p>
+<p>DuckDB is an open-source column-oriented relational database management system (RDBMS) originally developed by Mark Raasveldt and Hannes Mühleisen at the Centrum Wiskunde &amp; Informatica (CWI) in the Netherlands and first released in 2019. The project has over 6 million downloads per month. It is designed to provide high performance on complex queries against large databases in embedded configuration, such as combining tables with hundreds of columns and billions of rows. Unlike other embedded databases (for example, SQLite) DuckDB is not focusing on transactional (OLTP) applications and instead is specialized for <em>online analytical processing (OLAP)</em> workloads.</p>
 </blockquote>
 <p>From <a href="https://en.wikipedia.org/wiki/DuckDB">Wikipedia - DuckDB</a></p>
 </section>
@@ -1108,7 +1108,7 @@ max-height: 520px !important;
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href></a><span class="fu">library</span>(DBI)</span>
 <span id="cb1-2"><a href></a>(<span class="at">con =</span> <span class="fu">dbConnect</span>(duckdb<span class="sc">::</span><span class="fu">duckdb</span>()))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>&lt;duckdb_connection c9240 driver=&lt;duckdb_driver dbdir=&#39;:memory:&#39; read_only=FALSE bigint=numeric&gt;&gt;</code></pre>
+<pre><code>&lt;duckdb_connection 387a0 driver=&lt;duckdb_driver dbdir=&#39;:memory:&#39; read_only=FALSE bigint=numeric&gt;&gt;</code></pre>
 </div>
 </div>
 </div>
@@ -1164,7 +1164,7 @@ max-height: 520px !important;
 <span id="cb7-5"><a href></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(n))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Source:     SQL [?? x 3]
-# Database:   DuckDB 1.5.0 [root@Darwin 25.3.0:R 4.5.3/:memory:]
+# Database:   DuckDB 1.5.0 [root@Darwin 25.4.0:R 4.5.3/:memory:]
 # Ordered by: desc(n)
    origin dest      n
    &lt;chr&gt;  &lt;chr&gt; &lt;dbl&gt;
@@ -1174,10 +1174,10 @@ max-height: 520px !important;
  4 JFK    SFO      23
  5 LGA    CLT      21
  6 EWR    ORD      18
- 7 LGA    BOS      16
- 8 EWR    SFO      16
- 9 JFK    BOS      16
-10 LGA    DCA      16
+ 7 LGA    DCA      16
+ 8 LGA    BOS      16
+ 9 EWR    SFO      16
+10 JFK    BOS      16
 # ℹ more rows</code></pre>
 </div>
 </div>
@@ -1190,93 +1190,128 @@ max-height: 520px !important;
 </section>
 <section id="connecting-via-cli" class="slide level2">
 <h2>Connecting via CLI</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode numberSource shell number-lines code-with-copy"><code class="sourceCode"><span id="cb9-1"><a href></a>#| eval: false</span>
-<span id="cb9-2"><a href></a>duckdb employees.duckdb</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>v1.2.1 8e52ec4395
+<div class="small">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode numberSource shell number-lines code-with-copy"><code class="sourceCode"><span id="cb9-1"><a href></a>duckdb employees.duckdb</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>DuckDB v1.5.1 (Variegata)
 Enter &quot;.help&quot; for usage hints.</code></pre>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb11-1"><a href></a> </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 </section>
 <section id="table-information" class="slide level2">
 <h2>Table information</h2>
 <p>Dot commands are expressions that begins with <code>.</code> and are specific to the DuckDB CLI, some examples include:</p>
-<div class="small">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb12-1"><a href></a>.<span class="kw">tables</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## employees</code></pre>
+<div class="xsmall">
+<div class="cell" data-layout-align="center" data-db="Lec21/employees.duckdb" data-session="employees">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb12-1"><a href></a>.tables</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> ── employees ─── 
+ ───── main ───── 
+┌────────────────┐
+│   employees    │
+│                │
+│ name   varchar │
+│ email  varchar │
+│ salary double  │
+│ dept   varchar │
+│                │
+│     6 rows     │
+└────────────────┘</code></pre>
+</div>
+</div>
 </div>
 <p>
-</p><div class="small">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb14-1"><a href></a>.<span class="kw">schema</span> employees</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## CREATE TABLE employees(&quot;name&quot; VARCHAR, email VARCHAR, salary DOUBLE, dept VARCHAR);</code></pre>
+</p><div class="xsmall">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb14-1"><a href></a>.schema employees</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CREATE TABLE employees(&quot;name&quot; VARCHAR, email VARCHAR, salary DOUBLE, dept VARCHAR);</code></pre>
 </div>
-<p>
-</p><div class="small">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb16-1"><a href></a>.<span class="kw">indexes</span> employees</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb17-1"><a href></a>.maxrows <span class="dv">20</span></span>
-<span id="cb17-2"><a href></a>.maxwidth <span class="dv">80</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><br></p>
-<p>A full list of available dot commands can be found <a href="https://duckdb.org/docs/api/cli/dot_commands.html">here</a> or listed via <code>.help</code> in the CLI.</p>
+</div>
+<p>A full list of available dot commands can be found <a href="https://duckdb.org/docs/stable/clients/cli/dot_commands.html">here</a> or listed via <code>.help</code> in the CLI.</p>
 </section>
 <section id="select-statements" class="slide level2">
 <h2>SELECT Statements</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb18-1"><a href></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> employees;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌─────────┬───────────────────┬─────────┬────────────┐
-## │  name   │       email       │ salary  │    dept    │
-## │ varchar │      varchar      │ double  │  varchar   │
-## ├─────────┼───────────────────┼─────────┼────────────┤
-## │ Alice   │ alice@company.com │ 52000.0 │ Accounting │
-## │ Bob     │ bob@company.com   │ 40000.0 │ Accounting │
-## │ Carol   │ carol@company.com │ 30000.0 │ Sales      │
-## │ Dave    │ dave@company.com  │ 33000.0 │ Accounting │
-## │ Eve     │ eve@company.com   │ 44000.0 │ Sales      │
-## │ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │
-## └─────────┴───────────────────┴─────────┴────────────┘</code></pre>
+<div class="small">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb16-1"><a href></a>SELECT * FROM employees;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌─────────┬───────────────────┬─────────┬────────────┐
+│  name   │       email       │ salary  │    dept    │
+│ varchar │      varchar      │ double  │  varchar   │
+├─────────┼───────────────────┼─────────┼────────────┤
+│ Alice   │ alice@company.com │ 52000.0 │ Accounting │
+│ Bob     │ bob@company.com   │ 40000.0 │ Accounting │
+│ Carol   │ carol@company.com │ 30000.0 │ Sales      │
+│ Dave    │ dave@company.com  │ 33000.0 │ Accounting │
+│ Eve     │ eve@company.com   │ 44000.0 │ Sales      │
+│ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │
+└─────────┴───────────────────┴─────────┴────────────┘</code></pre>
+</div>
+</div>
+</div>
 </section>
 <section id="output-formats" class="slide level2">
 <h2>Output formats</h2>
-<p>The format of duckdb’s output (in the CLI) is controled via <code>.mode</code> - the default is <code>duckbox</code>, see possible <a href="https://duckdb.org/docs/api/cli/output_formats.html">output formats</a>.</p>
-<div class="columns xxsmall">
+<p>The format of duckdb’s output (in the CLI) is controlled via <code>.mode</code> - the default is <code>duckbox</code>, see possible <a href="https://duckdb.org/docs/stable/clients/cli/output_formats.html">output formats</a>.</p>
+<div class="columns mxsmall">
 <div class="column" style="width:50%;">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb20-1"><a href></a>.<span class="kw">mode</span> csv</span>
-<span id="cb20-2"><a href></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> employees;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## name,email,salary,dept
-## Alice,alice@company.com,52000.0,Accounting
-## Bob,bob@company.com,40000.0,Accounting
-## Carol,carol@company.com,30000.0,Sales
-## Dave,dave@company.com,33000.0,Accounting
-## Eve,eve@company.com,44000.0,Sales
-## Frank,frank@comany.com,37000.0,Sales</code></pre>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb18-1"><a href></a>.mode csv</span>
+<span id="cb18-2"><a href></a>SELECT * FROM employees;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>name,email,salary,dept
+Alice,alice@company.com,52000.0,Accounting
+Bob,bob@company.com,40000.0,Accounting
+Carol,carol@company.com,30000.0,Sales
+Dave,dave@company.com,33000.0,Accounting
+Eve,eve@company.com,44000.0,Sales
+Frank,frank@comany.com,37000.0,Sales</code></pre>
+</div>
+</div>
 </div><div class="column" style="width:50%;">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb22-1"><a href></a>.<span class="kw">mode</span> markdown</span>
-<span id="cb22-2"><a href></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> employees;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## | name  |       email       | salary  |    dept    |
-## |-------|-------------------|--------:|------------|
-## | Alice | alice@company.com | 52000.0 | Accounting |
-## | Bob   | bob@company.com   | 40000.0 | Accounting |
-## | Carol | carol@company.com | 30000.0 | Sales      |
-## | Dave  | dave@company.com  | 33000.0 | Accounting |
-## | Eve   | eve@company.com   | 44000.0 | Sales      |
-## | Frank | frank@comany.com  | 37000.0 | Sales      |</code></pre>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb20-1"><a href></a>.mode markdown</span>
+<span id="cb20-2"><a href></a>SELECT * FROM employees;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>| name  |       email       | salary  |    dept    |
+|-------|-------------------|--------:|------------|
+| Alice | alice@company.com | 52000.0 | Accounting |
+| Bob   | bob@company.com   | 40000.0 | Accounting |
+| Carol | carol@company.com | 30000.0 | Sales      |
+| Dave  | dave@company.com  | 33000.0 | Accounting |
+| Eve   | eve@company.com   | 44000.0 | Sales      |
+| Frank | frank@comany.com  | 37000.0 | Sales      |</code></pre>
+</div>
+</div>
 </div></div>
-<div class="columns xxsmall">
+<div class="columns mxsmall">
 <div class="column" style="width:50%;">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb24-1"><a href></a>.<span class="kw">mode</span> json</span>
-<span id="cb24-2"><a href></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> employees;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## [{&quot;name&quot;:&quot;Alice&quot;,&quot;email&quot;:&quot;alice@company.com&quot;,&quot;salary&quot;:52000.0,&quot;dept&quot;:&quot;Accounting&quot;},
-## {&quot;name&quot;:&quot;Bob&quot;,&quot;email&quot;:&quot;bob@company.com&quot;,&quot;salary&quot;:40000.0,&quot;dept&quot;:&quot;Accounting&quot;},
-## {&quot;name&quot;:&quot;Carol&quot;,&quot;email&quot;:&quot;carol@company.com&quot;,&quot;salary&quot;:30000.0,&quot;dept&quot;:&quot;Sales&quot;},
-## {&quot;name&quot;:&quot;Dave&quot;,&quot;email&quot;:&quot;dave@company.com&quot;,&quot;salary&quot;:33000.0,&quot;dept&quot;:&quot;Accounting&quot;},
-## {&quot;name&quot;:&quot;Eve&quot;,&quot;email&quot;:&quot;eve@company.com&quot;,&quot;salary&quot;:44000.0,&quot;dept&quot;:&quot;Sales&quot;},
-## {&quot;name&quot;:&quot;Frank&quot;,&quot;email&quot;:&quot;frank@comany.com&quot;,&quot;salary&quot;:37000.0,&quot;dept&quot;:&quot;Sales&quot;}]</code></pre>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb22-1"><a href></a>.mode json</span>
+<span id="cb22-2"><a href></a>SELECT * FROM employees;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[{&quot;name&quot;:&quot;Alice&quot;,&quot;email&quot;:&quot;alice@company.com&quot;,&quot;salary&quot;:52000.0,&quot;dept&quot;:&quot;Accounting&quot;},
+{&quot;name&quot;:&quot;Bob&quot;,&quot;email&quot;:&quot;bob@company.com&quot;,&quot;salary&quot;:40000.0,&quot;dept&quot;:&quot;Accounting&quot;},
+{&quot;name&quot;:&quot;Carol&quot;,&quot;email&quot;:&quot;carol@company.com&quot;,&quot;salary&quot;:30000.0,&quot;dept&quot;:&quot;Sales&quot;},
+{&quot;name&quot;:&quot;Dave&quot;,&quot;email&quot;:&quot;dave@company.com&quot;,&quot;salary&quot;:33000.0,&quot;dept&quot;:&quot;Accounting&quot;},
+{&quot;name&quot;:&quot;Eve&quot;,&quot;email&quot;:&quot;eve@company.com&quot;,&quot;salary&quot;:44000.0,&quot;dept&quot;:&quot;Sales&quot;},
+{&quot;name&quot;:&quot;Frank&quot;,&quot;email&quot;:&quot;frank@comany.com&quot;,&quot;salary&quot;:37000.0,&quot;dept&quot;:&quot;Sales&quot;}]</code></pre>
+</div>
+</div>
 </div><div class="column" style="width:50%;">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb26-1"><a href></a>.<span class="kw">mode</span> <span class="kw">insert</span></span>
-<span id="cb26-2"><a href></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> employees;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb24-1"><a href></a>.mode insert</span>
+<span id="cb24-2"><a href></a>SELECT * FROM employees;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
 <pre><code>INSERT INTO &quot;table&quot;(&quot;name&quot;,email,salary,dept) VALUES(&#39;Alice&#39;,&#39;alice@company.com&#39;,52000.0,&#39;Accounting&#39;);
 INSERT INTO &quot;table&quot;(&quot;name&quot;,email,salary,dept) VALUES(&#39;Bob&#39;,&#39;bob@company.com&#39;,40000.0,&#39;Accounting&#39;);
 INSERT INTO &quot;table&quot;(&quot;name&quot;,email,salary,dept) VALUES(&#39;Carol&#39;,&#39;carol@company.com&#39;,30000.0,&#39;Sales&#39;);
 INSERT INTO &quot;table&quot;(&quot;name&quot;,email,salary,dept) VALUES(&#39;Dave&#39;,&#39;dave@company.com&#39;,33000.0,&#39;Accounting&#39;);
 INSERT INTO &quot;table&quot;(&quot;name&quot;,email,salary,dept) VALUES(&#39;Eve&#39;,&#39;eve@company.com&#39;,44000.0,&#39;Sales&#39;);
 INSERT INTO &quot;table&quot;(&quot;name&quot;,email,salary,dept) VALUES(&#39;Frank&#39;,&#39;frank@comany.com&#39;,37000.0,&#39;Sales&#39;);</code></pre>
+</div>
+</div>
 </div></div>
 </section></section>
 <section>
@@ -1284,108 +1319,111 @@ INSERT INTO &quot;table&quot;(&quot;name&quot;,email,salary,dept) VALUES(&#39;Fr
 <h1>A brief tour of SQL</h1>
 
 </section>
-<section id="select-using-select" class="slide level2">
-<h2>select() using SELECT</h2>
-<p>We can subset for certain columns (and rename them) using <code>SELECT</code></p>
-<div class="small">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb28-1"><a href></a><span class="kw">SELECT</span> name <span class="kw">AS</span> first_name, salary <span class="kw">FROM</span> employees;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌────────────┬─────────┐
-## │ first_name │ salary  │
-## │  varchar   │ double  │
-## ├────────────┼─────────┤
-## │ Alice      │ 52000.0 │
-## │ Bob        │ 40000.0 │
-## │ Carol      │ 30000.0 │
-## │ Dave       │ 33000.0 │
-## │ Eve        │ 44000.0 │
-## │ Frank      │ 37000.0 │
-## └────────────┴─────────┘</code></pre>
+<section id="basic-keywords" class="slide level2">
+<h2>Basic Keywords</h2>
+<p>We can subset and rename columns, sort results, and limit output using <code>SELECT</code>, <code>ORDER BY</code>, and <code>LIMIT</code>. <code>DISTINCT</code> removes duplicate values.</p>
+<div class="columns small">
+<div class="column">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb26-1"><a href></a>SELECT name AS first_name, salary</span>
+<span id="cb26-2"><a href></a>FROM employees</span>
+<span id="cb26-3"><a href></a>ORDER BY salary DESC</span>
+<span id="cb26-4"><a href></a>LIMIT 3;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌────────────┬─────────┐
+│ first_name │ salary  │
+│  varchar   │ double  │
+├────────────┼─────────┤
+│ Alice      │ 52000.0 │
+│ Eve        │ 44000.0 │
+│ Bob        │ 40000.0 │
+└────────────┴─────────┘</code></pre>
 </div>
-</section>
-<section id="arrange-using-order-by" class="slide level2">
-<h2>arrange() using ORDER BY</h2>
-<p>We can sort our results by adding <code>ORDER BY</code> to our <code>SELECT</code> statement and reverse the ordering by include <code>DESC</code>.</p>
-<div class="columns xxsmall">
-<div class="column" style="width:50%;">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb30-1"><a href></a><span class="kw">SELECT</span> name <span class="kw">AS</span> first_name, salary <span class="kw">FROM</span> employees </span>
-<span id="cb30-2"><a href></a>  <span class="kw">ORDER</span> <span class="kw">BY</span> salary;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌────────────┬─────────┐
-## │ first_name │ salary  │
-## │  varchar   │ double  │
-## ├────────────┼─────────┤
-## │ Carol      │ 30000.0 │
-## │ Dave       │ 33000.0 │
-## │ Frank      │ 37000.0 │
-## │ Bob        │ 40000.0 │
-## │ Eve        │ 44000.0 │
-## │ Alice      │ 52000.0 │
-## └────────────┴─────────┘</code></pre>
-</div><div class="column" style="width:50%;">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb32-1"><a href></a><span class="kw">SELECT</span> name <span class="kw">AS</span> first_name, salary <span class="kw">FROM</span> employees </span>
-<span id="cb32-2"><a href></a>  <span class="kw">ORDER</span> <span class="kw">BY</span> salary <span class="kw">DESC</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌────────────┬─────────┐
-## │ first_name │ salary  │
-## │  varchar   │ double  │
-## ├────────────┼─────────┤
-## │ Alice      │ 52000.0 │
-## │ Eve        │ 44000.0 │
-## │ Bob        │ 40000.0 │
-## │ Frank      │ 37000.0 │
-## │ Dave       │ 33000.0 │
-## │ Carol      │ 30000.0 │
-## └────────────┴─────────┘</code></pre>
+</div>
+</div><div class="column fragment">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb28-1"><a href></a>SELECT DISTINCT dept</span>
+<span id="cb28-2"><a href></a>FROM employees;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌────────────┐
+│    dept    │
+│  varchar   │
+├────────────┤
+│ Accounting │
+│ Sales      │
+└────────────┘</code></pre>
+</div>
+</div>
 </div></div>
-</section>
+
+<aside><div>
+<p>SQL clauses are evaluated in a different order than they are written: <code>FROM</code> → <code>WHERE</code> → <code>GROUP BY</code> → <code>SELECT</code> → <code>ORDER BY</code> → <code>LIMIT</code></p>
+</div></aside></section>
 <section id="filter-using-where" class="slide level2">
 <h2>filter() using WHERE</h2>
 <p>We can filter rows using a <code>WHERE</code> clause</p>
 <div class="small">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb34-1"><a href></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> employees <span class="kw">WHERE</span> salary <span class="op">&lt;</span> <span class="dv">40000</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌─────────┬───────────────────┬─────────┬────────────┐
-## │  name   │       email       │ salary  │    dept    │
-## │ varchar │      varchar      │ double  │  varchar   │
-## ├─────────┼───────────────────┼─────────┼────────────┤
-## │ Carol   │ carol@company.com │ 30000.0 │ Sales      │
-## │ Dave    │ dave@company.com  │ 33000.0 │ Accounting │
-## │ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │
-## └─────────┴───────────────────┴─────────┴────────────┘</code></pre>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb36-1"><a href></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> employees <span class="kw">WHERE</span> salary <span class="op">&lt;</span> <span class="dv">40000</span> <span class="kw">AND</span> dept <span class="op">=</span> <span class="st">&#39;Sales&#39;</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌─────────┬───────────────────┬─────────┬─────────┐
-## │  name   │       email       │ salary  │  dept   │
-## │ varchar │      varchar      │ double  │ varchar │
-## ├─────────┼───────────────────┼─────────┼─────────┤
-## │ Carol   │ carol@company.com │ 30000.0 │ Sales   │
-## │ Frank   │ frank@comany.com  │ 37000.0 │ Sales   │
-## └─────────┴───────────────────┴─────────┴─────────┘</code></pre>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb30-1"><a href></a>SELECT * FROM employees WHERE salary &lt; 40000;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌─────────┬───────────────────┬─────────┬────────────┐
+│  name   │       email       │ salary  │    dept    │
+│ varchar │      varchar      │ double  │  varchar   │
+├─────────┼───────────────────┼─────────┼────────────┤
+│ Carol   │ carol@company.com │ 30000.0 │ Sales      │
+│ Dave    │ dave@company.com  │ 33000.0 │ Accounting │
+│ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │
+└─────────┴───────────────────┴─────────┴────────────┘</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb32-1"><a href></a>SELECT * FROM employees WHERE salary &lt; 40000 AND dept = &#39;Sales&#39;;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌─────────┬───────────────────┬─────────┬─────────┐
+│  name   │       email       │ salary  │  dept   │
+│ varchar │      varchar      │ double  │ varchar │
+├─────────┼───────────────────┼─────────┼─────────┤
+│ Carol   │ carol@company.com │ 30000.0 │ Sales   │
+│ Frank   │ frank@comany.com  │ 37000.0 │ Sales   │
+└─────────┴───────────────────┴─────────┴─────────┘</code></pre>
+</div>
+</div>
 </div>
 </section>
-<section id="group_by-and-summarize-via-group-by" class="slide level2">
-<h2>group_by() and summarize() via GROUP BY</h2>
-<p>We can create groups for the purpose of summarizing using <code>GROUP BY</code>.</p>
-<div class="small">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb38-1"><a href></a><span class="kw">SELECT</span> dept, <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> n <span class="kw">FROM</span> employees <span class="kw">GROUP</span> <span class="kw">BY</span> dept;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌────────────┬───────┐
-## │    dept    │   n   │
-## │  varchar   │ int64 │
-## ├────────────┼───────┤
-## │ Sales      │     3 │
-## │ Accounting │     3 │
-## └────────────┴───────┘</code></pre>
+<section id="group-by-and-having" class="slide level2">
+<h2>GROUP BY and HAVING</h2>
+<p><code>GROUP BY</code> groups rows for aggregation; <code>HAVING</code> filters <em>after</em> aggregation (like <code>WHERE</code> but for grouped results).</p>
+<div class="xsmall">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb34-1"><a href></a>SELECT dept, COUNT(*) AS n, ROUND(AVG(salary),2) AS avg_salary</span>
+<span id="cb34-2"><a href></a>FROM employees GROUP BY dept;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌────────────┬───────┬────────────┐
+│    dept    │   n   │ avg_salary │
+│  varchar   │ int64 │   double   │
+├────────────┼───────┼────────────┤
+│ Accounting │     3 │   41666.67 │
+│ Sales      │     3 │    37000.0 │
+└────────────┴───────┴────────────┘</code></pre>
 </div>
-</section>
-<section id="head-using-limit" class="slide level2">
-<h2>head() using LIMIT</h2>
-<p>We can limit the number of results we get by using <code>LIMIT</code></p>
-<div class="small">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb40-1"><a href></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> employees <span class="kw">LIMIT</span> <span class="dv">3</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌─────────┬───────────────────┬─────────┬────────────┐
-## │  name   │       email       │ salary  │    dept    │
-## │ varchar │      varchar      │ double  │  varchar   │
-## ├─────────┼───────────────────┼─────────┼────────────┤
-## │ Alice   │ alice@company.com │ 52000.0 │ Accounting │
-## │ Bob     │ bob@company.com   │ 40000.0 │ Accounting │
-## │ Carol   │ carol@company.com │ 30000.0 │ Sales      │
-## └─────────┴───────────────────┴─────────┴────────────┘</code></pre>
+</div>
+</div>
+<div class="fragment">
+<div class="xsmall">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb36-1"><a href></a>SELECT dept, COUNT(*) AS n, ROUND(AVG(salary),2) AS avg_salary</span>
+<span id="cb36-2"><a href></a>FROM employees GROUP BY dept</span>
+<span id="cb36-3"><a href></a>HAVING avg_salary &gt; 38000;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌────────────┬───────┬────────────┐
+│    dept    │   n   │ avg_salary │
+│  varchar   │ int64 │   double   │
+├────────────┼───────┼────────────┤
+│ Accounting │     3 │   41666.67 │
+└────────────┴───────┴────────────┘</code></pre>
+</div>
+</div>
+</div>
 </div>
 </section>
 <section id="exercise-1" class="slide level2">
@@ -1393,300 +1431,393 @@ INSERT INTO &quot;table&quot;(&quot;name&quot;,email,salary,dept) VALUES(&#39;Fr
 <p>Using duckdb calculate the following quantities for <code>employees.duckdb</code>,</p>
 <ol type="1">
 <li><p>The total costs in payroll for this company</p></li>
-<li><p>The average salary within each department</p></li>
+<li><p>The number of employees in each department who earn more than $35,000</p></li>
 </ol>
 
 <aside><div>
-<p><a href="https://duckdb.org/docs/sql/functions/aggregates">DuckDB’s aggregation functions</a></p>
+<p><a href="https://duckdb.org/docs/stable/sql/functions/aggregates.html">DuckDB’s aggregation functions</a></p>
 </div></aside></section>
 <section id="reading-from-csv-files" class="slide level2">
 <h2>Reading from CSV files</h2>
-<p>DuckDB has a neat trick in that it can treat files as tables (for supported formats), this lets you query them without having to explicitly create a table in the database and .</p>
-<p>We can also make this explicit by using the <code>read_csv()</code> function, which is useful if we need to use custom options (e.g. specify a different delimeter)</p>
+<p>DuckDB has a neat trick in that it can treat files as tables (for supported formats), this lets you query them without having to explicitly create a table in the database.</p>
+<p>We can also make this explicit by using the <code>read_csv()</code> function, which is useful if we need to use custom options (e.g. specify a different delimiter)</p>
 <div class="columns xsmall">
 <div class="column" style="width:50%;">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb42-1"><a href></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="st">&#39;phone.csv&#39;</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌─────────┬──────────────┐
-## │  name   │    phone     │
-## │ varchar │   varchar    │
-## ├─────────┼──────────────┤
-## │ Bob     │ 919 555-1111 │
-## │ Carol   │ 919 555-2222 │
-## │ Eve     │ 919 555-3333 │
-## │ Frank   │ 919 555-4444 │
-## └─────────┴──────────────┘</code></pre>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb38-1"><a href></a>SELECT * FROM &#39;Lec21/phone.csv&#39;;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌─────────┬──────────────┐
+│  name   │    phone     │
+│ varchar │   varchar    │
+├─────────┼──────────────┤
+│ Bob     │ 919 555-1111 │
+│ Carol   │ 919 555-2222 │
+│ Eve     │ 919 555-3333 │
+│ Frank   │ 919 555-4444 │
+└─────────┴──────────────┘</code></pre>
+</div>
+</div>
 </div><div class="column" style="width:50%;">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb44-1"><a href></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> </span>
-<span id="cb44-2"><a href></a>  read_csv(<span class="st">&#39;phone.csv&#39;</span>, delim <span class="op">=</span> <span class="st">&#39;,&#39;</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌─────────┬──────────────┐
-## │  name   │    phone     │
-## │ varchar │   varchar    │
-## ├─────────┼──────────────┤
-## │ Bob     │ 919 555-1111 │
-## │ Carol   │ 919 555-2222 │
-## │ Eve     │ 919 555-3333 │
-## │ Frank   │ 919 555-4444 │
-## └─────────┴──────────────┘</code></pre>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb40-1"><a href></a>SELECT * FROM</span>
+<span id="cb40-2"><a href></a>  read_csv(&#39;Lec21/phone.csv&#39;, delim = &#39;,&#39;);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌─────────┬──────────────┐
+│  name   │    phone     │
+│ varchar │   varchar    │
+├─────────┼──────────────┤
+│ Bob     │ 919 555-1111 │
+│ Carol   │ 919 555-2222 │
+│ Eve     │ 919 555-3333 │
+│ Frank   │ 919 555-4444 │
+└─────────┴──────────────┘</code></pre>
+</div>
+</div>
 </div></div>
 </section>
 <section id="tables-from-csv" class="slide level2">
 <h2>Tables from CSV</h2>
 <p>If we wanted to explicitly create a table from the CSV file this is also possible,</p>
-<div class="small extra-pb">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb46-1"><a href></a>.<span class="kw">tables</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## employees</code></pre>
+<div class="columns mxsmall">
+<div class="column">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb42-1"><a href></a>.tables</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> ── employees ─── 
+ ───── main ───── 
+┌────────────────┐
+│   employees    │
+│                │
+│ name   varchar │
+│ email  varchar │
+│ salary double  │
+│ dept   varchar │
+│                │
+│     6 rows     │
+└────────────────┘</code></pre>
 </div>
+</div>
+</div><div class="column">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb44-1"><a href></a>CREATE TABLE phone AS</span>
+<span id="cb44-2"><a href></a>  SELECT * FROM &#39;Lec21/phone.csv&#39;;</span>
+<span id="cb44-3"><a href></a>.tables</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> ─────────── employees ─────────── 
+ ───────────── main ────────────── 
+┌────────────────┐┌───────────────┐
+│   employees    ││     phone     │
+│                ││               │
+│ name   varchar ││ name  varchar │
+│ email  varchar ││ phone varchar │
+│ salary double  ││               │
+│ dept   varchar ││    4 rows     │
+│                │└───────────────┘
+│     6 rows     │
+└────────────────┘</code></pre>
+</div>
+</div>
+</div></div>
 <div class="fragment">
-<div class="small extra-pb">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb48-1"><a href></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> phone <span class="kw">AS</span></span>
-<span id="cb48-2"><a href></a>  <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="st">&#39;phone.csv&#39;</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb49-1"><a href></a>.<span class="kw">tables</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## employees  phone</code></pre>
+<div class="mxsmall">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb46-1"><a href></a>SELECT * FROM phone;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌─────────┬──────────────┐
+│  name   │    phone     │
+│ varchar │   varchar    │
+├─────────┼──────────────┤
+│ Bob     │ 919 555-1111 │
+│ Carol   │ 919 555-2222 │
+│ Eve     │ 919 555-3333 │
+│ Frank   │ 919 555-4444 │
+└─────────┴──────────────┘</code></pre>
 </div>
 </div>
-<div class="fragment">
-<div class="small">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb51-1"><a href></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> phone;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌─────────┬──────────────┐
-## │  name   │    phone     │
-## │ varchar │   varchar    │
-## ├─────────┼──────────────┤
-## │ Bob     │ 919 555-1111 │
-## │ Carol   │ 919 555-2222 │
-## │ Eve     │ 919 555-3333 │
-## │ Frank   │ 919 555-4444 │
-## └─────────┴──────────────┘</code></pre>
 </div>
 </div>
 </section>
 <section id="views-from-csv" class="slide level2">
 <h2>Views from CSV</h2>
-<p>It is also possible to create a view from a file - this acts like a table but the data is not copied from the file.</p>
-<div class="small extra-pb">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb53"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb53-1"><a href></a>.<span class="kw">tables</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## employees</code></pre>
+<p>It is also possible to create a view from a file - this acts like a table but the data is not copied from the file. This means the file must remain accessible and is re-read on every query, but no storage is used within the database.</p>
+<div class="columns mxsmall">
+<div class="column">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb48-1"><a href></a>CREATE VIEW phone_view AS</span>
+<span id="cb48-2"><a href></a>  SELECT * FROM &#39;Lec21/phone.csv&#39;;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div class="fragment">
-<div class="small extra-pb">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb55"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb55-1"><a href></a><span class="kw">CREATE</span> <span class="kw">VIEW</span> phone_view <span class="kw">AS</span></span>
-<span id="cb55-2"><a href></a>  <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="st">&#39;phone.csv&#39;</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb56"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb56-1"><a href></a>.<span class="kw">tables</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## employees  phone  phone_view</code></pre>
-</div>
-</div>
-<div class="fragment">
-<div class="small extra-pb">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb58"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb58-1"><a href></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> phone_view;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌─────────┬──────────────┐
-## │  name   │    phone     │
-## │ varchar │   varchar    │
-## ├─────────┼──────────────┤
-## │ Bob     │ 919 555-1111 │
-## │ Carol   │ 919 555-2222 │
-## │ Eve     │ 919 555-3333 │
-## │ Frank   │ 919 555-4444 │
-## └─────────┴──────────────┘</code></pre>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb49-1"><a href></a>.tables</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> ─────────────────── employees ──────────────────── 
+ ────────────────────── main ────────────────────── 
+┌────────────────┐┌───────────────┐┌───────────────┐
+│   employees    ││     phone     ││  phone_view   │
+│                ││               ││               │
+│ name   varchar ││ name  varchar ││ name  varchar │
+│ email  varchar ││ phone varchar ││ phone varchar │
+│ salary double  ││               │└───────────────┘
+│ dept   varchar ││    4 rows     │
+│                │└───────────────┘
+│     6 rows     │                 
+└────────────────┘                 </code></pre>
 </div>
 </div>
+</div><div class="column">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb51-1"><a href></a>SELECT * FROM phone_view;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌─────────┬──────────────┐
+│  name   │    phone     │
+│ varchar │   varchar    │
+├─────────┼──────────────┤
+│ Bob     │ 919 555-1111 │
+│ Carol   │ 919 555-2222 │
+│ Eve     │ 919 555-3333 │
+│ Frank   │ 919 555-4444 │
+└─────────┴──────────────┘</code></pre>
+</div>
+</div>
+</div></div>
 </section>
 <section id="deleting-tables-and-views" class="slide level2">
 <h2>Deleting tables and views</h2>
 <p>Tables and views can be deleted using <code>DROP</code></p>
-<div class="small extra-pb">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb60"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb60-1"><a href></a>.<span class="kw">tables</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## employees  phone  phone_view</code></pre>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb62"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb62-1"><a href></a><span class="kw">DROP</span> <span class="kw">TABLE</span> phone;</span>
-<span id="cb62-2"><a href></a><span class="kw">DROP</span> <span class="kw">VIEW</span> phone_view;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="columns mxsmall">
+<div class="column">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb53-1"><a href></a>.tables</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> ─────────────────── employees ──────────────────── 
+ ────────────────────── main ────────────────────── 
+┌────────────────┐┌───────────────┐┌───────────────┐
+│   employees    ││     phone     ││  phone_view   │
+│                ││               ││               │
+│ name   varchar ││ name  varchar ││ name  varchar │
+│ email  varchar ││ phone varchar ││ phone varchar │
+│ salary double  ││               │└───────────────┘
+│ dept   varchar ││    4 rows     │
+│                │└───────────────┘
+│     6 rows     │                 
+└────────────────┘                 </code></pre>
 </div>
+</div>
+</div><div class="column">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb55-1"><a href></a>DROP TABLE phone;</span>
+<span id="cb55-2"><a href></a>DROP VIEW phone_view;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div></div>
 <div class="fragment">
-<div class="small extra-pb">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb63"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb63-1"><a href></a>.<span class="kw">tables</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## employees</code></pre>
+<div class="mxsmall">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb56-1"><a href></a>.tables</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> ── employees ─── 
+ ───── main ───── 
+┌────────────────┐
+│   employees    │
+│                │
+│ name   varchar │
+│ email  varchar │
+│ salary double  │
+│ dept   varchar │
+│                │
+│     6 rows     │
+└────────────────┘</code></pre>
+</div>
+</div>
 </div>
 </div>
 </section>
-<section id="joins---default" class="slide level2">
-<h2>Joins - Default</h2>
-<p>If not otherwise specified the default join in DuckDB will be an inner join.</p>
+<section id="inner-join" class="slide level2">
+<h2>Inner Join</h2>
+<p>DuckDB requires an <code>ON</code> or <code>USING</code> clause for joins — <code>JOIN</code> alone is a syntax error.</p>
 <div class="small">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb65"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb65-1"><a href></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> employees <span class="kw">JOIN</span> phone;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## Parser Error: syntax error at or near &quot;;&quot;
-## LINE 1: SELECT * FROM employees JOIN phone;</code></pre>
-</div>
-<p>this error occurs because duckdb requires an <code>ON</code> or <code>USING</code> clause unless using <code>NATURAL</code>.</p>
-<div class="fragment">
-<div class="small">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb67"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb67-1"><a href></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> employees <span class="kw">NATURAL</span> <span class="kw">JOIN</span> phone;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌─────────┬───────────────────┬─────────┬────────────┬──────────────┐
-## │  name   │       email       │ salary  │    dept    │    phone     │
-## │ varchar │      varchar      │ double  │  varchar   │   varchar    │
-## ├─────────┼───────────────────┼─────────┼────────────┼──────────────┤
-## │ Bob     │ bob@company.com   │ 40000.0 │ Accounting │ 919 555-1111 │
-## │ Carol   │ carol@company.com │ 30000.0 │ Sales      │ 919 555-2222 │
-## │ Eve     │ eve@company.com   │ 44000.0 │ Sales      │ 919 555-3333 │
-## │ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │ 919 555-4444 │
-## └─────────┴───────────────────┴─────────┴────────────┴──────────────┘</code></pre>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb58-1"><a href></a>SELECT * FROM employees JOIN phone USING(name);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌─────────┬───────────────────┬─────────┬────────────┬──────────────┐
+│  name   │       email       │ salary  │    dept    │    phone     │
+│ varchar │      varchar      │ double  │  varchar   │   varchar    │
+├─────────┼───────────────────┼─────────┼────────────┼──────────────┤
+│ Bob     │ bob@company.com   │ 40000.0 │ Accounting │ 919 555-1111 │
+│ Carol   │ carol@company.com │ 30000.0 │ Sales      │ 919 555-2222 │
+│ Eve     │ eve@company.com   │ 44000.0 │ Sales      │ 919 555-3333 │
+│ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │ 919 555-4444 │
+└─────────┴───────────────────┴─────────┴────────────┴──────────────┘</code></pre>
 </div>
 </div>
-</section>
-<section id="inner-join---explicit" class="slide level2">
-<h2>Inner Join - Explicit</h2>
-<div class="xsmall">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb69"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb69-1"><a href></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> employees <span class="kw">JOIN</span> phone <span class="kw">ON</span> employees.name <span class="op">=</span> phone.name;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>##┌─────────┬───────────────────┬─────────┬────────────┬─────────┬──────────────┐
-##│  name   │       email       │ salary  │    dept    │  name   │    phone     │
-##│ varchar │      varchar      │ double  │  varchar   │ varchar │   varchar    │
-##├─────────┼───────────────────┼─────────┼────────────┼─────────┼──────────────┤
-##│ Bob     │ bob@company.com   │ 40000.0 │ Accounting │ Bob     │ 919 555-1111 │
-##│ Carol   │ carol@company.com │ 30000.0 │ Sales      │ Carol   │ 919 555-2222 │
-##│ Eve     │ eve@company.com   │ 44000.0 │ Sales      │ Eve     │ 919 555-3333 │
-##│ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │ Frank   │ 919 555-4444 │
-##└─────────┴───────────────────┴─────────┴────────────┴─────────┴──────────────┘```</code></pre>
-</div>
-<div class="fragment">
-<div class="small">
-<p>to avoid the duplicate <code>name</code> column we can specify <code>USING</code> instead of <code>ON</code></p>
-</div>
-<div class="xsmall">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb71"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb71-1"><a href></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> employees <span class="kw">JOIN</span> phone <span class="kw">USING</span>(name);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌─────────┬───────────────────┬─────────┬────────────┬──────────────┐
-## │  name   │       email       │ salary  │    dept    │    phone     │
-## │ varchar │      varchar      │ double  │  varchar   │   varchar    │
-## ├─────────┼───────────────────┼─────────┼────────────┼──────────────┤
-## │ Bob     │ bob@company.com   │ 40000.0 │ Accounting │ 919 555-1111 │
-## │ Carol   │ carol@company.com │ 30000.0 │ Sales      │ 919 555-2222 │
-## │ Eve     │ eve@company.com   │ 44000.0 │ Sales      │ 919 555-3333 │
-## │ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │ 919 555-4444 │
-## └─────────┴───────────────────┴─────────┴────────────┴──────────────┘</code></pre>
 </div>
 
-</div>
 <aside><div>
-<p>As a rule, the <code>USING</code> (or <code>NATURAL</code>) keyword is used if the column names match between tables, otherwise <code>ON</code> is needed.</p>
+<p><code>USING(col)</code> joins on a named column (no duplicate column in result); <code>ON t1.colA = t2.colB</code> is needed when column names differ. <code>NATURAL JOIN</code> automatically matches all common column names — convenient but can produce unexpected results when tables share more columns than intended.</p>
 </div></aside></section>
-<section id="left-join---natural" class="slide level2">
-<h2>Left Join - Natural</h2>
-<div class="small">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb73"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb73-1"><a href></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> employees <span class="kw">NATURAL</span> <span class="kw">LEFT</span> <span class="kw">JOIN</span> phone;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌─────────┬───────────────────┬─────────┬────────────┬──────────────┐
-## │  name   │       email       │ salary  │    dept    │    phone     │
-## │ varchar │      varchar      │ double  │  varchar   │   varchar    │
-## ├─────────┼───────────────────┼─────────┼────────────┼──────────────┤
-## │ Bob     │ bob@company.com   │ 40000.0 │ Accounting │ 919 555-1111 │
-## │ Carol   │ carol@company.com │ 30000.0 │ Sales      │ 919 555-2222 │
-## │ Eve     │ eve@company.com   │ 44000.0 │ Sales      │ 919 555-3333 │
-## │ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │ 919 555-4444 │
-## │ Alice   │ alice@company.com │ 52000.0 │ Accounting │              │
-## │ Dave    │ dave@company.com  │ 33000.0 │ Accounting │              │
-## └─────────┴───────────────────┴─────────┴────────────┴──────────────┘</code></pre>
-</div>
-</section>
-<section id="left-join---explicit" class="slide level2">
-<h2>Left Join - Explicit</h2>
-<div class="mxsmall">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb75"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb75-1"><a href></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> employees <span class="kw">LEFT</span> <span class="kw">JOIN</span> phone <span class="kw">ON</span> employees.name <span class="op">=</span> phone.name;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌─────────┬───────────────────┬─────────┬────────────┬─────────┬──────────────┐
-## │  name   │       email       │ salary  │    dept    │  name   │    phone     │
-## │ varchar │      varchar      │ double  │  varchar   │ varchar │   varchar    │
-## ├─────────┼───────────────────┼─────────┼────────────┼─────────┼──────────────┤
-## │ Bob     │ bob@company.com   │ 40000.0 │ Accounting │ Bob     │ 919 555-1111 │
-## │ Carol   │ carol@company.com │ 30000.0 │ Sales      │ Carol   │ 919 555-2222 │
-## │ Eve     │ eve@company.com   │ 44000.0 │ Sales      │ Eve     │ 919 555-3333 │
-## │ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │ Frank   │ 919 555-4444 │
-## │ Alice   │ alice@company.com │ 52000.0 │ Accounting │         │              │
-## │ Dave    │ dave@company.com  │ 33000.0 │ Accounting │         │              │
-## └─────────┴───────────────────┴─────────┴────────────┴─────────┴──────────────┘</code></pre>
-</div>
-<div class="fragment">
-<div class="small">
-<p>Duplicate <code>name</code> column can be avoided by more restrictive <code>SELECT</code>,</p>
+<section id="joins" class="slide level2">
+<h2>Joins</h2>
+<div class="medium">
+<p>All standard joins are supported: <code>LEFT JOIN</code>, <code>RIGHT JOIN</code>, <code>FULL JOIN</code>, <code>CROSS JOIN</code>, <code>SEMI JOIN</code>, <code>ANTI JOIN</code>, etc.</p>
 </div>
 <div class="mxsmall">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb77"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb77-1"><a href></a><span class="kw">SELECT</span> employees.<span class="op">*</span>, phone <span class="kw">FROM</span> employees <span class="kw">LEFT</span> <span class="kw">JOIN</span> phone <span class="kw">ON</span> employees.name <span class="op">=</span> phone.name;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌─────────┬───────────────────┬─────────┬────────────┬──────────────┐
-## │  name   │       email       │ salary  │    dept    │    phone     │
-## │ varchar │      varchar      │ double  │  varchar   │   varchar    │
-## ├─────────┼───────────────────┼─────────┼────────────┼──────────────┤
-## │ Bob     │ bob@company.com   │ 40000.0 │ Accounting │ 919 555-1111 │
-## │ Carol   │ carol@company.com │ 30000.0 │ Sales      │ 919 555-2222 │
-## │ Eve     │ eve@company.com   │ 44000.0 │ Sales      │ 919 555-3333 │
-## │ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │ 919 555-4444 │
-## │ Alice   │ alice@company.com │ 52000.0 │ Accounting │              │
-## │ Dave    │ dave@company.com  │ 33000.0 │ Accounting │              │
-## └─────────┴───────────────────┴─────────┴────────────┴──────────────┘</code></pre>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb60-1"><a href></a>SELECT * FROM employees LEFT JOIN phone USING(name);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌─────────┬───────────────────┬─────────┬────────────┬──────────────┐
+│  name   │       email       │ salary  │    dept    │    phone     │
+│ varchar │      varchar      │ double  │  varchar   │   varchar    │
+├─────────┼───────────────────┼─────────┼────────────┼──────────────┤
+│ Bob     │ bob@company.com   │ 40000.0 │ Accounting │ 919 555-1111 │
+│ Carol   │ carol@company.com │ 30000.0 │ Sales      │ 919 555-2222 │
+│ Eve     │ eve@company.com   │ 44000.0 │ Sales      │ 919 555-3333 │
+│ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │ 919 555-4444 │
+│ Alice   │ alice@company.com │ 52000.0 │ Accounting │ NULL         │
+│ Dave    │ dave@company.com  │ 33000.0 │ Accounting │ NULL         │
+└─────────┴───────────────────┴─────────┴────────────┴──────────────┘</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb62-1"><a href></a>SELECT * FROM employees FULL JOIN phone USING(name);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌─────────┬───────────────────┬─────────┬────────────┬──────────────┐
+│  name   │       email       │ salary  │    dept    │    phone     │
+│ varchar │      varchar      │ double  │  varchar   │   varchar    │
+├─────────┼───────────────────┼─────────┼────────────┼──────────────┤
+│ Bob     │ bob@company.com   │ 40000.0 │ Accounting │ 919 555-1111 │
+│ Carol   │ carol@company.com │ 30000.0 │ Sales      │ 919 555-2222 │
+│ Eve     │ eve@company.com   │ 44000.0 │ Sales      │ 919 555-3333 │
+│ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │ 919 555-4444 │
+│ Alice   │ alice@company.com │ 52000.0 │ Accounting │ NULL         │
+│ Dave    │ dave@company.com  │ 33000.0 │ Accounting │ NULL         │
+└─────────┴───────────────────┴─────────┴────────────┴──────────────┘</code></pre>
+</div>
 </div>
 </div>
 </section>
-<section id="other-joins" class="slide level2">
-<h2>Other Joins</h2>
-<p>As you would expect all other standard joins are supported including <code>RIGHT JOIN</code>, <code>FULL JOIN</code>, <code>CROSS JOIN</code>, <code>SEMI JOIN</code>, <code>ANTI JOIN</code>, etc.</p>
-<div class="xxsmall">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb79"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb79-1"><a href></a><span class="kw">SELECT</span> employees.<span class="op">*</span>, phone <span class="kw">FROM</span> employees <span class="kw">NATURAL</span> <span class="kw">FULL</span> <span class="kw">JOIN</span> phone;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌─────────┬───────────────────┬─────────┬────────────┬──────────────┐
-## │  name   │       email       │ salary  │    dept    │    phone     │
-## │ varchar │      varchar      │ double  │  varchar   │   varchar    │
-## ├─────────┼───────────────────┼─────────┼────────────┼──────────────┤
-## │ Bob     │ bob@company.com   │ 40000.0 │ Accounting │ 919 555-1111 │
-## │ Carol   │ carol@company.com │ 30000.0 │ Sales      │ 919 555-2222 │
-## │ Eve     │ eve@company.com   │ 44000.0 │ Sales      │ 919 555-3333 │
-## │ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │ 919 555-4444 │
-## │ Alice   │ alice@company.com │ 52000.0 │ Accounting │              │
-## │ Dave    │ dave@company.com  │ 33000.0 │ Accounting │              │
-## └─────────┴───────────────────┴─────────┴────────────┴──────────────┘</code></pre>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb81"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb81-1"><a href></a><span class="kw">SELECT</span> employees.<span class="op">*</span>, phone <span class="kw">FROM</span> employees <span class="kw">NATURAL</span> <span class="kw">RIGHT</span> <span class="kw">JOIN</span> phone;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌─────────┬───────────────────┬─────────┬────────────┬──────────────┐
-## │  name   │       email       │ salary  │    dept    │    phone     │
-## │ varchar │      varchar      │ double  │  varchar   │   varchar    │
-## ├─────────┼───────────────────┼─────────┼────────────┼──────────────┤
-## │ Bob     │ bob@company.com   │ 40000.0 │ Accounting │ 919 555-1111 │
-## │ Carol   │ carol@company.com │ 30000.0 │ Sales      │ 919 555-2222 │
-## │ Eve     │ eve@company.com   │ 44000.0 │ Sales      │ 919 555-3333 │
-## │ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │ 919 555-4444 │
-## └─────────┴───────────────────┴─────────┴────────────┴──────────────┘</code></pre>
+<section id="section-2" class="slide level2">
+<h2></h2>
+<div class="xsmall">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb64-1"><a href></a>SELECT * FROM employees RIGHT JOIN phone USING(name);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌─────────┬───────────────────┬─────────┬────────────┬──────────────┐
+│  name   │       email       │ salary  │    dept    │    phone     │
+│ varchar │      varchar      │ double  │  varchar   │   varchar    │
+├─────────┼───────────────────┼─────────┼────────────┼──────────────┤
+│ Bob     │ bob@company.com   │ 40000.0 │ Accounting │ 919 555-1111 │
+│ Carol   │ carol@company.com │ 30000.0 │ Sales      │ 919 555-2222 │
+│ Eve     │ eve@company.com   │ 44000.0 │ Sales      │ 919 555-3333 │
+│ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │ 919 555-4444 │
+└─────────┴───────────────────┴─────────┴────────────┴──────────────┘</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb66-1"><a href></a>SELECT * FROM employees ANTI JOIN phone USING(name);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌─────────┬───────────────────┬─────────┬────────────┐
+│  name   │       email       │ salary  │    dept    │
+│ varchar │      varchar      │ double  │  varchar   │
+├─────────┼───────────────────┼─────────┼────────────┤
+│ Alice   │ alice@company.com │ 52000.0 │ Accounting │
+│ Dave    │ dave@company.com  │ 33000.0 │ Accounting │
+└─────────┴───────────────────┴─────────┴────────────┘</code></pre>
+</div>
+</div>
 </div>
 </section>
 <section id="subqueries" class="slide level2">
 <h2>Subqueries</h2>
 <p>Tables can be nested within tables for the purpose of queries,</p>
-<div class="xsmall">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb83"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb83-1"><a href></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> (</span>
-<span id="cb83-2"><a href></a>  <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> employees <span class="kw">NATURAL</span> <span class="kw">LEFT</span> <span class="kw">JOIN</span> phone</span>
-<span id="cb83-3"><a href></a>) combined <span class="kw">WHERE</span> phone <span class="kw">IS</span> <span class="kw">NULL</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌─────────┬───────────────────┬─────────┬────────────┬─────────┐
-## │  name   │       email       │ salary  │    dept    │  phone  │
-## │ varchar │      varchar      │ double  │  varchar   │ varchar │
-## ├─────────┼───────────────────┼─────────┼────────────┼─────────┤
-## │ Alice   │ alice@company.com │ 52000.0 │ Accounting │         │
-## │ Dave    │ dave@company.com  │ 33000.0 │ Accounting │         │
-## └─────────┴───────────────────┴─────────┴────────────┴─────────┘</code></pre>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb85"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb85-1"><a href></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> (</span>
-<span id="cb85-2"><a href></a>  <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> employees <span class="kw">NATURAL</span> <span class="kw">LEFT</span> <span class="kw">JOIN</span> phone</span>
-<span id="cb85-3"><a href></a>) combined <span class="kw">WHERE</span> phone <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌─────────┬───────────────────┬─────────┬────────────┬──────────────┐
-## │  name   │       email       │ salary  │    dept    │    phone     │
-## │ varchar │      varchar      │ double  │  varchar   │   varchar    │
-## ├─────────┼───────────────────┼─────────┼────────────┼──────────────┤
-## │ Bob     │ bob@company.com   │ 40000.0 │ Accounting │ 919 555-1111 │
-## │ Carol   │ carol@company.com │ 30000.0 │ Sales      │ 919 555-2222 │
-## │ Eve     │ eve@company.com   │ 44000.0 │ Sales      │ 919 555-3333 │
-## │ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │ 919 555-4444 │
-## └─────────┴───────────────────┴─────────┴────────────┴──────────────┘</code></pre>
+<div class="mxsmall">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb68-1"><a href></a>SELECT * FROM (</span>
+<span id="cb68-2"><a href></a>  SELECT * FROM employees NATURAL LEFT JOIN phone</span>
+<span id="cb68-3"><a href></a>) combined WHERE phone IS NULL;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌─────────┬───────────────────┬─────────┬────────────┬─────────┐
+│  name   │       email       │ salary  │    dept    │  phone  │
+│ varchar │      varchar      │ double  │  varchar   │ varchar │
+├─────────┼───────────────────┼─────────┼────────────┼─────────┤
+│ Alice   │ alice@company.com │ 52000.0 │ Accounting │ NULL    │
+│ Dave    │ dave@company.com  │ 33000.0 │ Accounting │ NULL    │
+└─────────┴───────────────────┴─────────┴────────────┴─────────┘</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb70-1"><a href></a>SELECT * FROM (</span>
+<span id="cb70-2"><a href></a>  SELECT * FROM employees NATURAL LEFT JOIN phone</span>
+<span id="cb70-3"><a href></a>) combined WHERE phone IS NOT NULL;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌─────────┬───────────────────┬─────────┬────────────┬──────────────┐
+│  name   │       email       │ salary  │    dept    │    phone     │
+│ varchar │      varchar      │ double  │  varchar   │   varchar    │
+├─────────┼───────────────────┼─────────┼────────────┼──────────────┤
+│ Bob     │ bob@company.com   │ 40000.0 │ Accounting │ 919 555-1111 │
+│ Carol   │ carol@company.com │ 30000.0 │ Sales      │ 919 555-2222 │
+│ Eve     │ eve@company.com   │ 44000.0 │ Sales      │ 919 555-3333 │
+│ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │ 919 555-4444 │
+└─────────┴───────────────────┴─────────┴────────────┴──────────────┘</code></pre>
+</div>
+</div>
 </div>
 </section>
+<section id="common-table-expressions-ctes" class="slide level2">
+<h2>Common Table Expressions (CTEs)</h2>
+<p>A <strong>CTE</strong> (defined with <code>WITH</code>) is a named subquery that can be referenced by name in the main query — useful for breaking complex queries into readable steps, or reusing a subquery multiple times.</p>
+<div class="xsmall">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb72-1"><a href></a>WITH combined AS (</span>
+<span id="cb72-2"><a href></a>  SELECT * FROM employees NATURAL LEFT JOIN phone</span>
+<span id="cb72-3"><a href></a>)</span>
+<span id="cb72-4"><a href></a>SELECT * FROM combined WHERE phone IS NULL;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌─────────┬───────────────────┬─────────┬────────────┬─────────┐
+│  name   │       email       │ salary  │    dept    │  phone  │
+│ varchar │      varchar      │ double  │  varchar   │ varchar │
+├─────────┼───────────────────┼─────────┼────────────┼─────────┤
+│ Alice   │ alice@company.com │ 52000.0 │ Accounting │ NULL    │
+│ Dave    │ dave@company.com  │ 33000.0 │ Accounting │ NULL    │
+└─────────┴───────────────────┴─────────┴────────────┴─────────┘</code></pre>
+</div>
+</div>
+</div>
+
+<aside><div>
+<p>Multiple CTEs can be chained with commas: <code>WITH cte1 AS (...), cte2 AS (...) SELECT ...</code></p>
+</div></aside></section>
 <section id="exercise-2" class="slide level2">
 <h2>Exercise 2</h2>
-<p>Lets try to create a table that has a new column - <code>abv_avg</code> which contains how much more (or less) than the average, for their department, each person is paid.</p>
-<p>Hint - This will require joining a subquery.</p>
+<ol type="1">
+<li><p>What percentage of the total payroll does each department account for?</p></li>
+<li><p>How much more (or less) than their department’s average salary does each employee earn?</p></li>
+</ol>
 <!--
+## Part 1 - subquery version
 ```sql
-SELECT *, round(salary-avg,2) AS diff 
+SELECT dept, round(sum(salary) / (SELECT sum(salary) FROM employees) * 100, 2) AS pct_payroll
+FROM employees
+GROUP BY dept;
+```
+
+## Part 1 - CTE version
+```sql
+WITH total AS (
+  SELECT sum(salary) AS total_salary FROM employees
+)
+SELECT dept, round(sum(salary) / total_salary * 100, 2) AS pct_payroll
+FROM employees CROSS JOIN total
+GROUP BY dept, total_salary;
+```
+
+## Part 2 - subquery version
+```sql
+SELECT *, round(salary-avg,2) AS abv_avg
 FROM employees
 NATURAL JOIN  (
   SELECT dept, round(avg(salary),2) AS avg FROM employees GROUP BY dept
 ) dept_avg
-ORDER dept, diff;
+ORDER BY dept, abv_avg;
 ## ┌─────────┬───────────────────┬─────────┬────────────┬──────────┬─────────┐
-## │  name   │       email       │ salary  │    dept    │   avg    │  diff   │
+## │  name   │       email       │ salary  │    dept    │   avg    │ abv_avg │
 ## │ varchar │      varchar      │ double  │  varchar   │  double  │ double  │
 ## ├─────────┼───────────────────┼─────────┼────────────┼──────────┼─────────┤
 ## │ Alice   │ alice@company.com │ 52000.0 │ Accounting │ 41666.67 │ 10333.0 │
@@ -1694,8 +1825,19 @@ ORDER dept, diff;
 ## │ Carol   │ carol@company.com │ 30000.0 │ Sales      │  37000.0 │ -7000.0 │
 ## │ Dave    │ dave@company.com  │ 33000.0 │ Accounting │ 41666.67 │ -8667.0 │
 ## │ Eve     │ eve@company.com   │ 44000.0 │ Sales      │  37000.0 │  7000.0 │
-## │ Frank   │ frank@comany.com  │ 37000.0 │ Sales      │  37000.0 │     0.0 │
+## │ Frank   │ frank@company.com │ 37000.0 │ Sales      │  37000.0 │     0.0 │
 ## └─────────┴───────────────────┴─────────┴────────────┴──────────┴─────────┘
+```
+
+## Part 2 - CTE version
+```sql
+WITH dept_avg AS (
+  SELECT dept, round(avg(salary),2) AS avg FROM employees GROUP BY dept
+)
+SELECT *, round(salary-avg,2) AS abv_avg
+FROM employees
+NATURAL JOIN dept_avg
+ORDER BY dept, abv_avg;
 ```
 -->
 </section></section>
@@ -1706,250 +1848,1062 @@ ORDER dept, diff;
 </section>
 <section id="setup" class="slide level2">
 <h2>Setup</h2>
-<p>To give us a bit more variety (and data), we have created another SQLite database <code>flights.duckdb</code> that contains both <code>nycflights13::flights</code> and <code>nycflights13::planes</code>, the latter of which has details on the characteristics of the planes in the dataset as identified by their tail numbers.</p>
-<div class="small">
+<p>To give us a bit more variety (and data), we have created another DuckDB database <code>flights.duckdb</code> that contains both <code>nycflights13::flights</code> and <code>nycflights13::planes</code>, the latter of which has details on each plane identified by tail number.</p>
+<p>To create the database you can run, ::: {.small}</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb87"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href></a>db <span class="ot">=</span> DBI<span class="sc">::</span><span class="fu">dbConnect</span>(duckdb<span class="sc">::</span><span class="fu">duckdb</span>(), <span class="st">&quot;flights.duckdb&quot;</span>)</span>
-<span id="cb87-2"><a href></a>dplyr<span class="sc">::</span><span class="fu">copy_to</span>(db, nycflights13<span class="sc">::</span>flights, <span class="at">name =</span> <span class="st">&quot;flights&quot;</span>, <span class="at">temporary =</span> <span class="cn">FALSE</span>, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb87-3"><a href></a>dplyr<span class="sc">::</span><span class="fu">copy_to</span>(db, nycflights13<span class="sc">::</span>planes, <span class="at">name =</span> <span class="st">&quot;planes&quot;</span>, <span class="at">temporary =</span> <span class="cn">FALSE</span>, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb87-4"><a href></a>DBI<span class="sc">::</span><span class="fu">dbDisconnect</span>(db)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href></a>db <span class="ot">=</span> DBI<span class="sc">::</span><span class="fu">dbConnect</span>(duckdb<span class="sc">::</span><span class="fu">duckdb</span>(), <span class="st">&quot;flights.duckdb&quot;</span>)</span>
+<span id="cb74-2"><a href></a>dplyr<span class="sc">::</span><span class="fu">copy_to</span>(db, nycflights13<span class="sc">::</span>flights, <span class="at">name =</span> <span class="st">&quot;flights&quot;</span>, <span class="at">temporary =</span> <span class="cn">FALSE</span>, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb74-3"><a href></a>dplyr<span class="sc">::</span><span class="fu">copy_to</span>(db, nycflights13<span class="sc">::</span>planes, <span class="at">name =</span> <span class="st">&quot;planes&quot;</span>, <span class="at">temporary =</span> <span class="cn">FALSE</span>, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb74-4"><a href></a>DBI<span class="sc">::</span><span class="fu">dbDisconnect</span>(db)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-</div>
-<div class="fragment">
-<p>All of the following code will be run in the DuckDB command line interface, make sure you’ve created the database and copied both the flights and planes tables into the db or use the version provided in the <code>exercises/</code> repo.</p>
-</div>
+<p>:::</p>
+<p>Alternative you can use the copy provided in the <code>exercises</code> repo.</p>
 </section>
 <section id="opening-flights.duckdb" class="slide level2">
 <h2>Opening <code>flights.duckdb</code></h2>
 <p>The database can then be opened from the terminal tab using,</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb88"><pre class="sourceCode numberSource shell number-lines code-with-copy"><code class="sourceCode"><span id="cb88-1"><a href></a>#| eval: false</span>
-<span id="cb88-2"><a href></a>duckdb flights.duckdb</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>As before we set a couple of configuration options so that our output is readable. We also include <code>.timer on</code> so that we get timings for our queries.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb89"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb89-1"><a href></a>.maxrows <span class="dv">20</span></span>
-<span id="cb89-2"><a href></a>.maxwidth <span class="dv">80</span></span>
-<span id="cb89-3"><a href></a>.timer <span class="kw">on</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb75"><pre class="sourceCode numberSource shell number-lines code-with-copy"><code class="sourceCode"><span id="cb75-1"><a href></a>duckdb flights.duckdb</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Before we start we will set a couple of configuration options so that our output is readable.</p>
+<p>We also include <code>.timer on</code> so that we get timings for our queries.</p>
+<div class="small">
+<div class="cell" data-layout-align="center" data-db="Lec21/flights.duckdb" data-session="flights">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb76-1"><a href></a>.maxrows 20</span>
+<span id="cb76-2"><a href></a>.maxwidth 80</span>
+<span id="cb76-3"><a href></a>.timer on</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
 </section>
 <section id="flights" class="slide level2">
 <h2><code>flights</code></h2>
 <div class="small">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb90"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb90-1"><a href></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> flights <span class="kw">LIMIT</span> <span class="dv">10</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌───────┬───────┬───────┬───┬──────────┬────────┬────────┬─────────────────────┐
-## │ year  │ month │  day  │ … │ distance │  hour  │ minute │      time_hour      │
-## │ int32 │ int32 │ int32 │   │  double  │ double │ double │      timestamp      │
-## ├───────┼───────┼───────┼───┼──────────┼────────┼────────┼─────────────────────┤
-## │  2013 │     1 │     1 │ … │   1400.0 │    5.0 │   15.0 │ 2013-01-01 10:00:00 │
-## │  2013 │     1 │     1 │ … │   1416.0 │    5.0 │   29.0 │ 2013-01-01 10:00:00 │
-## │  2013 │     1 │     1 │ … │   1089.0 │    5.0 │   40.0 │ 2013-01-01 10:00:00 │
-## │  2013 │     1 │     1 │ … │   1576.0 │    5.0 │   45.0 │ 2013-01-01 10:00:00 │
-## │  2013 │     1 │     1 │ … │    762.0 │    6.0 │    0.0 │ 2013-01-01 11:00:00 │
-## │  2013 │     1 │     1 │ … │    719.0 │    5.0 │   58.0 │ 2013-01-01 10:00:00 │
-## │  2013 │     1 │     1 │ … │   1065.0 │    6.0 │    0.0 │ 2013-01-01 11:00:00 │
-## │  2013 │     1 │     1 │ … │    229.0 │    6.0 │    0.0 │ 2013-01-01 11:00:00 │
-## │  2013 │     1 │     1 │ … │    944.0 │    6.0 │    0.0 │ 2013-01-01 11:00:00 │
-## │  2013 │     1 │     1 │ … │    733.0 │    6.0 │    0.0 │ 2013-01-01 11:00:00 │
-## ├───────┴───────┴───────┴───┴──────────┴────────┴────────┴─────────────────────┤
-## │ 10 rows                                                 19 columns (7 shown) │
-## └──────────────────────────────────────────────────────────────────────────────┘
-## Run Time (s): real 0.020 user 0.000784 sys 0.002284</code></pre>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb77-1"><a href></a>SELECT * FROM flights LIMIT 10;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌───────┬───────┬───────┬───┬──────────┬────────┬────────┬─────────────────────┐
+│ year  │ month │  day  │ … │ distance │  hour  │ minute │      time_hour      │
+│ int32 │ int32 │ int32 │ … │  double  │ double │ double │      timestamp      │
+├───────┼───────┼───────┼───┼──────────┼────────┼────────┼─────────────────────┤
+│  2013 │     1 │     1 │ … │   1400.0 │    5.0 │   15.0 │ 2013-01-01 10:00:00 │
+│  2013 │     1 │     1 │ … │   1416.0 │    5.0 │   29.0 │ 2013-01-01 10:00:00 │
+│  2013 │     1 │     1 │ … │   1089.0 │    5.0 │   40.0 │ 2013-01-01 10:00:00 │
+│  2013 │     1 │     1 │ … │   1576.0 │    5.0 │   45.0 │ 2013-01-01 10:00:00 │
+│  2013 │     1 │     1 │ … │    762.0 │    6.0 │    0.0 │ 2013-01-01 11:00:00 │
+│  2013 │     1 │     1 │ … │    719.0 │    5.0 │   58.0 │ 2013-01-01 10:00:00 │
+│  2013 │     1 │     1 │ … │   1065.0 │    6.0 │    0.0 │ 2013-01-01 11:00:00 │
+│  2013 │     1 │     1 │ … │    229.0 │    6.0 │    0.0 │ 2013-01-01 11:00:00 │
+│  2013 │     1 │     1 │ … │    944.0 │    6.0 │    0.0 │ 2013-01-01 11:00:00 │
+│  2013 │     1 │     1 │ … │    733.0 │    6.0 │    0.0 │ 2013-01-01 11:00:00 │
+└───────┴───────┴───────┴───┴──────────┴────────┴────────┴─────────────────────┘
+  10 rows         use .last to show entire result         19 columns (7 shown)
+Run Time (s): real 0.002 user 0.000674 sys 0.000497</code></pre>
+</div>
+</div>
 </div>
 </section>
 <section id="planes" class="slide level2">
 <h2><code>planes</code></h2>
 <div class="small">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb92"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb92-1"><a href></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> planes <span class="kw">LIMIT</span> <span class="dv">10</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌─────────┬───────┬──────────────────────┬───┬───────┬───────┬───────────┐
-## │ tailnum │ year  │         type         │ … │ seats │ speed │  engine   │
-## │ varchar │ int32 │       varchar        │   │ int32 │ int32 │  varchar  │
-## ├─────────┼───────┼──────────────────────┼───┼───────┼───────┼───────────┤
-## │ N10156  │  2004 │ Fixed wing multi e…  │ … │    55 │       │ Turbo-fan │
-## │ N102UW  │  1998 │ Fixed wing multi e…  │ … │   182 │       │ Turbo-fan │
-## │ N103US  │  1999 │ Fixed wing multi e…  │ … │   182 │       │ Turbo-fan │
-## │ N104UW  │  1999 │ Fixed wing multi e…  │ … │   182 │       │ Turbo-fan │
-## │ N10575  │  2002 │ Fixed wing multi e…  │ … │    55 │       │ Turbo-fan │
-## │ N105UW  │  1999 │ Fixed wing multi e…  │ … │   182 │       │ Turbo-fan │
-## │ N107US  │  1999 │ Fixed wing multi e…  │ … │   182 │       │ Turbo-fan │
-## │ N108UW  │  1999 │ Fixed wing multi e…  │ … │   182 │       │ Turbo-fan │
-## │ N109UW  │  1999 │ Fixed wing multi e…  │ … │   182 │       │ Turbo-fan │
-## │ N110UW  │  1999 │ Fixed wing multi e…  │ … │   182 │       │ Turbo-fan │
-## ├─────────┴───────┴──────────────────────┴───┴───────┴───────┴───────────┤
-## │ 10 rows                                            9 columns (6 shown) │
-## └────────────────────────────────────────────────────────────────────────┘
-## Run Time (s): real 0.003 user 0.000819 sys 0.000018</code></pre>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb79-1"><a href></a>SELECT * FROM planes LIMIT 10;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌─────────┬───────┬─────────────────────────┬───┬───────┬───────┬───────────┐
+│ tailnum │ year  │          type           │ … │ seats │ speed │  engine   │
+│ varchar │ int32 │         varchar         │ … │ int32 │ int32 │  varchar  │
+├─────────┼───────┼─────────────────────────┼───┼───────┼───────┼───────────┤
+│ N10156  │  2004 │ Fixed wing multi engine │ … │    55 │  NULL │ Turbo-fan │
+│ N102UW  │  1998 │ Fixed wing multi engine │ … │   182 │  NULL │ Turbo-fan │
+│ N103US  │  1999 │ Fixed wing multi engine │ … │   182 │  NULL │ Turbo-fan │
+│ N104UW  │  1999 │ Fixed wing multi engine │ … │   182 │  NULL │ Turbo-fan │
+│ N10575  │  2002 │ Fixed wing multi engine │ … │    55 │  NULL │ Turbo-fan │
+│ N105UW  │  1999 │ Fixed wing multi engine │ … │   182 │  NULL │ Turbo-fan │
+│ N107US  │  1999 │ Fixed wing multi engine │ … │   182 │  NULL │ Turbo-fan │
+│ N108UW  │  1999 │ Fixed wing multi engine │ … │   182 │  NULL │ Turbo-fan │
+│ N109UW  │  1999 │ Fixed wing multi engine │ … │   182 │  NULL │ Turbo-fan │
+│ N110UW  │  1999 │ Fixed wing multi engine │ … │   182 │  NULL │ Turbo-fan │
+└─────────┴───────┴─────────────────────────┴───┴───────┴───────┴───────────┘
+  10 rows        use .last to show entire result        9 columns (6 shown)
+Run Time (s): real 0.001 user 0.000330 sys 0.000054</code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="tables" class="slide level2">
+<h2>tables</h2>
+<div class="mxsmall">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb81-1"><a href></a>.tables</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> ────────────────────────── flights ────────────────────────── 
+ ─────────────────────────── main ──────────────────────────── 
+┌──────────────────────────┐┌─────────────────────────────────┐
+│         flights          ││              taxi               │
+│                          ││                                 │
+│ year           integer   ││ VendorID              bigint    │
+│ month          integer   ││ tpep_pickup_datetime  timestamp │
+│ day            integer   ││ tpep_dropoff_datetime timestamp │
+│ dep_time       integer   ││ passenger_count       double    │
+│ sched_dep_time integer   ││ trip_distance         double    │
+│ dep_delay      double    ││ RatecodeID            double    │
+│ arr_time       integer   ││ store_and_fwd_flag    varchar   │
+│ sched_arr_time integer   ││ PULocationID          bigint    │
+│ arr_delay      double    ││ DOLocationID          bigint    │
+│ carrier        varchar   ││ payment_type          bigint    │
+│ flight         integer   ││ fare_amount           double    │
+│ tailnum        varchar   ││ extra                 double    │
+│ origin         varchar   ││ mta_tax               double    │
+│ dest           varchar   ││ tip_amount            double    │
+│ air_time       double    ││ tolls_amount          double    │
+│ distance       double    ││ improvement_surcharge double    │
+│ hour           double    ││ total_amount          double    │
+│ minute         double    ││ congestion_surcharge  double    │
+│ time_hour      timestamp ││ airport_fee           &quot;null&quot;    │
+│                          │└─────────────────────────────────┘
+│       336776 rows        │
+└──────────────────────────┘
+┌──────────────────────┐┌───────────────────────────┐
+│        planes        ││       payment_types       │
+│                      ││                           │
+│ tailnum      varchar ││ payment_type      integer │
+│ year         integer ││ payment_type_desc varchar │
+│ type         varchar ││                           │
+│ manufacturer varchar ││          7 rows           │
+│ model        varchar │└───────────────────────────┘
+│ engines      integer │
+│ seats        integer │
+│ speed        integer │
+│ engine       varchar │
+│                      │
+│      3322 rows       │
+└──────────────────────┘</code></pre>
+</div>
+</div>
 </div>
 </section>
 <section id="exercise-3" class="slide level2">
 <h2>Exercise 3</h2>
-<p>Write a query that determines the total number of seats available on all of the planes that flew out of New York in 2013.</p>
+<p>What is the total number of seats available on all of the planes that flew out of New York in 2013.</p>
 </section>
 <section id="a-solution" class="slide level2">
 <h2>A Solution?</h2>
 <p>Does the following seem correct?</p>
 <div class="small">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb94"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb94-1"><a href></a><span class="kw">SELECT</span> <span class="fu">sum</span>(seats) <span class="kw">FROM</span> flights <span class="kw">NATURAL</span> <span class="kw">LEFT</span> <span class="kw">JOIN</span> planes;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌────────────┐
-## │ sum(seats) │
-## │   int128   │
-## ├────────────┤
-## │     614366 │
-## └────────────┘
-## Run Time (s): real 0.012 user 0.016061 sys 0.002386</code></pre>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb83"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb83-1"><a href></a>SELECT sum(seats) FROM flights NATURAL LEFT JOIN planes;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌────────────┐
+│ sum(seats) │
+│   int128   │
+├────────────┤
+│     614366 │
+└────────────┘
+Run Time (s): real 0.002 user 0.006164 sys 0.000249</code></pre>
 </div>
-<div class="fragment">
+</div>
+</div>
 <p><br><br></p>
 <div class="center large">
-<p>Why?</p>
-</div>
+<p>Why or why not?</p>
 </div>
 </section>
 <section id="correct-solution" class="slide level2">
 <h2>Correct solution</h2>
 <p><strong>Join and select</strong>:</p>
 <div class="small">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb96"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb96-1"><a href></a><span class="kw">SELECT</span> <span class="fu">sum</span>(seats) <span class="kw">FROM</span> flights <span class="kw">LEFT</span> <span class="kw">JOIN</span> planes <span class="kw">USING</span> (tailnum);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌────────────┐
-## │ sum(seats) │
-## │   int128   │
-## ├────────────┤
-## │   38851317 │
-## └────────────┘
-## Run Time (s): real 0.005 user 0.010150 sys 0.000291</code></pre>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb85-1"><a href></a>SELECT sum(seats) FROM flights LEFT JOIN planes USING (tailnum);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌────────────┐
+│ sum(seats) │
+│   int128   │
+├────────────┤
+│   38851317 │
+└────────────┘
+Run Time (s): real 0.003 user 0.007574 sys 0.000086</code></pre>
+</div>
+</div>
 </div>
 </section>
 <section id="explain" class="slide level2">
 <h2><code>EXPLAIN</code></h2>
-<div class="xxsmall">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb98"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb98-1"><a href></a><span class="kw">EXPLAIN</span> <span class="kw">SELECT</span> <span class="fu">sum</span>(seats) <span class="kw">FROM</span> flights <span class="kw">LEFT</span> <span class="kw">JOIN</span> planes <span class="kw">USING</span> (tailnum);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌─────────────────────────────┐
-## │┌───────────────────────────┐│
-## ││       Physical Plan       ││
-## │└───────────────────────────┘│
-## └─────────────────────────────┘
-## ┌───────────────────────────┐
-## │    UNGROUPED_AGGREGATE    │
-## │    ────────────────────   │
-## │    Aggregates: sum(#0)    │
-## └─────────────┬─────────────┘
-## ┌─────────────┴─────────────┐
-## │         PROJECTION        │
-## │    ────────────────────   │
-## │           seats           │
-## │                           │
-## │        ~336776 Rows       │
-## └─────────────┬─────────────┘
-## ┌─────────────┴─────────────┐
-## │         HASH_JOIN         │
-## │    ────────────────────   │
-## │      Join Type: LEFT      │
-## │                           │
-## │        Conditions:        ├──────────────┐
-## │     tailnum = tailnum     │              │
-## │                           │              │
-## │        ~336776 Rows       │              │
-## └─────────────┬─────────────┘              │
-## ┌─────────────┴─────────────┐┌─────────────┴─────────────┐
-## │         SEQ_SCAN          ││         SEQ_SCAN          │
-## │    ────────────────────   ││    ────────────────────   │
-## │          flights          ││           planes          │
-## │                           ││                           │
-## │    Projections: tailnum   ││        Projections:       │
-## │                           ││          tailnum          │
-## │                           ││           seats           │
-## │                           ││                           │
-## │        ~336776 Rows       ││         ~3322 Rows        │
-## └───────────────────────────┘└───────────────────────────┘
-## Run Time (s): real 0.001 user 0.000547 sys 0.000000</code></pre>
+<div class="mxsmall">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb87"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb87-1"><a href></a>EXPLAIN SELECT sum(seats) FROM flights LEFT JOIN planes USING (tailnum);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+┌─────────────────────────────┐
+│┌───────────────────────────┐│
+││       Physical Plan       ││
+│└───────────────────────────┘│
+└─────────────────────────────┘
+┌───────────────────────────┐
+│    UNGROUPED_AGGREGATE    │
+│    ────────────────────   │
+│    Aggregates: sum(#0)    │
+└─────────────┬─────────────┘
+┌─────────────┴─────────────┐
+│         PROJECTION        │
+│    ────────────────────   │
+│           seats           │
+│                           │
+│       ~336,776 rows       │
+└─────────────┬─────────────┘
+┌─────────────┴─────────────┐
+│         HASH_JOIN         │
+│    ────────────────────   │
+│      Join Type: LEFT      │
+│                           │
+│        Conditions:        ├──────────────┐
+│     tailnum = tailnum     │              │
+│                           │              │
+│       ~336,776 rows       │              │
+└─────────────┬─────────────┘              │
+┌─────────────┴─────────────┐┌─────────────┴─────────────┐
+│          SEQ_SCAN         ││          SEQ_SCAN         │
+│    ────────────────────   ││    ────────────────────   │
+│           Table:          ││           Table:          │
+│    flights.main.flights   ││    flights.main.planes    │
+│                           ││                           │
+│   Type: Sequential Scan   ││   Type: Sequential Scan   │
+│    Projections: tailnum   ││                           │
+│                           ││        Projections:       │
+│                           ││          tailnum          │
+│                           ││           seats           │
+│                           ││                           │
+│       ~336,776 rows       ││        ~3,322 rows        │
+└───────────────────────────┘└───────────────────────────┘
+Run Time (s): real 0.000 user 0.000352 sys 0.000029</code></pre>
 </div>
+</div>
+</div>
+</section>
+<section id="explain-key-operators" class="slide level2">
+<h2><code>EXPLAIN</code> — key operators</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Operator</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>SEQ_SCAN</code></td>
+<td>Reads every row of a table sequentially</td>
+</tr>
+<tr class="even">
+<td><code>FILTER</code></td>
+<td>Applies a <code>WHERE</code> condition to rows</td>
+</tr>
+<tr class="odd">
+<td><code>PROJECTION</code></td>
+<td>Computes and selects output columns (<code>SELECT</code>)</td>
+</tr>
+<tr class="even">
+<td><code>HASH_JOIN</code></td>
+<td>Joins two tables by building a hash table on the smaller one</td>
+</tr>
+<tr class="odd">
+<td><code>HASH_GROUP_BY</code></td>
+<td>Groups rows and computes aggregates using a hash table (<code>GROUP BY</code>)</td>
+</tr>
+<tr class="even">
+<td><code>UNGROUPED_AGGREGATE</code></td>
+<td>Computes a single aggregate over all rows (no <code>GROUP BY</code>)</td>
+</tr>
+<tr class="odd">
+<td><code>CROSS_PRODUCT</code></td>
+<td>Cartesian product of two inputs (<code>CROSS JOIN</code>)</td>
+</tr>
+<tr class="even">
+<td><code>ORDER_BY</code></td>
+<td>Sorts rows (<code>ORDER BY</code>)</td>
+</tr>
+<tr class="odd">
+<td><code>TOP_N</code></td>
+<td>Efficiently returns the top N sorted rows (<code>ORDER BY</code> + <code>LIMIT</code>)</td>
+</tr>
+</tbody>
+</table>
 </section>
 <section id="explain-analyze" class="slide level2">
 <h2><code>EXPLAIN ANALYZE</code></h2>
-<div class="xxsmall">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb100"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb100-1"><a href></a><span class="kw">EXPLAIN</span> <span class="kw">ANALYZE</span> <span class="kw">SELECT</span> <span class="fu">sum</span>(seats) <span class="kw">FROM</span> flights <span class="kw">LEFT</span> <span class="kw">JOIN</span> planes <span class="kw">USING</span> (tailnum);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>## ┌─────────────────────────────────────┐
-## │┌───────────────────────────────────┐│
-## ││    Query Profiling Information    ││
-## │└───────────────────────────────────┘│
-## └─────────────────────────────────────┘
-## EXPLAIN ANALYZE SELECT sum(seats) FROM flights LEFT JOIN planes USING (tailnum);
-## ┌────────────────────────────────────────────────┐
-## │┌──────────────────────────────────────────────┐│
-## ││              Total Time: 0.0045s             ││
-## │└──────────────────────────────────────────────┘│
-## └────────────────────────────────────────────────┘
-## ┌───────────────────────────┐
-## │           QUERY           │
-## └─────────────┬─────────────┘
-## ┌─────────────┴─────────────┐
-## │      EXPLAIN_ANALYZE      │
-## │    ────────────────────   │
-## │           0 Rows          │
-## │          (0.00s)          │
-## └─────────────┬─────────────┘
-## ┌─────────────┴─────────────┐
-## │    UNGROUPED_AGGREGATE    │
-## │    ────────────────────   │
-## │    Aggregates: sum(#0)    │
-## │                           │
-## │           1 Rows          │
-## │          (0.00s)          │
-## └─────────────┬─────────────┘
-## ┌─────────────┴─────────────┐
-## │         PROJECTION        │
-## │    ────────────────────   │
-## │           seats           │
-## │                           │
-## │        336776 Rows        │
-## │          (0.00s)          │
-## └─────────────┬─────────────┘
-## ┌─────────────┴─────────────┐
-## │         HASH_JOIN         │
-## │    ────────────────────   │
-## │      Join Type: LEFT      │
-## │                           │
-## │        Conditions:        ├──────────────┐
-## │     tailnum = tailnum     │              │
-## │                           │              │
-## │        336776 Rows        │              │
-## │          (0.01s)          │              │
-## └─────────────┬─────────────┘              │
-## ┌─────────────┴─────────────┐┌─────────────┴─────────────┐
-## │         TABLE_SCAN        ││         TABLE_SCAN        │
-## │    ────────────────────   ││    ────────────────────   │
-## │          flights          ││           planes          │
-## │                           ││                           │
-## │    Projections: tailnum   ││        Projections:       │
-## │                           ││          tailnum          │
-## │                           ││           seats           │
-## │                           ││                           │
-## │        336776 Rows        ││         3322 Rows         │
-## │          (0.00s)          ││          (0.00s)          │
-## └───────────────────────────┘└───────────────────────────┘
-## Run Time (s): real 0.004 user 0.011027 sys 0.000200</code></pre>
+<div class="mxsmall">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb89"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb89-1"><a href></a>EXPLAIN ANALYZE SELECT sum(seats) FROM flights LEFT JOIN planes USING (tailnum);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌─────────────────────────────────────┐
+│┌───────────────────────────────────┐│
+││    Query Profiling Information    ││
+│└───────────────────────────────────┘│
+└─────────────────────────────────────┘
+EXPLAIN ANALYZE SELECT sum(seats) FROM flights LEFT JOIN planes USING (tailnum);
+┌────────────────────────────────────────────────┐
+│┌──────────────────────────────────────────────┐│
+││              Total Time: 0.0044s             ││
+│└──────────────────────────────────────────────┘│
+└────────────────────────────────────────────────┘
+┌───────────────────────────┐
+│           QUERY           │
+└─────────────┬─────────────┘
+┌─────────────┴─────────────┐
+│      EXPLAIN_ANALYZE      │
+│    ────────────────────   │
+│                           │
+│           0 rows          │
+│           0.00s           │
+└─────────────┬─────────────┘
+┌─────────────┴─────────────┐
+│    UNGROUPED_AGGREGATE    │
+│    ────────────────────   │
+│    Aggregates: sum(#0)    │
+│                           │
+│                           │
+│                           │
+│           1 row           │
+│           0.00s           │
+└─────────────┬─────────────┘
+┌─────────────┴─────────────┐
+│         PROJECTION        │
+│    ────────────────────   │
+│           seats           │
+│                           │
+│                           │
+│                           │
+│        336,776 rows       │
+│           0.00s           │
+└─────────────┬─────────────┘
+┌─────────────┴─────────────┐
+│         HASH_JOIN         │
+│    ────────────────────   │
+│      Join Type: LEFT      │
+│                           │
+│        Conditions:        │
+│     tailnum = tailnum     ├──────────────┐
+│                           │              │
+│                           │              │
+│                           │              │
+│        336,776 rows       │              │
+│           0.00s           │              │
+└─────────────┬─────────────┘              │
+┌─────────────┴─────────────┐┌─────────────┴─────────────┐
+│         TABLE_SCAN        ││         TABLE_SCAN        │
+│    ────────────────────   ││    ────────────────────   │
+│           Table:          ││           Table:          │
+│    flights.main.flights   ││    flights.main.planes    │
+│                           ││                           │
+│   Type: Sequential Scan   ││   Type: Sequential Scan   │
+│    Projections: tailnum   ││                           │
+│                           ││        Projections:       │
+│                           ││          tailnum          │
+│                           ││           seats           │
+│                           ││                           │
+│           0.00s           ││                           │
+│                           ││                           │
+│        336,776 rows       ││         3,322 rows        │
+│          (0.00s)          ││           0.00s           │
+└───────────────────────────┘└───────────────────────────┘
+Run Time (s): real 0.005 user 0.012341 sys 0.000376</code></pre>
+</div>
+</div>
 </div>
 </section>
 <section id="dplyr" class="slide level2">
 <h2>dplyr</h2>
 <div class="small">
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb102"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb102-2"><a href></a>flights <span class="ot">=</span> nycflights13<span class="sc">::</span>flights</span>
-<span id="cb102-3"><a href></a>planes <span class="ot">=</span> nycflights13<span class="sc">::</span>planes</span>
-<span id="cb102-4"><a href></a></span>
-<span id="cb102-5"><a href></a><span class="fu">system.time</span>({</span>
-<span id="cb102-6"><a href></a>  flights <span class="sc">|&gt;</span></span>
-<span id="cb102-7"><a href></a>    <span class="fu">left_join</span>(planes, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;tailnum&quot;</span> <span class="ot">=</span> <span class="st">&quot;tailnum&quot;</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb102-8"><a href></a>    <span class="fu">summarise</span>(<span class="at">total_seats =</span> <span class="fu">sum</span>(seats, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb102-9"><a href></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb91"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb91-2"><a href></a>flights <span class="ot">=</span> nycflights13<span class="sc">::</span>flights</span>
+<span id="cb91-3"><a href></a>planes <span class="ot">=</span> nycflights13<span class="sc">::</span>planes</span>
+<span id="cb91-4"><a href></a></span>
+<span id="cb91-5"><a href></a><span class="fu">system.time</span>({</span>
+<span id="cb91-6"><a href></a>  flights <span class="sc">|&gt;</span></span>
+<span id="cb91-7"><a href></a>    <span class="fu">left_join</span>(planes, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;tailnum&quot;</span> <span class="ot">=</span> <span class="st">&quot;tailnum&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb91-8"><a href></a>    <span class="fu">summarise</span>(<span class="at">total_seats =</span> <span class="fu">sum</span>(seats, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb91-9"><a href></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.050   0.004   0.054 </code></pre>
+  0.047   0.004   0.050 </code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="a-more-complex-query" class="slide level2">
+<h2>A more complex query</h2>
+<p>For each carrier and departure airport, how much better or worse (as a %) is their average departure delay compared to the overall average?</p>
+<div class="fragment">
+<div class="mxsmall">
+<div class="cell columns column-output-location" data-layout-align="center">
+<div class="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb93"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb93-1"><a href></a>WITH overall AS (</span>
+<span id="cb93-2"><a href></a>  SELECT AVG(dep_delay) AS avg_delay FROM flights</span>
+<span id="cb93-3"><a href></a>)</span>
+<span id="cb93-4"><a href></a>SELECT carrier,</span>
+<span id="cb93-5"><a href></a>       ROUND(AVG(dep_delay), 2) AS carrier_avg_delay,</span>
+<span id="cb93-6"><a href></a>       ROUND((AVG(dep_delay) - avg_delay) </span>
+<span id="cb93-7"><a href></a>             / avg_delay, 3) </span>
+<span id="cb93-8"><a href></a>       AS pct_vs_overall</span>
+<span id="cb93-9"><a href></a>FROM flights CROSS JOIN overall</span>
+<span id="cb93-10"><a href></a>GROUP BY carrier, avg_delay</span>
+<span id="cb93-11"><a href></a>ORDER BY pct_vs_overall;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column">
+<div class="cell-output cell-output-stdout">
+<pre><code>┌─────────┬───────────────────┬────────────────┐
+│ carrier │ carrier_avg_delay │ pct_vs_overall │
+│ varchar │      double       │     double     │
+├─────────┼───────────────────┼────────────────┤
+│ US      │              3.78 │         -0.701 │
+│ HA      │               4.9 │         -0.612 │
+│ AS      │               5.8 │         -0.541 │
+│ AA      │              8.59 │         -0.321 │
+│ DL      │              9.26 │         -0.267 │
+│ MQ      │             10.55 │         -0.165 │
+│ UA      │             12.11 │         -0.042 │
+│ OO      │             12.59 │         -0.004 │
+│ VX      │             12.87 │          0.018 │
+│ B6      │             13.02 │           0.03 │
+│ 9E      │             16.73 │          0.323 │
+│ WN      │             17.71 │          0.401 │
+│ FL      │             18.73 │          0.482 │
+│ YV      │              19.0 │          0.503 │
+│ EV      │             19.96 │          0.579 │
+│ F9      │             20.22 │          0.599 │
+└─────────┴───────────────────┴────────────────┘
+  16 rows                            3 columns
+Run Time (s): real 0.002 user 0.008119 sys 0.002048</code></pre>
+</div>
+</div></div>
+</div>
+</div>
+</section>
+<section id="explain-analyze-1" class="slide level2">
+<h2><code>EXPLAIN ANALYZE</code></h2>
+<div class="xxsmall">
+<div class="cell columns column-output-location" data-layout-align="center">
+<div class="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb95"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb95-1"><a href></a>EXPLAIN ANALYZE</span>
+<span id="cb95-2"><a href></a>WITH overall AS (</span>
+<span id="cb95-3"><a href></a>  SELECT AVG(dep_delay) AS avg_delay FROM flights</span>
+<span id="cb95-4"><a href></a>)</span>
+<span id="cb95-5"><a href></a>SELECT carrier,</span>
+<span id="cb95-6"><a href></a>       ROUND(AVG(dep_delay), 2) AS carrier_avg_delay,</span>
+<span id="cb95-7"><a href></a>       ROUND((AVG(dep_delay) - avg_delay) </span>
+<span id="cb95-8"><a href></a>             / avg_delay, 3) </span>
+<span id="cb95-9"><a href></a>       AS pct_vs_overall</span>
+<span id="cb95-10"><a href></a>FROM flights CROSS JOIN overall</span>
+<span id="cb95-11"><a href></a>GROUP BY carrier, avg_delay</span>
+<span id="cb95-12"><a href></a>ORDER BY pct_vs_overall;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column">
+<div class="cell-output cell-output-stdout">
+<pre><code>┌─────────────────────────────────────┐
+│┌───────────────────────────────────┐│
+││    Query Profiling Information    ││
+│└───────────────────────────────────┘│
+└─────────────────────────────────────┘
+EXPLAIN ANALYZE WITH overall AS (   SELECT AVG(dep_delay) AS avg_delay FROM flights ) SELECT carrier,        ROUND(AVG(dep_delay), 2) AS carrier_avg_delay,        ROUND((AVG(dep_delay) - avg_delay)               / avg_delay, 3)         AS pct_vs_overall FROM flights CROSS JOIN overall GROUP BY carrier, avg_delay ORDER BY pct_vs_overall;
+┌────────────────────────────────────────────────┐
+│┌──────────────────────────────────────────────┐│
+││              Total Time: 0.0029s             ││
+│└──────────────────────────────────────────────┘│
+└────────────────────────────────────────────────┘
+┌───────────────────────────┐
+│           QUERY           │
+└─────────────┬─────────────┘
+┌─────────────┴─────────────┐
+│      EXPLAIN_ANALYZE      │
+│    ────────────────────   │
+│                           │
+│           0 rows          │
+│           0.00s           │
+└─────────────┬─────────────┘
+┌─────────────┴─────────────┐
+│         PROJECTION        │
+│    ────────────────────   │
+│__internal_decompress_strin│
+│           g(#0)           │
+│             #1            │
+│             #2            │
+│                           │
+│                           │
+│                           │
+│          16 rows          │
+│           0.00s           │
+└─────────────┬─────────────┘
+┌─────────────┴─────────────┐
+│          ORDER_BY         │
+│    ────────────────────   │
+│  round(((avg(flights.main │
+│   .flights.dep_delay) -   │
+│    overall.avg_delay) /   │
+│ overall.avg_delay), 3) ASC│
+│                           │
+│                           │
+│                           │
+│          16 rows          │
+│           0.00s           │
+└─────────────┬─────────────┘
+┌─────────────┴─────────────┐
+│         PROJECTION        │
+│    ────────────────────   │
+│__internal_compress_string_│
+│        uinteger(#0)       │
+│             #1            │
+│             #2            │
+│                           │
+│                           │
+│                           │
+│          16 rows          │
+│           0.00s           │
+└─────────────┬─────────────┘
+┌─────────────┴─────────────┐
+│         PROJECTION        │
+│    ────────────────────   │
+│          carrier          │
+│     carrier_avg_delay     │
+│       pct_vs_overall      │
+│                           │
+│                           │
+│                           │
+│          16 rows          │
+│           0.00s           │
+└─────────────┬─────────────┘
+┌─────────────┴─────────────┐
+│         PROJECTION        │
+│    ────────────────────   │
+│__internal_decompress_strin│
+│           g(#0)           │
+│             #1            │
+│             #2            │
+│                           │
+│                           │
+│                           │
+│          16 rows          │
+│           0.00s           │
+└─────────────┬─────────────┘
+┌─────────────┴─────────────┐
+│       HASH_GROUP_BY       │
+│    ────────────────────   │
+│          Groups:          │
+│             #0            │
+│             #1            │
+│                           │
+│    Aggregates: avg(#2)    │
+│                           │
+│                           │
+│                           │
+│          16 rows          │
+│           0.00s           │
+└─────────────┬─────────────┘
+┌─────────────┴─────────────┐
+│         PROJECTION        │
+│    ────────────────────   │
+│          carrier          │
+│         avg_delay         │
+│         dep_delay         │
+│                           │
+│                           │
+│                           │
+│        336,776 rows       │
+│           0.00s           │
+└─────────────┬─────────────┘
+┌─────────────┴─────────────┐
+│         PROJECTION        │
+│    ────────────────────   │
+│__internal_compress_string_│
+│        uinteger(#0)       │
+│             #1            │
+│             #2            │
+│                           │
+│                           │
+│                           │
+│        336,776 rows       │
+│           0.00s           │
+└─────────────┬─────────────┘
+┌─────────────┴─────────────┐
+│       CROSS_PRODUCT       │
+│    ────────────────────   │
+│                           ├──────────────┐
+│        336,776 rows       │              │
+│           0.00s           │              │
+└─────────────┬─────────────┘              │
+┌─────────────┴─────────────┐┌─────────────┴─────────────┐
+│         TABLE_SCAN        ││    UNGROUPED_AGGREGATE    │
+│    ────────────────────   ││    ────────────────────   │
+│           Table:          ││    Aggregates: avg(#0)    │
+│    flights.main.flights   ││                           │
+│                           ││                           │
+│   Type: Sequential Scan   ││                           │
+│                           ││                           │
+│        Projections:       ││           0.00s           │
+│          carrier          ││                           │
+│         dep_delay         ││                           │
+│                           ││                           │
+│                           ││                           │
+│                           ││                           │
+│        336,776 rows       ││           1 row           │
+│           0.00s           ││          (0.00s)          │
+└───────────────────────────┘└─────────────┬─────────────┘
+                             ┌─────────────┴─────────────┐
+                             │         PROJECTION        │
+                             │    ────────────────────   │
+                             │         dep_delay         │
+                             │                           │
+                             │                           │
+                             │                           │
+                             │        336,776 rows       │
+                             │           0.00s           │
+                             └─────────────┬─────────────┘
+                             ┌─────────────┴─────────────┐
+                             │         TABLE_SCAN        │
+                             │    ────────────────────   │
+                             │           Table:          │
+                             │    flights.main.flights   │
+                             │                           │
+                             │   Type: Sequential Scan   │
+                             │                           │
+                             │        Projections:       │
+                             │         dep_delay         │
+                             │                           │
+                             │                           │
+                             │                           │
+                             │        336,776 rows       │
+                             │           0.00s           │
+                             └───────────────────────────┘
+Run Time (s): real 0.003 user 0.008910 sys 0.000641</code></pre>
+</div>
+</div></div>
+</div>
+</section>
+<section id="dplyr-1" class="slide level2">
+<h2>dplyr</h2>
+<div class="small">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb97"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href></a><span class="fu">system.time</span>({</span>
+<span id="cb97-2"><a href></a>  overall_avg <span class="ot">=</span> nycflights13<span class="sc">::</span>flights <span class="sc">|&gt;</span></span>
+<span id="cb97-3"><a href></a>    <span class="fu">summarise</span>(<span class="at">avg_delay =</span> <span class="fu">mean</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb97-4"><a href></a>    <span class="fu">pull</span>(avg_delay)</span>
+<span id="cb97-5"><a href></a></span>
+<span id="cb97-6"><a href></a>  nycflights13<span class="sc">::</span>flights <span class="sc">|&gt;</span></span>
+<span id="cb97-7"><a href></a>    <span class="fu">group_by</span>(carrier) <span class="sc">|&gt;</span></span>
+<span id="cb97-8"><a href></a>    <span class="fu">summarise</span>(<span class="at">carrier_avg_delay =</span> <span class="fu">round</span>(<span class="fu">mean</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">2</span>), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb97-9"><a href></a>    <span class="fu">mutate</span>(<span class="at">pct_vs_overall =</span> <span class="fu">round</span>((carrier_avg_delay <span class="sc">-</span> overall_avg) <span class="sc">/</span> overall_avg, <span class="dv">3</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb97-10"><a href></a>    <span class="fu">arrange</span>(pct_vs_overall)</span>
+<span id="cb97-11"><a href></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   user  system elapsed 
+  0.011   0.001   0.012 </code></pre>
 </div>
 </div>
 </div>
 </section></section>
+<section>
 <section id="nyc-taxi-demo" class="title-slide slide level1 center">
 <h1>NYC Taxi Demo</h1>
 
 </section>
+<section id="nyc-taxi-data" class="slide level2">
+<h2>NYC Taxi Data</h2>
+<p>The <a href="https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page">NYC TLC Trip Record Data</a> is a large public dataset of taxi and for-hire vehicle trips in New York City, published monthly since 2009.</p>
+<p>Each row is one trip and includes:</p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>tpep_pickup_datetime</code> / <code>tpep_dropoff_datetime</code></td>
+<td>Trip start and end times</td>
+</tr>
+<tr class="even">
+<td><code>trip_distance</code></td>
+<td>Distance traveled (miles)</td>
+</tr>
+<tr class="odd">
+<td><code>PULocationID</code> / <code>DOLocationID</code></td>
+<td>Pickup and dropoff taxi zone</td>
+</tr>
+<tr class="even">
+<td><code>fare_amount</code>, <code>tip_amount</code>, <code>total_amount</code></td>
+<td>Fare components</td>
+</tr>
+<tr class="odd">
+<td><code>payment_type</code></td>
+<td>How the fare was paid (card, cash, etc.)</td>
+</tr>
+<tr class="even">
+<td><code>passenger_count</code></td>
+<td>Number of passengers</td>
+</tr>
+</tbody>
+</table>
+<p>Recent years are distributed as parquet files (one per month), with each file containing millions of rows.</p>
+</section>
+<section id="parquet" class="slide level2">
+<h2>Parquet</h2>
+<p>Parquet is a binary, columnar file format widely used in data science and analytics.</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>Row-oriented (CSV)</strong></p>
+<pre><code>name,  salary, dept
+Alice, 52000,  Accounting
+Bob,   40000,  Accounting
+Carol, 30000,  Sales</code></pre>
+<p>Reading one column requires reading every row.</p>
+</div><div class="column" style="width:50%;">
+<p><strong>Column-oriented (Parquet)</strong></p>
+<pre><code>name:   [Alice, Bob, Carol, ...]
+salary: [52000, 40000, 30000, ...]
+dept:   [Accounting, Accounting, Sales, ...]</code></pre>
+<p>Reading one column skips all others entirely.</p>
+</div></div>
+<p>Key advantages over CSV: <em>compressed</em> (much smaller files), <em>typed</em> (no schema inference), <em>fast for analytical queries</em> (only reads needed columns). Widely used with Spark, Arrow, Pandas, and cloud data warehouses.</p>
+</section>
+<section id="the-data" class="slide level2">
+<h2>The data</h2>
+<div class="xsmall">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb101"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a href></a>(<span class="at">d =</span> fs<span class="sc">::</span><span class="fu">dir_info</span>(<span class="st">&quot;~/Scratch/nyctaxi/&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb101-2"><a href></a>  dplyr<span class="sc">::</span><span class="fu">transmute</span>(<span class="at">path =</span> fs<span class="sc">::</span><span class="fu">path_file</span>(path), size))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 74 × 2
+   path                                   size
+   &lt;chr&gt;                           &lt;fs::bytes&gt;
+ 1 fix                                   1.91K
+ 2 taxi_zone_lookup.csv                 12.04K
+ 3 yellow_tripdata_2020-01.parquet      89.23M
+ 4 yellow_tripdata_2020-02.parquet      87.87M
+ 5 yellow_tripdata_2020-03.parquet      42.38M
+ 6 yellow_tripdata_2020-04.parquet       4.24M
+ 7 yellow_tripdata_2020-05.parquet       5.94M
+ 8 yellow_tripdata_2020-06.parquet       9.07M
+ 9 yellow_tripdata_2020-07.parquet      12.77M
+10 yellow_tripdata_2020-08.parquet      15.83M
+# ℹ 64 more rows</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb103"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href></a><span class="fu">sum</span>(d<span class="sc">$</span>size)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>3.38G</code></pre>
+</div>
+</div>
+</div>
+
+<aside><div>
+<p>If you want to try this out the files are available on the departmental servers in <code>/data/nyctaxi/</code>.</p>
+</div></aside></section>
+<section id="reading-from-parquet-files" class="slide level2">
+<h2>Reading from Parquet files</h2>
+<p>DuckDB can query Parquet files directly — no explicit import step needed.</p>
+<div class="columns xsmall">
+<div class="column" style="width:50%;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb105"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb105-1"><a href></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="st">&#39;~/Scratch/nyctaxi/yellow_tripdata_2024-01.parquet&#39;</span> <span class="kw">LIMIT</span> <span class="dv">5</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column" style="width:50%;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb106"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb106-1"><a href></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="st">&#39;~/Scratch/nyctaxi/yellow_tripdata_*.parquet&#39;</span> <span class="kw">LIMIT</span> <span class="dv">5</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div></div>
+<p>Glob patterns let you query multiple files as a single table — useful for partitioned datasets.</p>
+<div class="fragment">
+<p>The same <code>CREATE TABLE</code> / <code>CREATE VIEW</code> pattern from CSV works with Parquet:</p>
+<div class="small">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb107"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb107-1"><a href></a><span class="kw">CREATE</span> <span class="kw">VIEW</span> taxi <span class="kw">AS</span> <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> read_parquet(<span class="st">&#39;~/Scratch/nyctaxi/yellow_tripdata_*.parquet&#39;</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+
+</div>
+<aside><div>
+<p>DuckDB can also read remote Parquet files directly via HTTPS, enabling queries over S3 or other cloud storage without downloading the file first.</p>
+</div></aside></section>
+<section id="setup-1" class="slide level2">
+<h2>Setup</h2>
+<p>Enable timings and create a view over all monthly Parquet files:</p>
+<div class="small">
+<div class="cell" data-layout-align="center" data-session="taxi">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb108"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb108-1"><a href></a>.timer on</span>
+<span id="cb108-2"><a href></a>CREATE VIEW taxi AS SELECT * FROM read_parquet(&#39;~/Scratch/nyctaxi/yellow_*.parquet&#39;);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Run Time (s): real 0.000 user 0.000333 sys 0.000336</code></pre>
+</div>
+</div>
+</div>
+<div class="fragment">
+<p>How many rows?</p>
+<div class="small">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb110"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb110-1"><a href></a>SELECT count(*) FROM taxi;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌──────────────┐
+│ count_star() │
+│    int64     │
+├──────────────┤
+│    223412046 │
+└──────────────┘
+Run Time (s): real 0.013 user 0.129479 sys 0.013948</code></pre>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="schema" class="slide level2">
+<h2>Schema</h2>
+<div class="xsmall">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb112"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb112-1"><a href></a>DESCRIBE SELECT * FROM taxi;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌─────────────────────────────────┐
+│              taxi               │
+│                                 │
+│ VendorID              bigint    │
+│ tpep_pickup_datetime  timestamp │
+│ tpep_dropoff_datetime timestamp │
+│ passenger_count       double    │
+│ trip_distance         double    │
+│ RatecodeID            double    │
+│ store_and_fwd_flag    varchar   │
+│ PULocationID          bigint    │
+│ DOLocationID          bigint    │
+│ payment_type          bigint    │
+│ fare_amount           double    │
+│ extra                 double    │
+│ mta_tax               double    │
+│ tip_amount            double    │
+│ tolls_amount          double    │
+│ improvement_surcharge double    │
+│ total_amount          double    │
+│ congestion_surcharge  double    │
+│ airport_fee           integer   │
+└─────────────────────────────────┘
+Run Time (s): real 0.000 user 0.000506 sys 0.000249</code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="payment-types" class="slide level2">
+<h2>Payment types</h2>
+<p>Create a lookup table for the numeric <code>payment_type</code> codes:</p>
+<div class="xsmall">
+<div class="cell columns column-output-location" data-layout-align="center">
+<div class="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb114"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb114-1"><a href></a>CREATE TABLE payment_types AS</span>
+<span id="cb114-2"><a href></a>SELECT * FROM (</span>
+<span id="cb114-3"><a href></a>  VALUES</span>
+<span id="cb114-4"><a href></a>    (0, &#39;Flex Fare trip&#39;),</span>
+<span id="cb114-5"><a href></a>    (1, &#39;Credit card&#39;),</span>
+<span id="cb114-6"><a href></a>    (2, &#39;Cash&#39;),</span>
+<span id="cb114-7"><a href></a>    (3, &#39;No charge&#39;),</span>
+<span id="cb114-8"><a href></a>    (4, &#39;Dispute&#39;),</span>
+<span id="cb114-9"><a href></a>    (5, &#39;Unknown&#39;),</span>
+<span id="cb114-10"><a href></a>    (6, &#39;Voided trip&#39;)</span>
+<span id="cb114-11"><a href></a>) AS t(payment_type, payment_type_desc);</span>
+<span id="cb114-12"><a href></a></span>
+<span id="cb114-13"><a href></a>SELECT * FROM payment_types;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column">
+<div class="cell-output cell-output-stdout">
+<pre><code>Run Time (s): real 0.001 user 0.000298 sys 0.000092
+┌──────────────┬───────────────────┐
+│ payment_type │ payment_type_desc │
+│    int32     │      varchar      │
+├──────────────┼───────────────────┤
+│            0 │ Flex Fare trip    │
+│            1 │ Credit card       │
+│            2 │ Cash              │
+│            3 │ No charge         │
+│            4 │ Dispute           │
+│            5 │ Unknown           │
+│            6 │ Voided trip       │
+└──────────────┴───────────────────┘
+Run Time (s): real 0.000 user 0.000162 sys 0.000029</code></pre>
+</div>
+</div></div>
+</div>
+</section>
+<section id="tip-percentage" class="slide level2">
+<h2>Tip percentage</h2>
+<p>What fraction of the fare is tipped on average, by payment type?</p>
+<div class="xsmall">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb116"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb116-1"><a href></a>SELECT payment_type_desc,</span>
+<span id="cb116-2"><a href></a>       round(avg(tip_amount / fare_amount), 4) AS mean_tip_frac,</span>
+<span id="cb116-3"><a href></a>       count(*) AS n</span>
+<span id="cb116-4"><a href></a>FROM taxi</span>
+<span id="cb116-5"><a href></a>JOIN payment_types USING (payment_type)</span>
+<span id="cb116-6"><a href></a>WHERE tip_amount &gt;= 0 AND fare_amount &gt; 0</span>
+<span id="cb116-7"><a href></a>GROUP BY payment_type, payment_type_desc</span>
+<span id="cb116-8"><a href></a>ORDER BY payment_type;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌───────────────────┬───────────────┬───────────┐
+│ payment_type_desc │ mean_tip_frac │     n     │
+│      varchar      │    double     │   int64   │
+├───────────────────┼───────────────┼───────────┤
+│ Flex Fare trip    │        0.0542 │  18478107 │
+│ Credit card       │         0.274 │ 161375392 │
+│ Cash              │           0.0 │  36624561 │
+│ No charge         │        0.0012 │    940580 │
+│ Dispute           │        0.0009 │   1453619 │
+│ Unknown           │           0.0 │        20 │
+└───────────────────┴───────────────┴───────────┘
+Run Time (s): real 0.858 user 10.822145 sys 0.113052</code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="cost-per-mile" class="slide level2 scrollable">
+<h2>Cost per mile</h2>
+<p>Average fare per mile for each pickup zone, joined with zone names:</p>
+<div class="xsmall">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb118"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb118-1"><a href></a>SELECT * FROM (</span>
+<span id="cb118-2"><a href></a>  SELECT</span>
+<span id="cb118-3"><a href></a>    PULocationID AS pickup_zone,</span>
+<span id="cb118-4"><a href></a>    ROUND(AVG(fare_amount), 2) AS fare_amount,</span>
+<span id="cb118-5"><a href></a>    ROUND(AVG(trip_distance), 2) AS trip_distance,</span>
+<span id="cb118-6"><a href></a>    ROUND(AVG(fare_amount / trip_distance), 2) AS fare_per_mile,</span>
+<span id="cb118-7"><a href></a>    COUNT(*) AS num_rides</span>
+<span id="cb118-8"><a href></a>  FROM taxi</span>
+<span id="cb118-9"><a href></a>  WHERE trip_distance &gt; 0 AND fare_amount &gt; 0</span>
+<span id="cb118-10"><a href></a>  GROUP BY PULocationID</span>
+<span id="cb118-11"><a href></a>) NATURAL LEFT JOIN (</span>
+<span id="cb118-12"><a href></a>  SELECT LocationID AS pickup_zone, *</span>
+<span id="cb118-13"><a href></a>  FROM read_csv(&#39;~/Scratch/nyctaxi/taxi_zone_lookup.csv&#39;)</span>
+<span id="cb118-14"><a href></a>)</span>
+<span id="cb118-15"><a href></a>ORDER BY fare_per_mile DESC;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌─────────────┬─────────────┬───────────────┬───────────────┬───────────┬────────────┬───────────────┬───────────────────────────────────────────────┬──────────────┐
+│ pickup_zone │ fare_amount │ trip_distance │ fare_per_mile │ num_rides │ LocationID │    Borough    │                     Zone                      │ service_zone │
+│    int64    │   double    │    double     │    double     │   int64   │   int64    │    varchar    │                    varchar                    │   varchar    │
+├─────────────┼─────────────┼───────────────┼───────────────┼───────────┼────────────┼───────────────┼───────────────────────────────────────────────┼──────────────┤
+│           1 │       83.98 │          4.14 │       2338.06 │      7245 │          1 │ EWR           │ Newark Airport                                │ EWR          │
+│         216 │       47.36 │         24.97 │        292.28 │     74147 │        216 │ Queens        │ South Ozone Park                              │ Boro Zone    │
+│         134 │       42.17 │         10.68 │        240.28 │     29004 │        134 │ Queens        │ Kew Gardens                                   │ Boro Zone    │
+│         197 │       35.53 │         38.87 │        144.19 │     56805 │        197 │ Queens        │ Richmond Hill                                 │ Boro Zone    │
+│          84 │       78.67 │         25.75 │        119.01 │       163 │         84 │ Staten Island │ Eltingville/Annadale/Prince&#39;s Bay             │ Boro Zone    │
+│         204 │       84.66 │          27.6 │        101.43 │       144 │        204 │ Staten Island │ Rossville/Woodrow                             │ Boro Zone    │
+│         120 │       34.64 │          7.18 │         95.25 │      1937 │        120 │ Manhattan     │ Highbridge Park                               │ Boro Zone    │
+│         265 │       45.28 │         10.03 │         90.66 │    283245 │        265 │ N/A           │ Outside of NYC                                │ N/A          │
+│         207 │       42.14 │          6.16 │         89.88 │      5022 │        207 │ Queens        │ Saint Michaels Cemetery/Woodside              │ Boro Zone    │
+│         109 │       56.26 │        520.98 │         88.84 │       204 │        109 │ Staten Island │ Great Kills                                   │ Boro Zone    │
+│         129 │       27.39 │         25.52 │         68.58 │     98924 │        129 │ Queens        │ Jackson Heights                               │ Boro Zone    │
+│          30 │       33.85 │          8.57 │         65.95 │       353 │         30 │ Queens        │ Broad Channel                                 │ Boro Zone    │
+│         221 │        38.6 │         51.89 │         59.04 │      1061 │        221 │ Staten Island │ Stapleton                                     │ Boro Zone    │
+│          96 │       31.03 │          6.67 │         58.43 │      1577 │         96 │ Queens        │ Forest Park/Highland Park                     │ Boro Zone    │
+│         124 │       37.46 │         65.86 │         55.58 │     13304 │        124 │ Queens        │ Howard Beach                                  │ Boro Zone    │
+│         180 │       31.82 │         13.44 │         53.74 │     10302 │        180 │ Queens        │ Ozone Park                                    │ Boro Zone    │
+│         219 │        53.8 │         55.74 │         48.42 │     31840 │        219 │ Queens        │ Springfield Gardens South                     │ Boro Zone    │
+│         206 │       51.61 │        383.92 │         46.89 │       594 │        206 │ Staten Island │ Saint George/New Brighton                     │ Boro Zone    │
+│          83 │       27.44 │         47.94 │         44.52 │     22221 │         83 │ Queens        │ Elmhurst/Maspeth                              │ Boro Zone    │
+│         145 │       30.09 │         11.09 │          43.2 │    167963 │        145 │ Queens        │ Long Island City/Hunters Point                │ Boro Zone    │
+│          ·  │         ·   │            ·  │            ·  │       ·   │         ·  │   ·           │        ·                                      │     ·        │
+│          ·  │         ·   │            ·  │            ·  │       ·   │         ·  │   ·           │        ·                                      │     ·        │
+│          ·  │         ·   │            ·  │            ·  │       ·   │         ·  │   ·           │        ·                                      │     ·        │
+│         141 │       12.15 │          2.97 │         10.14 │   5355630 │        141 │ Manhattan     │ Lenox Hill West                               │ Yellow Zone  │
+│         237 │       11.68 │          2.34 │          10.1 │  10183946 │        237 │ Manhattan     │ Upper East Side South                         │ Yellow Zone  │
+│         229 │       12.64 │          3.23 │         10.05 │   4122175 │        229 │ Manhattan     │ Sutton Place/Turtle Bay North                 │ Yellow Zone  │
+│          79 │       13.94 │          4.39 │         10.05 │   5242428 │         79 │ Manhattan     │ East Village                                  │ Yellow Zone  │
+│         249 │       13.83 │          3.47 │          9.94 │   4640245 │        249 │ Manhattan     │ West Village                                  │ Yellow Zone  │
+│         151 │       13.36 │          6.59 │          9.86 │   1941932 │        151 │ Manhattan     │ Manhattan Valley                              │ Yellow Zone  │
+│         138 │       39.58 │          9.73 │          9.86 │   5930897 │        138 │ Queens        │ LaGuardia Airport                             │ Airports     │
+│         236 │       12.14 │          2.78 │          9.78 │   9173243 │        236 │ Manhattan     │ Upper East Side North                         │ Yellow Zone  │
+│          70 │       39.13 │         10.95 │          9.78 │    695627 │         70 │ Queens        │ East Elmhurst                                 │ Boro Zone    │
+│         263 │       12.45 │          4.25 │          9.77 │   4364630 │        263 │ Manhattan     │ Yorkville West                                │ Yellow Zone  │
+│         238 │        12.9 │          4.81 │          9.69 │   4434109 │        238 │ Manhattan     │ Upper West Side North                         │ Yellow Zone  │
+│         239 │       12.83 │          3.82 │          9.42 │   6022092 │        239 │ Manhattan     │ Upper West Side South                         │ Yellow Zone  │
+│          43 │       13.44 │          2.93 │           9.4 │   3457031 │         43 │ Manhattan     │ Central Park                                  │ Yellow Zone  │
+│          46 │       40.07 │         11.65 │          9.36 │      1743 │         46 │ Bronx         │ City Island                                   │ Boro Zone    │
+│         142 │        12.9 │           2.9 │          9.28 │   6821494 │        142 │ Manhattan     │ Lincoln Square East                           │ Yellow Zone  │
+│           2 │       51.11 │         14.33 │          6.69 │       215 │          2 │ Queens        │ Jamaica Bay                                   │ Boro Zone    │
+│         105 │       21.48 │          5.76 │          4.71 │        63 │        105 │ Manhattan     │ Governor&#39;s Island/Ellis Island/Liberty Island │ Yellow Zone  │
+│         199 │       37.34 │          9.99 │          4.24 │        87 │        199 │ Bronx         │ Rikers Island                                 │ Boro Zone    │
+│         176 │       43.18 │         12.66 │          4.16 │       163 │        176 │ Staten Island │ Oakwood                                       │ Boro Zone    │
+│         110 │       55.16 │          16.9 │          4.02 │         3 │        110 │ Staten Island │ Great Kills Park                              │ Boro Zone    │
+└─────────────┴─────────────┴───────────────┴───────────────┴───────────┴────────────┴───────────────┴───────────────────────────────────────────────┴──────────────┘
+  263 rows (40 shown)                                                   use .last to show entire result                                                   9 columns
+Run Time (s): real 0.542 user 6.859641 sys 0.103632</code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="cost-per-mile-median" class="slide level2 scrollable">
+<h2>Cost per mile — median</h2>
+<p>Using <code>quantile_cont</code> instead of <code>AVG</code> for a more robust estimate:</p>
+<div class="xsmall">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb120" data-code-line-numbers="|4,5,6"><pre class="sourceCode numberSource duckdb number-lines code-with-copy"><code class="sourceCode"><span id="cb120-1"><a href></a>SELECT * FROM (</span>
+<span id="cb120-2"><a href></a>  SELECT</span>
+<span id="cb120-3"><a href></a>    PULocationID AS pickup_zone,</span>
+<span id="cb120-4"><a href></a>    ROUND(quantile_cont(fare_amount, 0.5), 2) AS fare_amount,</span>
+<span id="cb120-5"><a href></a>    ROUND(quantile_cont(trip_distance, 0.5), 2) AS trip_distance,</span>
+<span id="cb120-6"><a href></a>    ROUND(quantile_cont(fare_amount / trip_distance, 0.5), 2) AS fare_per_mile,</span>
+<span id="cb120-7"><a href></a>    COUNT(*) AS num_rides</span>
+<span id="cb120-8"><a href></a>  FROM taxi</span>
+<span id="cb120-9"><a href></a>  WHERE trip_distance &gt; 0 AND fare_amount &gt; 0</span>
+<span id="cb120-10"><a href></a>  GROUP BY PULocationID</span>
+<span id="cb120-11"><a href></a>) NATURAL LEFT JOIN (</span>
+<span id="cb120-12"><a href></a>  SELECT LocationID AS pickup_zone, *</span>
+<span id="cb120-13"><a href></a>  FROM read_csv(&#39;~/Scratch/nyctaxi/taxi_zone_lookup.csv&#39;)</span>
+<span id="cb120-14"><a href></a>)</span>
+<span id="cb120-15"><a href></a>ORDER BY fare_per_mile DESC;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>┌─────────────┬─────────────┬───────────────┬───────────────┬───────────┬────────────┬───────────────┬───────────────────────────────────┬──────────────┐
+│ pickup_zone │ fare_amount │ trip_distance │ fare_per_mile │ num_rides │ LocationID │    Borough    │               Zone                │ service_zone │
+│    int64    │   double    │    double     │    double     │   int64   │   int64    │    varchar    │              varchar              │   varchar    │
+├─────────────┼─────────────┼───────────────┼───────────────┼───────────┼────────────┼───────────────┼───────────────────────────────────┼──────────────┤
+│           1 │        90.0 │           0.1 │         625.0 │      7245 │          1 │ EWR           │ Newark Airport                    │ EWR          │
+│         237 │         9.3 │           1.3 │          7.19 │  10183946 │        237 │ Manhattan     │ Upper East Side South             │ Yellow Zone  │
+│         161 │        11.5 │           1.6 │          7.13 │   9136233 │        161 │ Manhattan     │ Midtown Center                    │ Yellow Zone  │
+│         234 │        10.7 │          1.51 │          6.88 │   5801824 │        234 │ Manhattan     │ Union Sq                          │ Yellow Zone  │
+│         236 │        10.0 │          1.49 │          6.88 │   9173243 │        236 │ Manhattan     │ Upper East Side North             │ Yellow Zone  │
+│         163 │        11.0 │          1.58 │          6.87 │   5887171 │        163 │ Manhattan     │ Midtown North                     │ Yellow Zone  │
+│         164 │        11.4 │          1.56 │          6.86 │   4698717 │        164 │ Manhattan     │ Midtown South                     │ Yellow Zone  │
+│         186 │        12.1 │           1.6 │          6.85 │   7208443 │        186 │ Manhattan     │ Penn Station/Madison Sq West      │ Yellow Zone  │
+│         100 │        11.0 │           1.5 │          6.82 │   3437441 │        100 │ Manhattan     │ Garment District                  │ Yellow Zone  │
+│         113 │        10.7 │          1.59 │          6.82 │   2993363 │        113 │ Manhattan     │ Greenwich Village North           │ Yellow Zone  │
+│         162 │        11.4 │           1.6 │          6.81 │   7190207 │        162 │ Manhattan     │ Midtown East                      │ Yellow Zone  │
+│          90 │        10.0 │           1.5 │          6.75 │   3579037 │         90 │ Manhattan     │ Flatiron                          │ Yellow Zone  │
+│         170 │        11.0 │          1.59 │          6.71 │   6345855 │        170 │ Manhattan     │ Murray Hill                       │ Yellow Zone  │
+│         230 │        12.1 │           1.7 │           6.7 │   6572024 │        230 │ Manhattan     │ Times Sq/Theatre District         │ Yellow Zone  │
+│           8 │        42.9 │          5.08 │          6.68 │      1569 │          8 │ Queens        │ Astoria Park                      │ Boro Zone    │
+│          68 │        12.5 │           1.8 │          6.67 │   5454880 │         68 │ Manhattan     │ East Chelsea                      │ Yellow Zone  │
+│          43 │        10.7 │          1.65 │          6.58 │   3457031 │         43 │ Manhattan     │ Central Park                      │ Yellow Zone  │
+│         207 │        40.8 │          6.47 │          6.56 │      5022 │        207 │ Queens        │ Saint Michaels Cemetery/Woodside  │ Boro Zone    │
+│         141 │         9.5 │          1.44 │          6.55 │   5355630 │        141 │ Manhattan     │ Lenox Hill West                   │ Yellow Zone  │
+│         246 │        12.8 │          1.88 │          6.54 │   3462704 │        246 │ Manhattan     │ West Chelsea/Hudson Yards         │ Yellow Zone  │
+│          ·  │          ·  │            ·  │            ·  │        ·  │         ·  │     ·         │      ·                            │     ·        │
+│          ·  │          ·  │            ·  │            ·  │        ·  │         ·  │     ·         │      ·                            │     ·        │
+│          ·  │          ·  │            ·  │            ·  │        ·  │         ·  │     ·         │      ·                            │     ·        │
+│         109 │       62.89 │         14.82 │          3.56 │       204 │        109 │ Staten Island │ Great Kills                       │ Boro Zone    │
+│          46 │        39.5 │         11.17 │          3.53 │      1743 │         46 │ Bronx         │ City Island                       │ Boro Zone    │
+│         117 │        46.9 │          13.3 │          3.51 │     19661 │        117 │ Queens        │ Hammels/Arverne                   │ Boro Zone    │
+│         245 │       47.41 │         13.79 │          3.48 │       253 │        245 │ Staten Island │ West Brighton                     │ Boro Zone    │
+│           5 │        67.2 │         18.99 │          3.43 │       900 │          5 │ Staten Island │ Arden Heights                     │ Boro Zone    │
+│         101 │       36.12 │         10.47 │          3.41 │      6449 │        101 │ Queens        │ Glen Oaks                         │ Boro Zone    │
+│          86 │        47.5 │         14.18 │           3.4 │     19320 │         86 │ Queens        │ Far Rockaway                      │ Boro Zone    │
+│          64 │       35.08 │         11.07 │          3.35 │      5026 │         64 │ Queens        │ Douglaston                        │ Boro Zone    │
+│         115 │       45.41 │         13.26 │          3.32 │       985 │        115 │ Staten Island │ Grymes Hill/Clifton               │ Boro Zone    │
+│         214 │        35.9 │         10.27 │          3.31 │       868 │        214 │ Staten Island │ South Beach/Dongan Hills          │ Boro Zone    │
+│         206 │       55.01 │         16.85 │          3.31 │       594 │        206 │ Staten Island │ Saint George/New Brighton         │ Boro Zone    │
+│           6 │         3.7 │          5.79 │          3.28 │      2306 │          6 │ Staten Island │ Arrochar/Fort Wadsworth           │ Boro Zone    │
+│         118 │       48.48 │         15.12 │          3.23 │       811 │        118 │ Staten Island │ Heartland Village/Todt Hill       │ Boro Zone    │
+│         187 │       50.35 │          15.5 │          3.16 │       212 │        187 │ Staten Island │ Port Richmond                     │ Boro Zone    │
+│         156 │       56.45 │         17.89 │          3.05 │       545 │        156 │ Staten Island │ Mariners Harbor                   │ Boro Zone    │
+│          84 │       83.06 │         27.86 │           3.0 │       163 │         84 │ Staten Island │ Eltingville/Annadale/Prince&#39;s Bay │ Boro Zone    │
+│          23 │        63.2 │          20.5 │          2.88 │      3037 │         23 │ Staten Island │ Bloomfield/Emerson Hill           │ Boro Zone    │
+│          99 │        95.5 │          34.0 │          2.77 │       140 │         99 │ Staten Island │ Freshkills Park                   │ Boro Zone    │
+│         204 │        88.0 │         31.12 │          2.71 │       144 │        204 │ Staten Island │ Rossville/Woodrow                 │ Boro Zone    │
+│          44 │       102.0 │         38.67 │          2.68 │      2792 │         44 │ Staten Island │ Charleston/Tottenville            │ Boro Zone    │
+└─────────────┴─────────────┴───────────────┴───────────────┴───────────┴────────────┴───────────────┴───────────────────────────────────┴──────────────┘
+  263 rows (40 shown)                                             use .last to show entire result                                             9 columns
+Run Time (s): real 3.868 user 19.200116 sys 9.108288</code></pre>
+</div>
+</div>
+</div>
+
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
