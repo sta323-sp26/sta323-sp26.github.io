@@ -345,7 +345,7 @@ options(width=85)
 For this we will be using the `glmnet` package which supports fitting lasso, ridge and elastic net models. 
 
 $$
-\min _{\beta_0, \beta} \frac{1}{N} \sum_{i=1}^N w_i l\left(y_i, \beta_0+\beta^T x_i\right)+\lambda\left[(1-\alpha)\|\beta\|{ }_2^2 / 2+\alpha\|\beta\|_1\right],
+\min _{\beta_0, \beta} \frac{1}{N} \sum_{i=1}^N w_i l\left(y_i, \beta_0+\beta^T x_i\right)+\lambda\left[(1-\alpha)\|\beta\|_2^2 / 2+\alpha\|\beta\|_1\right],
 $$
 
 . . .
@@ -569,7 +569,7 @@ hotel_metrics(lasso_test_perf, truth = children, estimate = .pred_class, .pred_c
 
 ::: {.column width='50%'}
 ```{r}
-#| output-width: 75%
+#| out-width: 75%
 yardstick::roc_curve(lasso_test_perf, children, .pred_children) |>
   autoplot()
 ```
@@ -618,7 +618,7 @@ dt_model = decision_tree(
 
 ## Recipe & workflow
 
-Same recipe as before but we skip dummy coding as it is not needed by rpart,
+Same recipe as before but we skip dummy coding as it is not needed by rpart.
 
 ::: {.xsmall}
 ```{r}
@@ -821,7 +821,7 @@ rf_model = rand_forest(mtry = tune(), min_n = tune(), trees = 100) |>
 
 ## Recipe & workflow
 
-We again skip dummy coding in the recipe as it is not needed by ranger,
+We again skip dummy coding in the recipe as it is not needed by ranger.
 
 ::: {.small}
 ```{r}
