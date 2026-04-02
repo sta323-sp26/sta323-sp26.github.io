@@ -86,7 +86,7 @@ map_int(hotels, ~ length(levels(.x))) |> keep(~ .x > 0) |> sort()
 
 ## The model
 
-Our goal is to develop a predictive model that is able to predict whether a booking will include children or not based on the other characteristics of the booking.
+Our goal is to develop a model that is able to predict whether a booking will include children or not based on the other characteristics of the booking.
 
 . . .
 
@@ -533,7 +533,7 @@ lasso_train_perf |>
 :::
 
 
-## Re-fitting
+## Re-fitting {.scrollable}
 
 Typically with a tuned model we update the workflow (or model) with the optimal parameter values and then refit using the *complete* training data,
 
@@ -723,7 +723,7 @@ options(width=60)
 options(tibble.width = 60)
 ```
 
-## Re-fitting
+## Re-fitting {.scrollable}
 
 ::: {.mxsmall}
 ```{r}
@@ -899,7 +899,7 @@ options(width=60)
 options(tibble.width = 60)
 ```
 
-## Re-fitting
+## Re-fitting {.scrollable}
 
 ::: {.mxsmall}
 ```{r}
