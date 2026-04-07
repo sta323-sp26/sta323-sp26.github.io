@@ -310,18 +310,22 @@ schedule:
 - week: 13
   day: 2
   lecture: Optimization
+  slides: Lec24
 
 - week: 13
   day: 4
-  lecture: Optimization
+  lecture: Optimization (cont.)
+  slides: 
 
 - week: 14
   day: 2
   lecture: Gradient Descent
+  slides: 
 
 - week: 14
   day: 4
-  lecture: Gradient Descent
+  lecture: Gradient Descent (cont.)
+  slides: 
 
 - week: 15
   day: 2

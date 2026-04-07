@@ -1,0 +1,959 @@
+---
+title: "Stochastic Gradient Descent"
+subtitle: "Lecture 25"
+author: "Dr. Colin Rundel"
+footer: "Sta 323 - Spring 2026"
+format:
+  revealjs:
+    theme: slides.scss
+    transition: fade
+    slide-number: true
+    self-contained: true
+execute:
+  echo: true
+engine: knitr
+---
+
+```{r setup}
+#| message: false
+#| warning: false
+#| include: false
+
+knitr::opts_chunk$set(
+  fig.align = "center", fig.retina = 2, dpi = 150,
+  out.width = "100%"
+)
+
+library(tidyverse)
+ggplot2::theme_set(ggplot2::theme_bw())
+
+options(width = 70)
+```
+
+
+# Gradient Descent <br/> for Regression
+
+
+## A regression example
+
+::: {.xsmall}
+```{r}
+set.seed(1234)
+n = 200; p = 20
+X = matrix(rnorm(n * p), n, p)
+true_beta = rep(0, p)
+true_beta[c(3, 7, 12, 18)] = c(5.2, -3.1, 8.7, -1.5)
+y = 3 + X %*% true_beta + rnorm(n)
+```
+:::
+
+:::: {.columns .xxsmall}
+::: {.column width='50%'}
+```{r}
+head(y, 20)
+```
+:::
+
+::: {.column width='50%'}
+```{r}
+true_beta
+```
+:::
+::::
+
+
+## Minimalistic GD for linear regression
+
+::: {.xsmall}
+```{r}
+#| code-line-numbers: "|4,5|10"
+grad_desc_lm = function(X, y, beta, step, max_step = 50) {
+  X = cbind(1, X)
+  n = nrow(X); k = ncol(X)
+
+  f = \(beta) sum((y - X %*% beta)^2)
+  grad = \(beta) 2 * t(X) %*% (X %*% beta - y)
+
+  res = list(x = list(beta), loss = f(beta), iter = 0)
+
+  for (i in seq_len(max_step)) {
+    beta = beta - drop(grad(beta)) * step
+    res$x = c(res$x, list(beta))
+    res$loss = c(res$loss, f(beta))
+    res$iter = c(res$iter, i)
+  }
+
+  res
+}
+```
+:::
+
+
+## Linear regression
+
+::: {.xsmall}
+```{r}
+lm_fit = lm(y ~ X)
+coef(lm_fit)
+```
+:::
+
+. . .
+
+<br/>
+
+::: {.xsmall}
+```{r}
+gd_time = system.time({
+  gd_lm = grad_desc_lm(
+    X, y, rep(0, p + 1),
+    step = 0.001, max_step = 20
+  )
+})
+tail(gd_lm$x, 1)[[1]]
+```
+:::
+
+
+##
+
+```{r}
+#| echo: false
+ggplot(
+  tibble(iter = gd_lm$iter, loss = gd_lm$loss),
+  aes(iter, loss)
+) +
+  geom_line() + geom_point(size = 0.8) +
+  scale_y_log10() +
+  labs(x = "Iteration", y = "Loss")
+```
+
+## A quick analysis
+
+Let's take a quick look at the linear regression loss function and gradient descent and think a bit about its cost(s), we can define the loss function and its gradient as follows:
+
+$$
+\begin{aligned}
+f(\underset{k\times 1}{\boldsymbol{\beta}}) &=  (\underset{n \times 1}{y} - \underset{n\times k}{\boldsymbol{X}} \, \underset{k \times 1}{\boldsymbol{\beta}})^T (\underset{n \times 1}{y} - \underset{n\times k}{\boldsymbol{X}} \, \underset{k \times 1}{\boldsymbol{\beta}}) \\
+\\
+\nabla f(\underset{k\times 1}{\boldsymbol{\beta}}) &= \underset{k\times n}{2 \boldsymbol{X}^T}(\underset{n \times k}{\boldsymbol{X}}\,\underset{k\times 1}{\boldsymbol{\beta}} - \underset{n \times 1}{\boldsymbol{y}})
+\end{aligned}
+$$
+
+What are the costs of calculating the loss function and gradient respectively in terms of $n$ and $k$?
+
+::: {.aside}
+*Hint* - $\underset{m \times n}{\boldsymbol{A}} \cdot \underset{n \times k}{\boldsymbol{B}}$ has complexity $O(mnk)$.
+:::
+
+. . .
+
+::: {.columns}
+::: {.column width=20%}
+:::
+::: {.column width=60%}
+* Calculating the loss function costs ${O}(nk)$
+
+* Calculating the gradient costs ${O}(nk)$
+:::
+::: {.column width=20%}
+:::
+:::
+
+
+
+# Stochastic Gradient Descent
+
+## Stochastic Gradient Descent
+
+This is a variant of gradient descent where rather than using all $n$ data points we randomly sample one at a time and use that single point to make our gradient step.
+
+* Sampling of observations can be done with or without replacement
+
+* Will take more steps to converge but each step is now cheaper to compute
+
+* SGD has slower asymptotic convergence than GD, but is often faster in practice in terms of runtime
+
+* Generally requires the learning rate to shrink as a function of iteration to guarantee convergence
+
+
+## SGD - Linear Regression
+
+::: {.xsmall}
+```{r}
+#| code-line-numbers: "|5|10-14|7,16,17"
+sgd_lm = function(X, y, beta, step, max_step = 50, seed = 1234, replace = TRUE) {
+  X = cbind(1, X)
+  n = nrow(X); k = ncol(X)
+  f = \(beta) sum((y - X %*% beta)^2)
+  grad_i = \(beta, i) 2 * X[i, ] * drop(X[i, ] %*% beta - y[i])
+
+  res = list(x = list(beta), loss = f(beta), iter = 0)
+  set.seed(seed)
+
+  for (ep in seq_len(max_step)) {
+    if (replace) {
+      js = sample.int(n, n, replace = TRUE)
+    } else {
+      js = sample.int(n)
+    }
+
+    for (j in js) {
+      beta = beta - grad_i(beta, j) * step
+      res$x = c(res$x, list(beta))
+      res$loss = c(res$loss, f(beta))
+      res$iter = c(res$iter, tail(res$iter, 1) + 1)
+    }
+  }
+
+  res
+}
+```
+:::
+
+
+## Fitting {.scrollable}
+
+::: {.xxsmall}
+```{r}
+coef(lm_fit)
+```
+
+```{r}
+sgd_rep_time = system.time({
+  sgd_lm_rep = sgd_lm(
+    X, y, rep(0, p + 1),
+    step = 0.001, max_step = 20, replace = TRUE
+  )
+})
+tail(sgd_lm_rep$x, 1)[[1]]
+```
+```{r}
+sgd_worep_time = system.time({
+  sgd_lm_worep = sgd_lm(
+    X, y, rep(0, p + 1),
+    step = 0.001, max_step = 20, replace = FALSE
+  )
+})
+tail(sgd_lm_worep$x, 1)[[1]]
+```
+:::
+
+
+## Learning by iteration
+
+```{r}
+#| echo: false
+bind_rows(
+  tibble(iter = gd_lm$iter, loss = gd_lm$loss, method = "GD"),
+  tibble(iter = sgd_lm_rep$iter, loss = sgd_lm_rep$loss, method = "SGD - replacement"),
+  tibble(iter = sgd_lm_worep$iter, loss = sgd_lm_worep$loss, method = "SGD - w/o replacement")
+) |>
+  ggplot(aes(iter, loss, color = method)) +
+  geom_line(alpha = 0.7) +
+  scale_y_log10() +
+  labs(x = "Iteration", y = "Loss", color = "")
+```
+
+## Learning by Epochs
+
+Generally, rather than thinking in iterations we use epochs instead - an epoch is one complete pass through the data.
+
+```{r}
+#| echo: false
+bind_rows(
+  tibble(iter = gd_lm$iter, loss = gd_lm$loss, method = "GD"),
+  tibble(iter = sgd_lm_rep$iter / n, loss = sgd_lm_rep$loss, method = "SGD - replacement"),
+  tibble(iter = sgd_lm_worep$iter / n, loss = sgd_lm_worep$loss, method = "SGD - w/o replacement")
+) |>
+  ggplot(aes(iter, loss, color = method)) +
+  geom_line(alpha = 0.7) +
+  scale_y_log10() +
+  labs(x = "Epoch", y = "Loss", color = "")
+```
+
+## Run times
+
+```{r}
+#| echo: false
+tibble(
+  Method = c("GD", "SGD (replacement)", "SGD (w/o replacement)"),
+  `Time / Epoch` = c(
+    sprintf("%.3fs", gd_time["elapsed"] / 20),
+    sprintf("%.3fs", sgd_rep_time["elapsed"] / 20),
+    sprintf("%.3fs", sgd_worep_time["elapsed"] / 20)
+  )
+) |>
+  knitr::kable()
+```
+
+
+## A bigger example
+
+::: {.xsmall}
+```{r}
+set.seed(1234)
+n = 10000; p = 20
+X = matrix(rnorm(n * p), n, p)
+true_beta = rep(0, p)
+true_beta[c(3, 7, 12, 18)] = c(5.2, -3.1, 8.7, -1.5)
+y = 3 + X %*% true_beta + rnorm(n)
+```
+:::
+
+. . .
+
+::: {.xsmall}
+```{r}
+lm_fit = lm(y ~ X)
+coef(lm_fit)
+```
+:::
+
+## Fitting {.scrollable}
+
+::: {.xxsmall}
+```{r}
+gd_time = system.time({
+  gd_lm = grad_desc_lm(
+    X, y, rep(0, p + 1),
+    step = 0.00005, max_step = 3
+  )
+})
+tail(gd_lm$x, 1)[[1]]
+```
+```{r}
+sgd_rep_time = system.time({
+  sgd_lm_rep = sgd_lm(
+    X, y, rep(0, p + 1),
+    step = 0.001, max_step = 3, replace = TRUE
+  )
+})
+tail(sgd_lm_rep$x, 1)[[1]]
+```
+```{r}
+sgd_worep_time = system.time({
+  sgd_lm_worep = sgd_lm(
+    X, y, rep(0, p + 1),
+    step = 0.001, max_step = 3, replace = FALSE
+  )
+})
+tail(sgd_lm_worep$x, 1)[[1]]
+```
+:::
+
+
+## Results
+
+::: {.panel-tabset}
+
+### Full
+
+```{r}
+#| echo: false
+bind_rows(
+  tibble(iter = gd_lm$iter, loss = gd_lm$loss, method = "GD"),
+  tibble(iter = sgd_lm_rep$iter / n, loss = sgd_lm_rep$loss, method = "SGD - replacement"),
+  tibble(iter = sgd_lm_worep$iter / n, loss = sgd_lm_worep$loss, method = "SGD - w/o replacement")
+) |>
+  ggplot(aes(iter, loss, color = method)) +
+  geom_line(alpha = 0.7) +
+  scale_y_log10() +
+  labs(x = "Epoch", y = "Loss", color = "")
+```
+
+### Zoom
+
+```{r}
+#| echo: false
+bind_rows(
+  tibble(iter = gd_lm$iter, loss = gd_lm$loss, method = "GD"),
+  tibble(iter = sgd_lm_rep$iter / n, loss = sgd_lm_rep$loss, method = "SGD - replacement"),
+  tibble(iter = sgd_lm_worep$iter / n, loss = sgd_lm_worep$loss, method = "SGD - w/o replacement")
+) |>
+  ggplot(aes(iter, loss, color = method)) +
+  geom_line(alpha = 0.7) +
+  scale_y_log10() +
+  coord_cartesian(xlim = c(0, 0.3)) +
+  labs(x = "Epoch", y = "Loss", color = "")
+```
+
+### Timings
+
+```{r}
+#| echo: false
+tibble(
+  Method = c("GD", "SGD (replacement)", "SGD (w/o replacement)"),
+  `Time / Epoch` = c(
+    sprintf("%.3fs", gd_time["elapsed"] / 3),
+    sprintf("%.3fs", sgd_rep_time["elapsed"] / 3),
+    sprintf("%.3fs", sgd_worep_time["elapsed"] / 3)
+  )
+) |>
+  knitr::kable()
+```
+
+:::
+
+
+# Mini-batch Gradient Descent
+
+## Mini-batch gradient descent
+
+This is a variant of stochastic gradient descent where a subset of $m$ data points is selected for each gradient update.
+
+* The idea is to find a balance between the cost of increasing the data size vs the speed-up of vectorized calculations.
+
+* More updates per epoch than GD, but less than SGD
+
+* Mini batch composition can be constructed by sampling data with or without replacement
+
+
+## MBGD - Linear Regression
+
+::: {.xsmall}
+```{r}
+#| code-line-numbers: "|4|10-14|16|17,4"
+mb_grad_desc_lm = function(X, y, beta, step, batch_size = 10, max_step = 50, seed = 1234, replace = TRUE) {
+  X = cbind(1, X)
+  n = nrow(X); k = ncol(X)
+  f = \(beta) sum((y - X %*% beta)^2)
+  grad_b = \(beta, idx) 2 * t(X[idx, , drop = FALSE]) %*% (X[idx, , drop = FALSE] %*% beta - y[idx])
+
+  res = list(x = list(beta), loss = f(beta), iter = 0)
+  set.seed(seed)
+
+  for (ep in seq_len(max_step)) {
+    if (replace) {
+      js = sample.int(n, n, replace = TRUE)
+    } else {
+      js = sample.int(n)
+    }
+
+    batches = split(js, ceiling(seq_along(js) / batch_size))
+    for (batch in batches) {
+      beta = beta - drop(grad_b(beta, batch)) * step
+      res$x = c(res$x, list(beta))
+      res$loss = c(res$loss, f(beta))
+      res$iter = c(res$iter, tail(res$iter, 1) + 1)
+    }
+  }
+
+  res
+}
+```
+:::
+
+
+## Fitting {.scrollable}
+
+::: {.xxsmall}
+```{r}
+coef(lm_fit)
+```
+```{r}
+sizes = c(10, 50, 100)
+mbgd = list()
+mbgd_time = list()
+for (size in sizes) {
+  mbgd_time[[as.character(size)]] = system.time({
+    mbgd[[as.character(size)]] = mb_grad_desc_lm(
+      X, y, rep(0, p + 1), batch_size = size,
+      step = 0.001, max_step = 3, replace = FALSE
+    )
+  })
+}
+```
+
+```{r}
+#| echo: false
+for (size in sizes) {
+  cat(sprintf("Batch size: %d (%.3fs / epoch)\n", size, mbgd_time[[as.character(size)]]["elapsed"] / 3))
+  print(tail(mbgd[[as.character(size)]]$x, 1)[[1]])
+  cat("\n")
+}
+```
+:::
+
+
+## Results
+
+::: {.panel-tabset}
+
+### Full
+
+```{r}
+#| echo: false
+df_all = bind_rows(
+  tibble(iter = gd_lm$iter, loss = gd_lm$loss, method = "GD"),
+  tibble(iter = sgd_lm_rep$iter / n, loss = sgd_lm_rep$loss, method = "SGD - replacement"),
+  tibble(iter = sgd_lm_worep$iter / n, loss = sgd_lm_worep$loss, method = "SGD - w/o replacement"),
+  purrr::map_dfr(sizes, \(size) {
+    res = mbgd[[as.character(size)]]
+    tibble(iter = res$iter / (n / size), loss = res$loss, method = paste0("MBGD (", size, ")"))
+  })
+)
+
+ggplot(df_all, aes(iter, loss, color = method)) +
+  geom_line(alpha = 0.7) +
+  scale_y_log10() +
+  labs(x = "Epoch", y = "Loss", color = "")
+```
+
+### Zoom
+
+```{r}
+#| echo: false
+ggplot(df_all, aes(iter, loss, color = method)) +
+  geom_line(alpha = 0.7) +
+  scale_y_log10() +
+  coord_cartesian(xlim = c(0, 0.15)) +
+  labs(x = "Epoch", y = "Loss", color = "")
+```
+
+### Timings
+
+```{r}
+#| echo: false
+tibble(
+  Method = c("GD", "SGD (replacement)", "SGD (w/o replacement)",
+             paste0("MBGD (", sizes, ")")),
+  `Time / Epoch` = c(
+    sprintf("%.3fs", gd_time["elapsed"] / 3),
+    sprintf("%.3fs", sgd_rep_time["elapsed"] / 3),
+    sprintf("%.3fs", sgd_worep_time["elapsed"] / 3),
+    sapply(sizes, \(s) sprintf("%.3fs", mbgd_time[[as.character(s)]]["elapsed"] / 3))
+  )
+) |>
+  knitr::kable()
+```
+
+:::
+
+
+## A bit of theory
+
+We've talked a bit about the computational side of things, but why do these approaches work at all?
+
+. . .
+
+In statistics and machine learning many of our problems have a form that looks like,
+
+$$
+\underset{\theta}{\text{arg min}} \; \ell(\boldsymbol{X}, \theta)  = \underset{\theta}{\text{arg min}} \; \frac{1}{n} \sum_{i=1}^n \ell(\boldsymbol{X}_i, \theta)
+$$
+
+which means that the gradient of the loss function is given by
+
+$$
+\nabla \ell(\boldsymbol{X}, \theta) = \frac{1}{n} \sum_{i=1}^n \nabla \ell(\boldsymbol{X}_i, \theta)
+$$
+
+. . .
+
+$$
+\nabla \ell(\boldsymbol{X}, \theta) \approx \frac{1}{|B|} \sum_{i \in B} \nabla \ell(\boldsymbol{X}_i, \theta)
+$$
+
+## SGD estimator
+
+Because we are sampling $B$ randomly, then our SGD and mini batch GD approximations are unbiased estimates of the full gradient,
+
+$$
+E\left[ \frac{1}{|B|} \sum_{i \in B} \nabla \ell(\boldsymbol{X}_i, \theta) \right] = \frac{1}{n} \sum_{i=1}^n \nabla \ell(\boldsymbol{X}_i, \theta) = \nabla \ell(\boldsymbol{X}, \theta)
+$$
+
+Each update can be viewed as a noisy gradient descent step (gradient + zero mean noise).
+
+* The difference between mini batch and stochastic gradient descent is that by increasing the computation cost per step we are reducing the noise variance for that step
+
+
+
+## Limitations
+
+As mentioned previously we need to be a bit careful with learning rates and convergence for both of these methods. So far, our approach has been naive and runs for a fixed number of epochs.
+
+If we want to use a convergence criterion we need to keep the following in mind:
+
+* Let $\theta^*$ be a global / local minimizer of our loss function $\ell(\boldsymbol{X},\theta)$, then by definition $\nabla \ell(\boldsymbol{X},\theta^*) = 0$
+
+* The issue is that our gradient approximation,
+  $$
+  \frac{1}{|B|} \sum_{i \in B} \nabla \ell(\boldsymbol{X}_i, \theta) \ne 0
+  $$
+  as $B$ is a subset of the data, therefore our algorithm is likely to never converge.
+
+
+## Solution
+
+The practical solution to this is to implement a learning rate schedule which generally shrinks the learning rate / step size over time to ensure convergence.
+
+The choice of the exact learning schedule is problem specific, and is usually about finding the right balance.
+
+Some common examples:
+
+* Piecewise constant - $\eta_t = \eta_i \text{ if } t_i \leq t \leq t_{i+1}$
+
+* Exponential decay - $\eta_t = \eta_0 e^{-\lambda t}$
+
+* Polynomial decay - $\eta_t = \eta_0 (\beta t+1)^{-\alpha}$
+
+There are many more approaches including more exotic techniques that allow the learning rate to increase and decrease to help the optimizer better explore the objective function and in some cases escape local optima.
+
+
+# Adaptive Updates & Momentum
+
+## AdaGrad
+
+This approach was proposed by Duchi, Hazan, & Singer in 2011 and is based on the idea of scaling the learning rates for the current step by the sum of the square gradients of previous steps - this has the effect of shrinking the step size of dimensions with large previous gradients.
+
+$$
+\begin{aligned}
+\boldsymbol{\theta}_{t+1} &= \boldsymbol{\theta}_t - \eta_t \frac{1}{\sqrt{\boldsymbol{s}_t + \epsilon}} \odot \nabla \ell(\boldsymbol{X}_{B_t}, \boldsymbol{\theta}_t)\\
+\boldsymbol{s}_t &= \sum_{i=1}^t \left(\nabla \ell(\boldsymbol{X}_{B_i}, \boldsymbol{\theta}_i)\right)^2
+\end{aligned}
+$$
+
+here $\epsilon$ is a small constant (i.e. $10^{-7}$) to avoid division by zero.
+
+
+## Implementation
+
+::: {.xsmall}
+```{r}
+#| code-line-numbers: "|9|19-22"
+adagrad_lm = function(X, y, beta, step, batch_size = 10, max_step = 50, seed = 1234, replace = TRUE, eps = 1e-8) {
+  X = cbind(1, X)
+  n = nrow(X); k = ncol(X)
+  f = \(beta) sum((y - X %*% beta)^2)
+  grad_b = \(beta, idx) 2 * t(X[idx, , drop = FALSE]) %*% (X[idx, , drop = FALSE] %*% beta - y[idx])
+
+  res = list(x = list(beta), loss = f(beta), iter = 0)
+  set.seed(seed)
+  S = rep(0, k)
+
+  for (ep in seq_len(max_step)) {
+    if (replace) {
+      js = sample.int(n, n, replace = TRUE)
+    } else {
+      js = sample.int(n)
+    }
+
+    batches = split(js, ceiling(seq_along(js) / batch_size))
+    for (batch in batches) {
+      G = drop(grad_b(beta, batch))
+      S = S + G^2
+      beta = beta - step * (1 / sqrt(S + eps)) * G
+
+      res$x = c(res$x, list(beta))
+      res$loss = c(res$loss, f(beta))
+      res$iter = c(res$iter, tail(res$iter, 1) + 1)
+    }
+  }
+
+  res
+}
+```
+:::
+
+
+## A medium example
+
+::: {.xsmall}
+```{r}
+set.seed(1234)
+n = 1000; p = 20
+X = matrix(rnorm(n * p), n, p)
+true_beta = rep(0, p)
+true_beta[c(3, 7, 12, 18)] = c(5.2, -3.1, 8.7, -1.5)
+y = 3 + X %*% true_beta + rnorm(n)
+```
+:::
+
+. . .
+
+::: {.xsmall}
+```{r}
+lm_fit = lm(y ~ X)
+coef(lm_fit)
+```
+:::
+
+## Fitting
+
+::: {.xxsmall}
+```{r}
+ag_sizes = c(1, 25, 50, 1000)
+ag_lrs = c(10, 10, 10, 10)
+ag_algos = c("AdaGrad - SGD", "AdaGrad - MBGD (25)", "AdaGrad - MBGD (50)", "AdaGrad - GD")
+
+adagrad_res = purrr::map2(ag_sizes, ag_lrs, \(size, lr) {
+  adagrad_lm(X, y, rep(0, p + 1), batch_size = size, step = lr, max_step = 7, replace = TRUE, eps = 1e-8)
+}) |> setNames(ag_algos)
+```
+
+```{r}
+#| echo: false
+for (algo in ag_algos) {
+  cat(algo, "\n")
+  print(tail(adagrad_res[[algo]]$x, 1)[[1]])
+  cat("\n")
+}
+```
+:::
+
+## Results
+
+```{r}
+#| echo: false
+purrr::imap_dfr(adagrad_res, \(res, name) {
+  tibble(
+    iter = res$iter / (n / ag_sizes[match(name, ag_algos)]),
+    loss = res$loss,
+    method = name
+  )
+}) |>
+  ggplot(aes(iter, loss, color = method)) +
+  geom_line(alpha = 0.7) +
+  scale_y_log10() +
+  labs(x = "Epoch", y = "Loss", color = "")
+```
+
+
+## RMSProp
+
+With AdaGrad the denominator involving $\boldsymbol{s}_t$ gets larger as $t$ increases, but in some cases it gets too large too fast to effectively explore the loss function. An alternative is to use a moving average of the past squared gradients instead.
+
+RMSProp replaces AdaGrad's $\boldsymbol{s}_t$ with the following,
+
+$$
+\boldsymbol{s}_t = \beta \, \boldsymbol{s}_{t-1} + (1-\beta) \, (\nabla \ell(\boldsymbol{X},\boldsymbol{\theta}_t))^2
+$$
+
+$$
+\boldsymbol{s}_0 = \boldsymbol{0}
+$$
+
+in practice a value of $\beta \approx 0.9$ is often used.
+
+
+## Implementation
+
+::: {.xsmall}
+```{r}
+#| code-line-numbers: "|20"
+rmsprop_lm = function(X, y, beta, step, batch_size = 10, max_step = 50, seed = 1234, replace = TRUE, eps = 1e-8, b = 0.9) {
+  X = cbind(1, X)
+  n = nrow(X); k = ncol(X)
+  f = \(beta) sum((y - X %*% beta)^2)
+  grad_b = \(beta, idx) 2 * t(X[idx, , drop = FALSE]) %*% (X[idx, , drop = FALSE] %*% beta - y[idx])
+
+  res = list(x = list(beta), loss = f(beta), iter = 0)
+  set.seed(seed)
+  S = rep(0, k)
+
+  for (ep in seq_len(max_step)) {
+    if (replace) {
+      js = sample.int(n, n, replace = TRUE)
+    } else {
+      js = sample.int(n)
+    }
+
+    batches = split(js, ceiling(seq_along(js) / batch_size))
+    for (batch in batches) {
+      G = drop(grad_b(beta, batch))
+      S = b * S + (1 - b) * G^2
+      beta = beta - step * (1 / sqrt(S + eps)) * G
+
+      res$x = c(res$x, list(beta))
+      res$loss = c(res$loss, f(beta))
+      res$iter = c(res$iter, tail(res$iter, 1) + 1)
+    }
+  }
+
+  res
+}
+```
+:::
+
+## Fitting
+
+::: {.xxsmall}
+```{r}
+rms_sizes = c(1, 25, 50, 1000)
+rms_lrs = c(0.01, 0.1, 0.25, 1)
+rms_algos = c("RMSProp - SGD", "RMSProp - MBGD (25)", "RMSProp - MBGD (50)", "RMSProp - GD")
+
+rmsprop_res = purrr::map2(rms_sizes, rms_lrs, \(size, lr) {
+  rmsprop_lm(X, y, rep(0, p + 1), batch_size = size, step = lr, max_step = 25, replace = TRUE)
+}) |> setNames(rms_algos)
+```
+
+```{r}
+#| echo: false
+for (algo in rms_algos) {
+  cat(algo, "\n")
+  print(tail(rmsprop_res[[algo]]$x, 1)[[1]])
+  cat("\n")
+}
+```
+:::
+
+## Results
+
+```{r}
+#| echo: false
+purrr::imap_dfr(rmsprop_res, \(res, name) {
+  tibble(
+    iter = res$iter / (n / rms_sizes[match(name, rms_algos)]),
+    loss = res$loss,
+    method = name
+  )
+}) |>
+  ggplot(aes(iter, loss, color = method)) +
+  geom_line(alpha = 0.7) +
+  scale_y_log10() +
+  labs(x = "Epoch", y = "Loss", color = "")
+```
+
+
+## Momentum
+
+Rather than just using the gradient information at our current location it may be beneficial to use information from our previous steps as well. A general setup for this type approach looks like,
+
+::: {.small}
+$$
+\boldsymbol{\theta}_{t+1} = \boldsymbol{\theta}_t - \eta \, \boldsymbol{m}_t
+$$
+
+$$
+\boldsymbol{m}_t = \beta \, \boldsymbol{m}_{t-1} + (1-\beta) \, \nabla \ell(\boldsymbol{X}, \boldsymbol{\theta}_t)
+$$
+:::
+
+where $\eta$ is our step size and $\beta$ determines the weighting of the current gradient and the previous gradients.
+
+If you have taken a course on time series, this has a flavor that looks a lot like moving average models,
+
+::: {.small}
+$$
+\boldsymbol{m}_t = (1-\beta) \, \nabla \ell(\boldsymbol{X}, \boldsymbol{\theta}_t) + \beta(1-\beta) \, \, \nabla \ell(\boldsymbol{X}, \boldsymbol{\theta}_{t-1}) + \beta^2(1-\beta) \, \, \nabla \ell(\boldsymbol{X}, \boldsymbol{\theta}_{t-2}) + \cdots
+$$
+:::
+
+## Adam
+
+The "adaptive moment estimation" algorithm is a combination of momentum with RMSProp,
+
+$$
+\begin{aligned}
+\theta_{t+1} &= \theta_t - \eta_t \frac{\boldsymbol{m_t}}{\sqrt{\boldsymbol{s}_t + \epsilon}} \\
+\boldsymbol{m}_t &= \beta_1 \, \boldsymbol{m}_{t-1} + (1-\beta_1) \, \nabla \ell(\boldsymbol{X}, \theta_t) \\
+\boldsymbol{s}_t &= \beta_2 \, \boldsymbol{s}_{t-1} + (1-\beta_2) \, (\nabla \ell(\boldsymbol{X},\boldsymbol{\theta}_t))^2 \\
+\end{aligned}
+$$
+
+Note that RMSProp is a special case of Adam when $\beta_1 = 0$.
+
+Adam is widely used in practice and is commonly available within tools like Torch for fitting neural network models.
+
+In typical use $\beta_1=0.9$, $\beta_2=0.999$, $\epsilon=10^{-6}$, and $\eta_t=0.001$ are used. As the learning rate is not guaranteed to decrease over time, the algorithm is not guaranteed to converge.
+
+## Bias corrections
+
+One small alteration that was suggested by the original authors and is commonly used is to correct for the bias towards small values in the initial estimates of $\boldsymbol{m}_t$ and $\boldsymbol{s}_t$. In which case they are replaced with,
+
+$$
+\begin{aligned}
+{\hat{\boldsymbol{m}}}_t &= \boldsymbol{m}_t / (1-{\beta_1}^t) \\
+{\hat{\boldsymbol{s}}}_t &=\boldsymbol{s}_t / (1-{\beta_2}^t) \\
+\end{aligned}
+$$
+
+## Implementation
+
+::: {.xsmall}
+```{r}
+#| code-line-numbers: "|10-12|22-25|27,28|30"
+adam_lm = function(X, y, beta, step = 0.001, batch_size = 10, max_step = 50, seed = 1234, replace = TRUE, eps = 1e-6, b1 = 0.9, b2 = 0.999) {
+  X = cbind(1, X)
+  n = nrow(X); k = ncol(X)
+  f = \(beta) sum((y - X %*% beta)^2)
+  grad_b = \(beta, idx) 2 * t(X[idx, , drop = FALSE]) %*% (X[idx, , drop = FALSE] %*% beta - y[idx])
+
+  res = list(x = list(beta), loss = f(beta), iter = 0)
+  set.seed(seed)
+
+  S = rep(0, k)
+  M = rep(0, k)
+  t = 0
+
+  for (ep in seq_len(max_step)) {
+    if (replace) {
+      js = sample.int(n, n, replace = TRUE)
+    } else {
+      js = sample.int(n)
+    }
+
+    batches = split(js, ceiling(seq_along(js) / batch_size))
+    for (batch in batches) {
+      t = t + 1
+      G = drop(grad_b(beta, batch))
+      S = b2 * S + (1 - b2) * G^2
+      M = b1 * M + (1 - b1) * G
+
+      M_hat = M / (1 - b1^t)
+      S_hat = S / (1 - b2^t)
+
+      beta = beta - step * (M_hat / sqrt(S_hat + eps))
+
+      res$x = c(res$x, list(beta))
+      res$loss = c(res$loss, f(beta))
+      res$iter = c(res$iter, t)
+    }
+  }
+
+  res
+}
+```
+:::
+
+## Fitting
+
+::: {.xxsmall}
+```{r}
+adam_sizes = c(1, 25, 50, 1000)
+adam_lrs = c(0.01, 0.5, 0.75, 1)
+adam_algos = c("Adam - SGD", "Adam - MBGD (25)", "Adam - MBGD (50)", "Adam - GD")
+
+adam_res = purrr::map2(adam_sizes, adam_lrs, \(size, lr) {
+  adam_lm(X, y, rep(0, p + 1), batch_size = size, step = lr, max_step = 25, replace = TRUE)
+}) |> setNames(adam_algos)
+```
+
+```{r}
+#| echo: false
+for (algo in adam_algos) {
+  cat(algo, "\n")
+  print(tail(adam_res[[algo]]$x, 1)[[1]])
+  cat("\n")
+}
+```
+:::
+
+## Results
+
+```{r}
+#| echo: false
+purrr::imap_dfr(adam_res, \(res, name) {
+  tibble(
+    iter = res$iter / (n / adam_sizes[match(name, adam_algos)]),
+    loss = res$loss,
+    method = name
+  )
+}) |>
+  ggplot(aes(iter, loss, color = method)) +
+  geom_line(alpha = 0.7) +
+  scale_y_log10() +
+  labs(x = "Epoch", y = "Loss", color = "")
+```

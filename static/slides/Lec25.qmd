@@ -1,0 +1,589 @@
+---
+title: "Optimization (cont.)"
+subtitle: "Lecture 25"
+author: "Dr. Colin Rundel"
+footer: "Sta 323 - Spring 2026"
+format:
+  revealjs:
+    theme: slides.scss
+    transition: fade
+    slide-number: true
+    self-contained: true
+execute:
+  echo: true
+engine: knitr
+---
+
+```{r setup}
+#| message: false
+#| warning: false
+#| include: false
+
+knitr::opts_chunk$set(
+  fig.align = "center", fig.retina = 2, dpi = 150,
+  out.width = "100%"
+)
+
+library(tidyverse)
+ggplot2::theme_set(ggplot2::theme_bw())
+
+options(width = 70)
+```
+
+
+# Regression via `optim()`
+
+## Simulated data
+
+```{r}
+set.seed(42)
+n = 200
+d = tibble(
+  x1 = rnorm(n),
+  x2 = rnorm(n),
+  x3 = rnorm(n),
+  x4 = rnorm(n),
+  x5 = rnorm(n),
+  y = 3 + 2*x1 - 1.5*x2 + 0*x3 + 0.1*x4 + 0*x5 + rnorm(n)
+)
+```
+
+True coefficients: $\beta_0 = 3$, $\beta_1 = 2$, $\beta_2 = -1.5$, $\beta_3 = 0$, $\beta_4 = 0.1$, $\beta_5 = 0$
+
+
+## OLS as optimization
+
+The least squares objective is
+
+$$\text{RSS}(\beta) = \sum_{i=1}^n \left(y_i - \beta_0 - \sum_{j=1}^p \beta_j x_{ij}\right)^2$$
+
+::: {.small}
+```{r}
+X = model.matrix(y ~ ., data = d)
+
+rss = function(beta) {
+  sum((d$y - X %*% beta)^2)
+}
+```
+:::
+
+
+## Fitting with `optim()`
+
+:::: {.columns .xsmall}
+::: {.column width='50%'}
+```{r}
+res_ols = optim(
+  rep(0, 6), rss, method = "BFGS"
+)
+res_ols
+```
+:::
+
+::: {.column width='50%' .fragment}
+```{r}
+coef(lm(y ~ ., data = d))
+```
+:::
+::::
+
+
+## Lasso regression
+
+The Lasso adds an $L_1$ penalty to shrink coefficients toward zero (note: we don't penalize the intercept),
+
+$$\text{RSS}(\beta) + \lambda \sum_{j=1}^p |\beta_j|$$
+
+. . .
+
+::: {.small}
+```{r}
+lasso_obj = function(beta, lambda) {
+  sum((d$y - X %*% beta)^2) + lambda * sum(abs(beta[-1]))
+}
+```
+:::
+
+
+## Lasso results
+
+Since the $L_1$ penalty is not differentiable, we use Nelder-Mead.
+
+::: {.xsmall}
+```{r}
+fit_lasso = function(lambda) {
+  res = optim(rep(0, 6), lasso_obj, lambda = lambda, method = "Nelder-Mead",
+              control = list(maxit = 10000))
+  setNames(res$par, colnames(X))
+}
+```
+:::
+
+. . .
+
+::: {.xsmall}
+```{r}
+rbind(
+  "OLS"           = coef(lm(y ~ ., data = d)),
+  "Lasso (λ=10)"  = fit_lasso(10),
+  "Lasso (λ=50)"  = fit_lasso(50),
+  "Lasso (λ=100)" = fit_lasso(100),
+  "Truth"         = c(3, 2, -1.5, 0, 0.1, 0)
+) |> round(3)
+```
+:::
+
+
+# Maximum Likelihood Estimation
+
+## The idea
+
+Given observed data $x_1, \ldots, x_n$ and a parametric model $f(x | \theta)$, the **likelihood** is
+
+$$\mathcal{L}(\theta | \mathbf{x}) = \prod_{i=1}^n f(x_i | \theta)$$
+
+. . .
+
+The **log-likelihood** is easier to work with,
+
+$$\ell(\theta | \mathbf{x}) = \sum_{i=1}^n \log f(x_i | \theta)$$
+
+. . .
+
+The **MLE** is the parameter value that maximizes the likelihood (equivalently, minimizes the negative log-likelihood),
+
+$$\hat{\theta}_{\text{MLE}} = \arg\max_\theta \, \ell(\theta | \mathbf{x}) = \arg\min_\theta \, -\ell(\theta | \mathbf{x})$$
+
+
+## Normal MLE
+
+:::: {.columns .xsmall}
+::: {.column width='50%'}
+```{r}
+set.seed(1234)
+x = rnorm(100, mean = -3.2, sd = 1.25)
+c(mean = mean(x), sd = sd(x))
+```
+```{r}
+nll_norm = function(theta) {
+  -sum(dnorm(x, mean = theta[1],
+             sd = theta[2], log = TRUE))
+}
+```
+:::
+
+::: {.column width='50%' .fragment}
+```{r}
+nll_norm(c(0, 1))
+nll_norm(c(-3, 1))
+nll_norm(c(-3.2, 1.25))
+```
+:::
+::::
+
+
+## Fitting the Normal MLE
+
+::: {.small}
+```{r}
+optim(c(0, 1), nll_norm, method = "BFGS")
+```
+:::
+
+. . .
+
+Note: `sd` must be positive, but BFGS doesn't know that — we got lucky with our starting value. We'll address this shortly.
+
+
+## Gamma MLE
+
+:::: {.columns .xsmall}
+::: {.column width='50%'}
+```{r}
+set.seed(5678)
+x_gam = rgamma(200, shape = 3, rate = 2)
+c(mean = mean(x_gam), var = var(x_gam))
+```
+```{r}
+nll_gamma = function(theta) {
+  -sum(dgamma(x_gam, shape = theta[1],
+              rate = theta[2], log = TRUE))
+}
+```
+:::
+
+::: {.column width='50%' .fragment}
+```{r}
+optim(
+  c(1, 1), nll_gamma, method = "BFGS"
+)
+```
+:::
+::::
+
+
+## Beta MLE
+
+:::: {.columns .xsmall}
+::: {.column width='50%'}
+```{r}
+set.seed(9012)
+x_beta = rbeta(200, shape1 = 2, shape2 = 5)
+c(mean = mean(x_beta), var = var(x_beta))
+```
+```{r}
+nll_beta = function(theta) {
+  -sum(dbeta(x_beta, shape1 = theta[1],
+             shape2 = theta[2], log = TRUE))
+}
+```
+:::
+
+::: {.column width='50%' .fragment}
+```{r}
+optim(
+  c(1, 1), nll_beta, method = "BFGS"
+)
+```
+:::
+::::
+
+
+# Constrained Parameters
+
+## The problem
+
+Many distribution parameters have restricted support — e.g., $\sigma > 0$, shape $> 0$, rate $> 0$.
+
+If `optim()` tries a negative value, the log-likelihood returns `NaN`:
+
+::: {.small}
+```{r}
+dnorm(0, mean = 0, sd = -1, log = TRUE)
+dgamma(1, shape = -1, rate = 1, log = TRUE)
+```
+:::
+
+. . .
+
+This causes the optimizer to fail or give unreliable results. Two common solutions:
+
+1. **Reparameterization** — optimize over a transformed, unconstrained space
+2. **Box constraints** — use `L-BFGS-B` with `lower` / `upper` bounds
+
+
+## Reparameterization
+
+Optimize over $\log(\sigma)$ instead of $\sigma$, using $\exp()$ to map back to the positive reals.
+
+:::: {.columns .xsmall}
+::: {.column width='50%'}
+```{r}
+nll_norm_reparam = function(theta) {
+  -sum(dnorm(
+    x, mean = theta[1],
+    sd = exp(theta[2]), log = TRUE
+  ))
+}
+```
+:::
+
+::: {.column width='50%' .fragment}
+```{r}
+res = optim(
+  c(0, log(1)), nll_norm_reparam,
+  method = "BFGS"
+)
+res
+```
+:::
+::::
+
+. . .
+
+::: {.xsmall}
+```{r}
+c(mu = res$par[1], sigma = exp(res$par[2]))
+```
+:::
+
+
+## Reparameterized Gamma MLE
+
+Both shape and rate must be positive — optimize over their logs.
+
+:::: {.columns .xsmall}
+::: {.column width='50%'}
+```{r}
+nll_gamma_reparam = function(theta) {
+  -sum(dgamma(
+    x_gam,
+    shape = exp(theta[1]),
+    rate = exp(theta[2]),
+    log = TRUE
+  ))
+}
+```
+:::
+
+::: {.column width='50%' .fragment}
+```{r}
+res_gam = optim(
+  c(0, 0), nll_gamma_reparam,
+  method = "BFGS"
+)
+exp(res_gam$par)
+```
+:::
+::::
+
+
+## Box constraints with `L-BFGS-B`
+
+An alternative — specify bounds directly via `lower` and `upper` (only available for `"L-BFGS-B"`).
+
+:::: {.columns .xsmall}
+::: {.column width='50%'}
+```{r}
+optim(
+  c(0, 1), nll_norm,
+  method = "L-BFGS-B",
+  lower = c(-Inf, 1e-6),
+  upper = c(Inf, Inf)
+)
+```
+:::
+
+::: {.column width='50%' .fragment}
+```{r}
+optim(
+  c(1, 1), nll_gamma,
+  method = "L-BFGS-B",
+  lower = c(1e-6, 1e-6),
+  upper = c(Inf, Inf)
+)
+```
+:::
+::::
+
+
+## Reparameterization vs. bounds
+
+| | Reparameterization | Box Constraints |
+|---|---|---|
+| **Methods** | Any (`BFGS`, `CG`, ...) | `L-BFGS-B` only |
+| **Gradients** | Need chain rule adjustment | Work on original scale |
+| **Flexibility** | Any smooth transform | Lower/upper bounds only |
+| **Edge behavior** | Can't reach boundary exactly | Can sit on boundary |
+
+. . .
+
+In general, **reparameterization is more flexible** and works with any method. Use **bounds** when you want simplicity and `L-BFGS-B` is sufficient.
+
+
+# Automatic Differentiation in Base R
+
+## The gradient problem
+
+Throughout this lecture we've been supplying hand-coded gradient functions to `optim()`. This works but is:
+
+* **Error-prone** — easy to make mistakes in the calculus or the code
+
+* **Tedious** — especially for complex objective functions
+
+* **Hard to maintain** — changing the objective means updating the gradient too
+
+. . .
+
+Base R provides tools for **symbolic differentiation** that can compute derivatives automatically: `D()`, `deriv()`, and `deriv3()`.
+
+
+## `D()` — symbolic derivatives
+
+`D()` differentiates an R **expression** with respect to a named variable and returns a new expression.
+
+::: {.small}
+```{r}
+D(expression(x^2), "x")
+D(expression(sin(x) * cos(y)), "x")
+D(expression(sin(x) * cos(y)), "y")
+```
+:::
+
+. . .
+
+::: {.small}
+```{r}
+D(expression(x^2 + 3*x*y + y^2), "x")
+D(expression(x^2 + 3*x*y + y^2), "y")
+```
+:::
+
+
+## Using `D()` to build gradient functions
+
+We can evaluate the result of `D()` by providing variable values,
+
+::: {.small}
+```{r}
+df_dx = D(expression(x^4 + x^3 - x^2 - x), "x")
+df_dx
+```
+:::
+
+. . .
+
+::: {.small}
+```{r}
+eval(df_dx, list(x = 0))
+eval(df_dx, list(x = 1))
+```
+:::
+
+. . .
+
+::: {.small}
+```{r}
+x = seq(-1.5, 1.5, length.out = 201)
+plot(x, x^4 + x^3 - x^2 - x, type = "l", ylab = "f(x)")
+lines(x, eval(df_dx, list(x = x)), col = "red", lty = 2)
+abline(h = 0, col = "grey")
+legend("top", c("f(x)", "f'(x)"), col = c("black", "red"), lty = c(1, 2))
+```
+:::
+
+
+## Higher-order and chained derivatives
+
+`D()` can be applied repeatedly for higher-order derivatives,
+
+::: {.small}
+```{r}
+expr = expression(x^4 + x^3 - x^2 - x)
+D(expr, "x")
+D(D(expr, "x"), "x")
+D(D(D(expr, "x"), "x"), "x")
+```
+:::
+
+## `D()` limitations
+
+`D()` only differentiates with respect to **one variable at a time** and returns an expression (not a function).
+
+For multivariate functions where we want a callable function that returns both the value *and* gradient, we need `deriv()`.
+
+
+## `deriv()` — gradient functions
+
+`deriv()` takes a formula or expression and a character vector of variable names, and returns a function that computes the value and its `"gradient"` attribute.
+
+::: {.small}
+```{r}
+f_grad = deriv(
+  ~ x^2 + 3*x*y + y^2,
+  namevec = c("x", "y"),
+  function.arg = TRUE
+)
+f_grad
+```
+:::
+
+. . .
+
+::: {.small}
+```{r}
+f_grad(x = 1, y = 2)
+```
+:::
+
+
+## Extracting the gradient
+
+::: {.small}
+```{r}
+res = f_grad(x = 1, y = 2)
+```
+:::
+
+. . .
+
+::: {.small}
+```{r}
+drop(res)
+attr(res, "gradient")
+```
+:::
+
+. . .
+
+The gradient at $(1, 2)$ is $(2(1) + 3(2),\; 3(1) + 2(2)) = (8, 7)$ — matching the analytical result.
+
+
+## `deriv3()` — gradient *and* Hessian
+
+`deriv3()` works exactly like `deriv()` but also computes the Hessian matrix (second derivatives), stored in a `"hessian"` attribute.
+
+::: {.small}
+```{r}
+f_all = deriv3(
+  ~ x^2 + 3*x*y + y^2,
+  namevec = c("x", "y"),
+  function.arg = TRUE
+)
+res = f_all(x = 1, y = 2)
+drop(res)
+attr(res, "gradient")
+attr(res, "hessian")
+```
+:::
+
+
+## Using `deriv()` with `optim()`
+
+We can use `deriv()` to automatically supply gradients to `optim()`,
+
+::: {.small}
+```{r}
+rosenbrock = deriv(
+  ~ (1 - x)^2 + 100 * (y - x^2)^2,
+  namevec = c("x", "y"),
+  function.arg = TRUE
+)
+```
+:::
+
+. . .
+
+::: {.small}
+```{r}
+fn = function(par) {
+  res = rosenbrock(x = par[1], y = par[2])
+  drop(res)
+}
+gr = function(par) {
+  res = rosenbrock(x = par[1], y = par[2])
+  drop(attr(res, "gradient"))
+}
+optim(c(-1, 1), fn, gr, method = "BFGS")
+```
+:::
+
+
+## What `D()` / `deriv()` support
+
+These functions handle a specific set of R math operations:
+
+::: {.small}
+| Supported | Examples |
+|---|---|
+| Arithmetic | `+`, `-`, `*`, `/`, `^` |
+| Trig | `sin`, `cos`, `tan` |
+| Logarithms | `log`, `exp`, `log2`, `log10` |
+| Other math | `sqrt`, `abs`, `gamma`, `lgamma`, `beta`, `lbeta`, `digamma`, `trigamma` |
+| Distribution | `dnorm`, `pnorm`, `dbinom`, `dpois`, `dgamma`, `dbeta`, `dt`, `df`, `dchisq`, `dweibull`, `dlnorm`, `dcauchy` |
+:::
+
+. . .
+
+Not supported: control flow (`if`, `for`), matrix operations, or arbitrary R functions — for those you need numerical differentiation (e.g. `numDeriv::grad()`) or AD packages.
+
