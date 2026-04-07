@@ -203,11 +203,11 @@ $$
 \nabla f(x) = \begin{bmatrix} \frac{\partial f}{\partial x_1} \\ \vdots \\ \frac{\partial f}{\partial x_n} \end{bmatrix}
 $$
 
-* Points in the direction of steepest *ascent* at the current point
+* Points in the *direction* of steepest ascent at the current location $x$
 
-* Its magnitude $\|\nabla f(x)\|$ gives the rate of steepest ascent
+* Its magnitude $\|\nabla f(x)\|$ gives the *rate* of steepest ascent
 
-* At a (local) minimum, $\nabla f(x^*) = 0$
+* At a (local) minimum, $\nabla f(x^*) = 0$ (also true for maximum / saddle points)
 
 
 ## Gradient - examples
@@ -240,10 +240,10 @@ $$
 
 ## Hessian (second-order)
 
-The **Hessian** is the $n \times n$ matrix of second partial derivatives,
+The Hessian is the $n \times n$ matrix of second partial derivatives,
 
 $$
-\nabla^2 f(x) = \begin{bmatrix}
+\nabla^2 f(x_1,\ldots,x_n) = \begin{bmatrix}
 \frac{\partial^2 f}{\partial x_1^2} & \frac{\partial^2 f}{\partial x_1 \partial x_2} & \cdots & \frac{\partial^2 f}{\partial x_1 \partial x_n} \\
 \frac{\partial^2 f}{\partial x_2 \partial x_1} & \frac{\partial^2 f}{\partial x_2^2} & \cdots & \frac{\partial^2 f}{\partial x_2 \partial x_n} \\
 \vdots & \vdots & \ddots & \vdots \\
@@ -313,9 +313,10 @@ grad_desc_1d = function(x, f, grad, step, max_step = 100, tol = 1e-6) {
   for (i in seq_len(max_step)) {
     x_new = x - grad(x) * step
 
-    if (!is.finite(x_new) || !is.finite(f(x_new)))
+    if (!is.finite(x_new) || !is.finite(f(x_new))) {
+      warning("Non-finite value encountered! Try a smaller step size.")
       break
-
+    }
     if (abs(x_new - x) < tol)
       break
 
@@ -384,7 +385,7 @@ If you pick a bad step size ...
 
 . . .
 
-:::: {.columns .xsmall}
+:::: {.columns .mxsmall}
 ::: {.column width='50%'}
 ```{r}
 #| out-width: 80%
@@ -400,12 +401,39 @@ plot_1d_traj(c(-2, 2), f, opt)
 #| out-width: 80%
 #| fig-width: 3
 #| fig-height: 3
-opt = grad_desc_1d(-2, f, grad, step = 1)
+opt = grad_desc_1d(-2, f, grad, step = 0.01)
 plot_1d_traj(c(-2, 2), f, opt)
 ```
 :::
 ::::
 
+
+##
+
+:::: {.columns .mxsmall}
+::: {.column width='50%'}
+```{r}
+#| out-width: 80%
+#| fig-width: 3
+#| fig-height: 3
+#| warning: true 
+opt = grad_desc_1d(-1.5, f, grad, step = 1.05)
+plot_1d_traj(c(-2, 2), f, opt)
+```
+:::
+
+::: {.column width='50%'}
+```{r}
+#| out-width: 80%
+#| fig-width: 3
+#| fig-height: 3
+#| warning: true 
+#| error: true
+opt = grad_desc_1d(-1.5, f, grad, step = 100)
+plot_1d_traj(c(-2, 2), f, opt)
+```
+:::
+::::
 
 
 ## Local minima
@@ -485,15 +513,17 @@ plot_1d_traj(c(-1.75, 1.5), f, opt)
 
 If the step size is too large it is possible for the algorithm to overflow,
 
-:::: {.columns .xsmall}
+:::: {.columns .mxsmall}
 ::: {.column width='50%'}
 
 ```{r}
 #| out-width: 80%
 #| fig-width: 4
 #| fig-height: 3
+#| error: true
+#| warning: true
 opt = grad_desc_1d(-1.5, f, grad, step = 0.75)
-plot_1d_traj(c(-3, 3), f, opt)
+plot_1d_traj(c(-1.5, 1.5), f, opt)
 ```
 :::
 
@@ -507,12 +537,10 @@ opt$f
 
 ## Gradient Descent w/ backtracking
 
-As we have just seen having too large of a step can
-be problematic, one solution is to allow the step size
+Having too large of a step can be problematic, one solution is to allow the step size
 to adapt.
 
-Backtracking involves checking if the proposed move is
-advantageous, i.e. 
+Backtracking involves checking if the proposed move is advantageous, i.e. 
 $$
 f(x_k-\alpha \nabla f(x_k)) < f(x_k)
 $$
@@ -532,7 +560,7 @@ Check $f(x_k-\alpha \nabla f(x_k)) \leq f(x_k) - c \alpha (\nabla f(x_k))^2$.
 
 ## Implementation
 
-::: {.xsmall}
+::: {.mxsmall}
 ```{r}
 #| code-line-numbers: "|6-11"
 grad_desc_1d_bt = function(x, f, grad, step, tau = 0.5, max_step = 100, max_back = 10, tol = 1e-6) {
@@ -1302,6 +1330,41 @@ optim(
 :::
 ::::
 
+##
+
+:::: {.columns .xsmall}
+::: {.column width='50%'}
+```{r}
+optim(
+  c(1.6, 1.1), q$f, q$grad,
+  method = "L-BFGS-B"
+)
+```
+:::
+
+::: {.column width='50%'}
+```{r}
+optim(
+  c(1.6, 1.1), q$f, q$grad,
+  method = "CG"
+)
+```
+:::
+::::
+
+##
+
+:::: {.columns .xsmall}
+::: {.column width='50%'}
+```{r}
+optim(
+  c(1.6, 1.1), q$f,
+  method = "Nelder-Mead"
+)
+```
+:::
+::::
+
 
 ## Example - Rosenbrock {.scrollable}
 
@@ -1315,7 +1378,7 @@ rb = mk_rosenbrock()
 ::: {.column width='50%'}
 ```{r}
 optim(
-  c(1.6, 1.1), rb$f, rb$grad,
+  c(1.6, 1.1), rb$f,
   method = "BFGS"
 )
 ```
@@ -1325,7 +1388,7 @@ optim(
 ```{r}
 optim(
   c(1.6, 1.1), rb$f, rb$grad,
-  method = "Nelder-Mead"
+  method = "BFGS"
 )
 ```
 :::
@@ -1353,6 +1416,19 @@ optim(
 :::
 ::::
 
+##
+
+:::: {.columns .xsmall}
+::: {.column width='50%'}
+```{r}
+optim(
+  c(1.6, 1.1), rb$f,
+  method = "Nelder-Mead"
+)
+```
+:::
+::::
+
 
 ## Comparing methods - fixed start
 
@@ -1370,14 +1446,15 @@ cost_funcs = list(
 )
 
 results_fixed = bench::press(
-  cost_func = names(cost_funcs),
+  cost_func = names(cost_funcs) |> forcats::as_factor(),
   {
     fns = cost_funcs[[cost_func]]
     bench::mark(
-      "Nelder-Mead" = optim(c(1.6, 1.1), fns$f, fns$grad, method = "Nelder-Mead"),
-      "BFGS"        = optim(c(1.6, 1.1), fns$f, fns$grad, method = "BFGS"),
-      "CG"          = optim(c(1.6, 1.1), fns$f, fns$grad, method = "CG"),
-      "L-BFGS-B"    = optim(c(1.6, 1.1), fns$f, fns$grad, method = "L-BFGS-B"),
+      "Nelder-Mead"   = optim(c(1.6, 1.1), fns$f, fns$grad, method = "Nelder-Mead"),
+      "BFGS"          = optim(c(1.6, 1.1), fns$f, fns$grad, method = "BFGS"),
+      "BFGS w/o Grad" = optim(c(1.6, 1.1), fns$f,           method = "BFGS"),
+      "CG"            = optim(c(1.6, 1.1), fns$f, fns$grad, method = "CG"),
+      "L-BFGS-B"      = optim(c(1.6, 1.1), fns$f, fns$grad, method = "L-BFGS-B"),
       check = FALSE
     )
   }
@@ -1406,16 +1483,17 @@ results_fixed |> ggplot2::autoplot()
 ::: {.xsmall}
 ```{r}
 results_random = bench::press(
-  cost_func = names(cost_funcs),
+  cost_func = names(cost_funcs) |> forcats::as_factor(),
   x0 = runif(200, -2, 2) |> matrix(ncol=2) |> apply(1,c, simplify = FALSE),
   {
-    fns = cost_funcs[[cost_func]]
+    fns = cost_funcs[[cost_func]] 
     x0 = unlist(x0)
     bench::mark(
-      "Nelder-Mead" = optim(x0, fns$f, fns$grad, method = "Nelder-Mead"),
-      "BFGS"        = optim(x0, fns$f, fns$grad, method = "BFGS"),
-      "CG"          = optim(x0, fns$f, fns$grad, method = "CG"),
-      "L-BFGS-B"    = optim(x0, fns$f, fns$grad, method = "L-BFGS-B"),
+      "Nelder-Mead"   = optim(x0, fns$f, fns$grad, method = "Nelder-Mead"),
+      "BFGS"          = optim(x0, fns$f, fns$grad, method = "BFGS"),
+      "BFGS w/o Grad" = optim(x0, fns$f,           method = "BFGS"),
+      "CG"            = optim(x0, fns$f, fns$grad, method = "CG"),
+      "L-BFGS-B"      = optim(x0, fns$f, fns$grad, method = "L-BFGS-B"),
       check = FALSE,
       iterations = 1
     )
@@ -1441,9 +1519,9 @@ results_random |> ggplot2::autoplot()
 
 * Having access to the Hessian can be helpful, but usually does not significantly improve things
 
-* The curse of dimensionality is real
+* The curse of dimensionality is real - everything gets much harder as $n$ grows
 
-  * Be careful with tolerance settings
+  * Be careful with tolerance settings - what is "close enough" in 2d may not be close enough in 1000d
 
-* In general, **BFGS** or **L-BFGS** should be a good place to start for most problems (either well- or ill-conditioned)
+* In general, **BFGS** or **L-BFGS** are a good place to start for most problems (either well- or ill-conditioned)
 
