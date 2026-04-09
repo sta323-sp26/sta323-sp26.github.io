@@ -315,7 +315,7 @@ schedule:
 - week: 13
   day: 4
   lecture: Optimization (cont.)
-  slides: 
+  slides: Lec25
 
 - week: 14
   day: 2
@@ -329,7 +329,7 @@ schedule:
 
 - week: 15
   day: 2
-  lecture: "LDOC"
+  lecture: "Project day"
 
 - week: 16
   day: 6
