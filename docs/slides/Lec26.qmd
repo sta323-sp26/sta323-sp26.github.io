@@ -1,6 +1,6 @@
 ---
 title: "Stochastic Gradient Descent"
-subtitle: "Lecture 25"
+subtitle: "Lecture 26"
 author: "Dr. Colin Rundel"
 footer: "Sta 323 - Spring 2026"
 format:
@@ -25,6 +25,8 @@ knitr::opts_chunk$set(
 )
 
 library(tidyverse)
+library(torch)
+library(luz)
 ggplot2::theme_set(ggplot2::theme_bw())
 
 options(width = 70)
@@ -36,7 +38,7 @@ options(width = 70)
 
 ## A regression example
 
-::: {.xsmall}
+::: {.mxsmall}
 ```{r}
 set.seed(1234)
 n = 200; p = 20
@@ -47,7 +49,7 @@ y = 3 + X %*% true_beta + rnorm(n)
 ```
 :::
 
-:::: {.columns .xxsmall}
+:::: {.columns .mxsmall}
 ::: {.column width='50%'}
 ```{r}
 head(y, 20)
@@ -66,10 +68,11 @@ true_beta
 
 ::: {.xsmall}
 ```{r}
-#| code-line-numbers: "|4,5|10"
+#| code-line-numbers: "|6,7|12|13-15"
 grad_desc_lm = function(X, y, beta, step, max_step = 50) {
   X = cbind(1, X)
-  n = nrow(X); k = ncol(X)
+  n = nrow(X)
+  k = ncol(X)
 
   f = \(beta) sum((y - X %*% beta)^2)
   grad = \(beta) 2 * t(X) %*% (X %*% beta - y)
@@ -93,24 +96,18 @@ grad_desc_lm = function(X, y, beta, step, max_step = 50) {
 
 ::: {.xsmall}
 ```{r}
-lm_fit = lm(y ~ X)
-coef(lm_fit)
+(lm_fit = lm(y ~ X)) |> coef() |> round(2) |> unname()
+deviance(lm_fit) |> round(2)
 ```
 :::
 
 . . .
 
-<br/>
-
 ::: {.xsmall}
 ```{r}
-gd_time = system.time({
-  gd_lm = grad_desc_lm(
-    X, y, rep(0, p + 1),
-    step = 0.001, max_step = 20
-  )
-})
-tail(gd_lm$x, 1)[[1]]
+gd_lm = grad_desc_lm(X, y, rep(0, p + 1), step = 0.001, max_step = 20)
+gd_lm$x |> tail(1) |> unlist() |> round(2)
+gd_lm$loss |> tail(1) |> round(2)
 ```
 :::
 
@@ -130,7 +127,9 @@ ggplot(
 
 ## A quick analysis
 
-Let's take a quick look at the linear regression loss function and gradient descent and think a bit about its cost(s), we can define the loss function and its gradient as follows:
+Let's take a quick look at the linear regression loss function and gradient descent and think a bit about its cost.
+
+We've defined the loss function and its gradient as follows:
 
 $$
 \begin{aligned}
@@ -181,12 +180,12 @@ This is a variant of gradient descent where rather than using all $n$ data point
 
 ::: {.xsmall}
 ```{r}
-#| code-line-numbers: "|5|10-14|7,16,17"
+#| code-line-numbers: "|5|11-15|10,17|18"
 sgd_lm = function(X, y, beta, step, max_step = 50, seed = 1234, replace = TRUE) {
   X = cbind(1, X)
   n = nrow(X); k = ncol(X)
   f = \(beta) sum((y - X %*% beta)^2)
-  grad_i = \(beta, i) 2 * X[i, ] * drop(X[i, ] %*% beta - y[i])
+  grad_i = \(beta, i) 2 * X[i, ] * (X[i, ] %*% beta - y[i])
 
   res = list(x = list(beta), loss = f(beta), iter = 0)
   set.seed(seed)
@@ -209,6 +208,7 @@ sgd_lm = function(X, y, beta, step, max_step = 50, seed = 1234, replace = TRUE) 
   res
 }
 ```
+
 :::
 
 
@@ -216,26 +216,25 @@ sgd_lm = function(X, y, beta, step, max_step = 50, seed = 1234, replace = TRUE) 
 
 ::: {.xxsmall}
 ```{r}
-coef(lm_fit)
+lm_fit |> coef() |> round(2) |> unname()
+lm_fit |> deviance() |> round(2)
 ```
 
 ```{r}
-sgd_rep_time = system.time({
-  sgd_lm_rep = sgd_lm(
-    X, y, rep(0, p + 1),
-    step = 0.001, max_step = 20, replace = TRUE
-  )
-})
-tail(sgd_lm_rep$x, 1)[[1]]
+sgd_lm_rep = sgd_lm(
+  X, y, rep(0, p + 1),
+  step = 0.001, max_step = 20, replace = TRUE
+)
+sgd_lm_rep$x |> tail(1) |> unlist() |> round(2)
+sgd_lm_rep$loss |> tail(1) |> round(2)
 ```
 ```{r}
-sgd_worep_time = system.time({
-  sgd_lm_worep = sgd_lm(
-    X, y, rep(0, p + 1),
-    step = 0.001, max_step = 20, replace = FALSE
-  )
-})
-tail(sgd_lm_worep$x, 1)[[1]]
+sgd_lm_worep = sgd_lm(
+   X, y, rep(0, p + 1),
+   step = 0.001, max_step = 20, replace = FALSE
+)
+sgd_lm_worep$x |> tail(1) |> unlist() |> round(2)
+sgd_lm_worep$loss |> tail(1) |> round(2)
 ```
 :::
 
@@ -274,10 +273,29 @@ bind_rows(
 
 ## Run times
 
+::: {.xsmall}
+```{r}
+gd_time = system.time(
+  grad_desc_lm(X, y, rep(0, p + 1), step = 0.001, max_step = 20)
+)
+sgd_rep_time = system.time(
+  sgd_lm(X, y, rep(0, p + 1), step = 0.001, max_step = 20, replace = TRUE)
+)
+sgd_worep_time = system.time(
+  sgd_lm(X, y, rep(0, p + 1), step = 0.001, max_step = 20, replace = FALSE)
+)
+```
+:::
+
 ```{r}
 #| echo: false
 tibble(
   Method = c("GD", "SGD (replacement)", "SGD (w/o replacement)"),
+  `Run time` = c(
+    sprintf("%.3fs", gd_time["elapsed"]),
+    sprintf("%.3fs", sgd_rep_time["elapsed"]),
+    sprintf("%.3fs", sgd_worep_time["elapsed"])
+  ),
   `Time / Epoch` = c(
     sprintf("%.3fs", gd_time["elapsed"] / 20),
     sprintf("%.3fs", sgd_rep_time["elapsed"] / 20),
@@ -289,6 +307,8 @@ tibble(
 
 
 ## A bigger example
+
+Remember that our costs scale as $O(nk)$, so let's see what happens when we increase the data size.
 
 ::: {.xsmall}
 ```{r}
@@ -306,39 +326,46 @@ y = 3 + X %*% true_beta + rnorm(n)
 ::: {.xsmall}
 ```{r}
 lm_fit = lm(y ~ X)
-coef(lm_fit)
+lm_fit |> coef() |> round(2) |> unname()
 ```
 :::
 
-## Fitting {.scrollable}
+## Fitting
 
 ::: {.xxsmall}
 ```{r}
-gd_time = system.time({
-  gd_lm = grad_desc_lm(
-    X, y, rep(0, p + 1),
-    step = 0.00005, max_step = 3
-  )
-})
-tail(gd_lm$x, 1)[[1]]
+lm_fit |> coef() |> round(2) |> unname()
+lm_fit |> deviance() |> round(2)
+```
+
+```{r}
+gd_lm = grad_desc_lm(
+  X, y, rep(0, p + 1),
+  step = 0.00005, max_step = 3
+)
+gd_lm$x |> tail(1) |> unlist() |> round(2)
+gd_lm$loss |> tail(1) |> round(2)
+```
+:::
+
+##
+
+::: {.xxsmall}
+```{r}
+sgd_lm_rep = sgd_lm(
+  X, y, rep(0, p + 1),
+  step = 0.001, max_step = 3, replace = TRUE
+)
+sgd_lm_rep$x |> tail(1) |> unlist() |> round(2)
+sgd_lm_rep$loss |> tail(1) |> round(2)
 ```
 ```{r}
-sgd_rep_time = system.time({
-  sgd_lm_rep = sgd_lm(
-    X, y, rep(0, p + 1),
-    step = 0.001, max_step = 3, replace = TRUE
-  )
-})
-tail(sgd_lm_rep$x, 1)[[1]]
-```
-```{r}
-sgd_worep_time = system.time({
-  sgd_lm_worep = sgd_lm(
-    X, y, rep(0, p + 1),
-    step = 0.001, max_step = 3, replace = FALSE
-  )
-})
-tail(sgd_lm_worep$x, 1)[[1]]
+sgd_lm_worep = sgd_lm(
+  X, y, rep(0, p + 1),
+  step = 0.001, max_step = 3, replace = FALSE
+)
+sgd_lm_worep$x |> tail(1) |> unlist() |> round(2)
+sgd_lm_worep$loss |> tail(1) |> round(2)
 ```
 :::
 
@@ -380,14 +407,38 @@ bind_rows(
 
 ### Timings
 
+::: {.xsmall}
+```{r}
+gd_time = system.time(
+  grad_desc_lm(X, y, rep(0, p + 1), step = 0.00005, max_step = 3)
+)
+sgd_rep_time = system.time(
+  sgd_lm(X, y, rep(0, p + 1), step = 0.001, max_step = 3, replace = TRUE)
+)
+sgd_worep_time = system.time(
+  sgd_lm(X, y, rep(0, p + 1), step = 0.001, max_step = 3, replace = FALSE)
+)
+```
+:::
+
 ```{r}
 #| echo: false
 tibble(
   Method = c("GD", "SGD (replacement)", "SGD (w/o replacement)"),
+  `Run time` = c(
+    sprintf("%.3fs", gd_time["elapsed"]),
+    sprintf("%.3fs", sgd_rep_time["elapsed"]),
+    sprintf("%.3fs", sgd_worep_time["elapsed"])
+  ),
   `Time / Epoch` = c(
     sprintf("%.3fs", gd_time["elapsed"] / 3),
     sprintf("%.3fs", sgd_rep_time["elapsed"] / 3),
     sprintf("%.3fs", sgd_worep_time["elapsed"] / 3)
+  ),
+  `Time to convergence` = c(
+    sprintf("%.3fs", gd_time["elapsed"] / 3 * 3),
+    sprintf("%.3fs", sgd_rep_time["elapsed"] / 3 * 0.2),
+    sprintf("%.3fs", sgd_worep_time["elapsed"] / 3 * 0.2)
   )
 ) |>
   knitr::kable()
@@ -413,7 +464,7 @@ This is a variant of stochastic gradient descent where a subset of $m$ data poin
 
 ::: {.xsmall}
 ```{r}
-#| code-line-numbers: "|4|10-14|16|17,4"
+#| code-line-numbers: "|4|5|11-15|17|19"
 mb_grad_desc_lm = function(X, y, beta, step, batch_size = 10, max_step = 50, seed = 1234, replace = TRUE) {
   X = cbind(1, X)
   n = nrow(X); k = ncol(X)
@@ -449,29 +500,32 @@ mb_grad_desc_lm = function(X, y, beta, step, batch_size = 10, max_step = 50, see
 
 ::: {.xxsmall}
 ```{r}
-coef(lm_fit)
+lm_fit |> coef() |> round(2) |> unname()
+lm_fit |> deviance() |> round(2)
 ```
+
 ```{r}
 sizes = c(10, 50, 100)
 mbgd = list()
-mbgd_time = list()
 for (size in sizes) {
-  mbgd_time[[as.character(size)]] = system.time({
-    mbgd[[as.character(size)]] = mb_grad_desc_lm(
-      X, y, rep(0, p + 1), batch_size = size,
-      step = 0.001, max_step = 3, replace = FALSE
-    )
-  })
+  mbgd[[as.character(size)]] = mb_grad_desc_lm(
+    X, y, rep(0, p + 1), batch_size = size,
+    step = 0.001, max_step = 3, replace = FALSE
+  )
 }
 ```
 
 ```{r}
-#| echo: false
-for (size in sizes) {
-  cat(sprintf("Batch size: %d (%.3fs / epoch)\n", size, mbgd_time[[as.character(size)]]["elapsed"] / 3))
-  print(tail(mbgd[[as.character(size)]]$x, 1)[[1]])
-  cat("\n")
-}
+mbgd[["10"]]$x |> tail(1) |> unlist() |> round(2)
+mbgd[["10"]]$loss |> tail(1) |> round(2)
+```
+```{r}
+mbgd[["50"]]$x |> tail(1) |> unlist() |> round(2)
+mbgd[["50"]]$loss |> tail(1) |> round(2)
+```
+```{r}
+mbgd[["100"]]$x |> tail(1) |> unlist() |> round(2)
+mbgd[["100"]]$loss |> tail(1) |> round(2)
 ```
 :::
 
@@ -507,22 +561,49 @@ ggplot(df_all, aes(iter, loss, color = method)) +
 ggplot(df_all, aes(iter, loss, color = method)) +
   geom_line(alpha = 0.7) +
   scale_y_log10() +
-  coord_cartesian(xlim = c(0, 0.15)) +
+  coord_cartesian(xlim = c(0, 0.25)) +
   labs(x = "Epoch", y = "Loss", color = "")
 ```
 
 ### Timings
+
+::: {.xsmall}
+```{r}
+#| include: false
+mbgd_time = list()
+for (size in sizes) {
+  mbgd_time[[as.character(size)]] = system.time(
+    mb_grad_desc_lm(
+      X, y, rep(0, p + 1), batch_size = size,
+      step = 0.001, max_step = 3, replace = FALSE
+    )
+  )
+}
+```
+:::
 
 ```{r}
 #| echo: false
 tibble(
   Method = c("GD", "SGD (replacement)", "SGD (w/o replacement)",
              paste0("MBGD (", sizes, ")")),
+  `Run time` = c(
+    sprintf("%.3fs", gd_time["elapsed"]),
+    sprintf("%.3fs", sgd_rep_time["elapsed"]),
+    sprintf("%.3fs", sgd_worep_time["elapsed"]),
+    sapply(sizes, \(s) sprintf("%.3fs", mbgd_time[[as.character(s)]]["elapsed"]))
+  ),
   `Time / Epoch` = c(
     sprintf("%.3fs", gd_time["elapsed"] / 3),
     sprintf("%.3fs", sgd_rep_time["elapsed"] / 3),
     sprintf("%.3fs", sgd_worep_time["elapsed"] / 3),
     sapply(sizes, \(s) sprintf("%.3fs", mbgd_time[[as.character(s)]]["elapsed"] / 3))
+  ),
+  `Time to convergence` = c(
+    sprintf("%.3fs", gd_time["elapsed"] / 3 * 2),
+    sprintf("%.3fs", sgd_rep_time["elapsed"] / 3 * 0.2),
+    sprintf("%.3fs", sgd_worep_time["elapsed"] / 3 * 0.2),
+    sapply(sizes, \(s) sprintf("%.3fs", mbgd_time[[as.character(s)]]["elapsed"] / 3 * 0.2))
   )
 ) |>
   knitr::kable()
@@ -601,72 +682,132 @@ Some common examples:
 There are many more approaches including more exotic techniques that allow the learning rate to increase and decrease to help the optimizer better explore the objective function and in some cases escape local optima.
 
 
-# Adaptive Updates & Momentum
+# torch
 
-## AdaGrad
+## What is `torch`?
 
-This approach was proposed by Duchi, Hazan, & Singer in 2011 and is based on the idea of scaling the learning rates for the current step by the sum of the square gradients of previous steps - this has the effect of shrinking the step size of dimensions with large previous gradients.
+The [`torch`](https://torch.mlverse.org) package is a native R port of [PyTorch](https://pytorch.org), built directly on top of `libtorch` (the C++ backend that powers PyTorch). There is no Python dependency.
 
-$$
-\begin{aligned}
-\boldsymbol{\theta}_{t+1} &= \boldsymbol{\theta}_t - \eta_t \frac{1}{\sqrt{\boldsymbol{s}_t + \epsilon}} \odot \nabla \ell(\boldsymbol{X}_{B_t}, \boldsymbol{\theta}_t)\\
-\boldsymbol{s}_t &= \sum_{i=1}^t \left(\nabla \ell(\boldsymbol{X}_{B_i}, \boldsymbol{\theta}_i)\right)^2
-\end{aligned}
-$$
+It provides:
 
-here $\epsilon$ is a small constant (i.e. $10^{-7}$) to avoid division by zero.
+* Multi-dimensional arrays (tensors) with GPU support
+
+* Automatic differentiation (autograd)
+
+* Neural network building blocks (`nn_module`, `nn_linear`, `nn_relu`, ...)
+
+* A growing ecosystem - [`luz`](https://mlverse.github.io/luz/) (high-level training), [`torchvision`](https://torchvision.mlverse.org), [`torchaudio`](https://curso-r.github.io/torchaudio/)
+
+::: {.aside}
+The torch + luz combination is roughly the R analogue of PyTorch + PyTorch Lightning.
+:::
 
 
-## Implementation
+## Tensors
 
-::: {.xsmall}
+A `torch_tensor` is the basic data type - a multi-dimensional array with a specific dtype and device.
+
+::: {.columns .xsmall}
+::: {.column}
 ```{r}
-#| code-line-numbers: "|9|19-22"
-adagrad_lm = function(X, y, beta, step, batch_size = 10, max_step = 50, seed = 1234, replace = TRUE, eps = 1e-8) {
-  X = cbind(1, X)
-  n = nrow(X); k = ncol(X)
-  f = \(beta) sum((y - X %*% beta)^2)
-  grad_b = \(beta, idx) 2 * t(X[idx, , drop = FALSE]) %*% (X[idx, , drop = FALSE] %*% beta - y[idx])
+torch_zeros(3)
+torch_ones(3, 2)
+```
+:::
+::: {.column}
+```{r}
+torch_manual_seed(1234)
+torch_rand(2, 2, 2)
+```
 
-  res = list(x = list(beta), loss = f(beta), iter = 0)
-  set.seed(seed)
-  S = rep(0, k)
+:::
+:::
 
-  for (ep in seq_len(max_step)) {
-    if (replace) {
-      js = sample.int(n, n, replace = TRUE)
-    } else {
-      js = sample.int(n)
-    }
 
-    batches = split(js, ceiling(seq_along(js) / batch_size))
-    for (batch in batches) {
-      G = drop(grad_b(beta, batch))
-      S = S + G^2
-      beta = beta - step * (1 / sqrt(S + eps)) * G
+## From R to torch
 
-      res$x = c(res$x, list(beta))
-      res$loss = c(res$loss, f(beta))
-      res$iter = c(res$iter, tail(res$iter, 1) + 1)
-    }
-  }
+Converting R objects to tensors uses `torch_tensor()`:
 
-  res
-}
+::: {.mxsmall}
+```{r}
+torch_tensor(diag(3))
+torch_tensor(matrix(1:6, 2, 3))
+```
+:::
+
+. . .
+
+Note that R integer vectors and matrices become `Long` tensors. Most `nn` layers expect `Float` (float32) so you usually want to convert explicitly:
+
+::: {.mxsmall}
+```{r}
+torch_tensor(matrix(1:6, 2, 3), dtype = torch_float())
 ```
 :::
 
 
-## A medium example
+## From torch to R
+
+Going the other direction uses `as_array()` (or `as.matrix()` / `as.numeric()` for 2d / 1d tensors):
 
 ::: {.xsmall}
 ```{r}
-set.seed(1234)
-n = 1000; p = 20
-X = matrix(rnorm(n * p), n, p)
-true_beta = rep(0, p)
-true_beta[c(3, 7, 12, 18)] = c(5.2, -3.1, 8.7, -1.5)
-y = 3 + X %*% true_beta + rnorm(n)
+t = torch_tensor(matrix(1:6, 2, 3), dtype = torch_float())
+as_array(t)
+as.matrix(t)
+```
+:::
+
+
+
+::: {.aside}
+
+If a tensor is tracking gradients you must `$detach()` it first:
+
+::: {.small}
+```{r}
+t = torch_tensor(c(1, 2, 3), requires_grad = TRUE)
+as_array(t$detach())
+```
+:::
+
+:::
+
+
+## Reshaping tensors
+
+Tensors can be reshaped with `$view()` or `$reshape()`, transposed with `$t()`:
+
+::: {.xxsmall}
+```{r}
+a = torch_arange(1, 12)
+a$view(c(3, 4))
+```
+:::
+
+. . .
+
+::: {.xxsmall}
+```{r}
+a$reshape(c(2, 6))
+a$view(c(3, 4))$t()
+```
+:::
+
+::: {.aside}
+`$view()` requires the tensor to be contiguous in memory; `$reshape()` will copy if needed.
+:::
+
+
+## Adding and removing dimensions
+
+`$squeeze()` drops dimensions of size 1, `$unsqueeze(dim)` inserts a new dimension of size 1:
+
+::: {.xsmall}
+```{r}
+b = torch_zeros(2, 1, 3)
+b$shape
+b$squeeze()$shape
 ```
 :::
 
@@ -674,286 +815,425 @@ y = 3 + X %*% true_beta + rnorm(n)
 
 ::: {.xsmall}
 ```{r}
-lm_fit = lm(y ~ X)
-coef(lm_fit)
+c = torch_zeros(2, 3)
+c$unsqueeze(1)$shape
+c$unsqueeze(2)$shape
 ```
 :::
 
-## Fitting
-
-::: {.xxsmall}
-```{r}
-ag_sizes = c(1, 25, 50, 1000)
-ag_lrs = c(10, 10, 10, 10)
-ag_algos = c("AdaGrad - SGD", "AdaGrad - MBGD (25)", "AdaGrad - MBGD (50)", "AdaGrad - GD")
-
-adagrad_res = purrr::map2(ag_sizes, ag_lrs, \(size, lr) {
-  adagrad_lm(X, y, rep(0, p + 1), batch_size = size, step = lr, max_step = 7, replace = TRUE, eps = 1e-8)
-}) |> setNames(ag_algos)
-```
-
-```{r}
-#| echo: false
-for (algo in ag_algos) {
-  cat(algo, "\n")
-  print(tail(adagrad_res[[algo]]$x, 1)[[1]])
-  cat("\n")
-}
-```
+::: {.aside}
+Adding and removing dimensions is typically done to conform tensor shapes so that they can be combined via [broadcasting](https://pytorch.org/docs/stable/notes/broadcasting.html).
 :::
 
-## Results
-
-```{r}
-#| echo: false
-purrr::imap_dfr(adagrad_res, \(res, name) {
-  tibble(
-    iter = res$iter / (n / ag_sizes[match(name, ag_algos)]),
-    loss = res$loss,
-    method = name
-  )
-}) |>
-  ggplot(aes(iter, loss, color = method)) +
-  geom_line(alpha = 0.7) +
-  scale_y_log10() +
-  labs(x = "Epoch", y = "Loss", color = "")
-```
 
 
-## RMSProp
+## Autograd
 
-With AdaGrad the denominator involving $\boldsymbol{s}_t$ gets larger as $t$ increases, but in some cases it gets too large too fast to effectively explore the loss function. An alternative is to use a moving average of the past squared gradients instead.
-
-RMSProp replaces AdaGrad's $\boldsymbol{s}_t$ with the following,
-
-$$
-\boldsymbol{s}_t = \beta \, \boldsymbol{s}_{t-1} + (1-\beta) \, (\nabla \ell(\boldsymbol{X},\boldsymbol{\theta}_t))^2
-$$
-
-$$
-\boldsymbol{s}_0 = \boldsymbol{0}
-$$
-
-in practice a value of $\beta \approx 0.9$ is often used.
-
-
-## Implementation
+::: {.medium}
+This is where torch starts to do real work for us - any tensor created with `requires_grad = TRUE` will have its operations recorded so that gradients can be computed automatically:
+:::
 
 ::: {.xsmall}
 ```{r}
-#| code-line-numbers: "|20"
-rmsprop_lm = function(X, y, beta, step, batch_size = 10, max_step = 50, seed = 1234, replace = TRUE, eps = 1e-8, b = 0.9) {
-  X = cbind(1, X)
-  n = nrow(X); k = ncol(X)
-  f = \(beta) sum((y - X %*% beta)^2)
-  grad_b = \(beta, idx) 2 * t(X[idx, , drop = FALSE]) %*% (X[idx, , drop = FALSE] %*% beta - y[idx])
-
-  res = list(x = list(beta), loss = f(beta), iter = 0)
-  set.seed(seed)
-  S = rep(0, k)
-
-  for (ep in seq_len(max_step)) {
-    if (replace) {
-      js = sample.int(n, n, replace = TRUE)
-    } else {
-      js = sample.int(n)
-    }
-
-    batches = split(js, ceiling(seq_along(js) / batch_size))
-    for (batch in batches) {
-      G = drop(grad_b(beta, batch))
-      S = b * S + (1 - b) * G^2
-      beta = beta - step * (1 / sqrt(S + eps)) * G
-
-      res$x = c(res$x, list(beta))
-      res$loss = c(res$loss, f(beta))
-      res$iter = c(res$iter, tail(res$iter, 1) + 1)
-    }
-  }
-
-  res
-}
+a = torch_tensor(2, requires_grad = TRUE)
+f = a^3 + 2*a
+f
 ```
 :::
 
-## Fitting
-
-::: {.xxsmall}
-```{r}
-rms_sizes = c(1, 25, 50, 1000)
-rms_lrs = c(0.01, 0.1, 0.25, 1)
-rms_algos = c("RMSProp - SGD", "RMSProp - MBGD (25)", "RMSProp - MBGD (50)", "RMSProp - GD")
-
-rmsprop_res = purrr::map2(rms_sizes, rms_lrs, \(size, lr) {
-  rmsprop_lm(X, y, rep(0, p + 1), batch_size = size, step = lr, max_step = 25, replace = TRUE)
-}) |> setNames(rms_algos)
-```
-
-```{r}
-#| echo: false
-for (algo in rms_algos) {
-  cat(algo, "\n")
-  print(tail(rmsprop_res[[algo]]$x, 1)[[1]])
-  cat("\n")
-}
-```
-:::
-
-## Results
-
-```{r}
-#| echo: false
-purrr::imap_dfr(rmsprop_res, \(res, name) {
-  tibble(
-    iter = res$iter / (n / rms_sizes[match(name, rms_algos)]),
-    loss = res$loss,
-    method = name
-  )
-}) |>
-  ggplot(aes(iter, loss, color = method)) +
-  geom_line(alpha = 0.7) +
-  scale_y_log10() +
-  labs(x = "Epoch", y = "Loss", color = "")
-```
-
-
-## Momentum
-
-Rather than just using the gradient information at our current location it may be beneficial to use information from our previous steps as well. A general setup for this type approach looks like,
-
-::: {.small}
-$$
-\boldsymbol{\theta}_{t+1} = \boldsymbol{\theta}_t - \eta \, \boldsymbol{m}_t
-$$
-
-$$
-\boldsymbol{m}_t = \beta \, \boldsymbol{m}_{t-1} + (1-\beta) \, \nabla \ell(\boldsymbol{X}, \boldsymbol{\theta}_t)
-$$
-:::
-
-where $\eta$ is our step size and $\beta$ determines the weighting of the current gradient and the previous gradients.
-
-If you have taken a course on time series, this has a flavor that looks a lot like moving average models,
-
-::: {.small}
-$$
-\boldsymbol{m}_t = (1-\beta) \, \nabla \ell(\boldsymbol{X}, \boldsymbol{\theta}_t) + \beta(1-\beta) \, \, \nabla \ell(\boldsymbol{X}, \boldsymbol{\theta}_{t-1}) + \beta^2(1-\beta) \, \, \nabla \ell(\boldsymbol{X}, \boldsymbol{\theta}_{t-2}) + \cdots
-$$
-:::
-
-## Adam
-
-The "adaptive moment estimation" algorithm is a combination of momentum with RMSProp,
-
-$$
-\begin{aligned}
-\theta_{t+1} &= \theta_t - \eta_t \frac{\boldsymbol{m_t}}{\sqrt{\boldsymbol{s}_t + \epsilon}} \\
-\boldsymbol{m}_t &= \beta_1 \, \boldsymbol{m}_{t-1} + (1-\beta_1) \, \nabla \ell(\boldsymbol{X}, \theta_t) \\
-\boldsymbol{s}_t &= \beta_2 \, \boldsymbol{s}_{t-1} + (1-\beta_2) \, (\nabla \ell(\boldsymbol{X},\boldsymbol{\theta}_t))^2 \\
-\end{aligned}
-$$
-
-Note that RMSProp is a special case of Adam when $\beta_1 = 0$.
-
-Adam is widely used in practice and is commonly available within tools like Torch for fitting neural network models.
-
-In typical use $\beta_1=0.9$, $\beta_2=0.999$, $\epsilon=10^{-6}$, and $\eta_t=0.001$ are used. As the learning rate is not guaranteed to decrease over time, the algorithm is not guaranteed to converge.
-
-## Bias corrections
-
-One small alteration that was suggested by the original authors and is commonly used is to correct for the bias towards small values in the initial estimates of $\boldsymbol{m}_t$ and $\boldsymbol{s}_t$. In which case they are replaced with,
-
-$$
-\begin{aligned}
-{\hat{\boldsymbol{m}}}_t &= \boldsymbol{m}_t / (1-{\beta_1}^t) \\
-{\hat{\boldsymbol{s}}}_t &=\boldsymbol{s}_t / (1-{\beta_2}^t) \\
-\end{aligned}
-$$
-
-## Implementation
+. . .
 
 ::: {.xsmall}
 ```{r}
-#| code-line-numbers: "|10-12|22-25|27,28|30"
-adam_lm = function(X, y, beta, step = 0.001, batch_size = 10, max_step = 50, seed = 1234, replace = TRUE, eps = 1e-6, b1 = 0.9, b2 = 0.999) {
-  X = cbind(1, X)
-  n = nrow(X); k = ncol(X)
-  f = \(beta) sum((y - X %*% beta)^2)
-  grad_b = \(beta, idx) 2 * t(X[idx, , drop = FALSE]) %*% (X[idx, , drop = FALSE] %*% beta - y[idx])
+f$backward()
+a$grad
+```
+:::
 
-  res = list(x = list(beta), loss = f(beta), iter = 0)
-  set.seed(seed)
+. . .
 
-  S = rep(0, k)
-  M = rep(0, k)
-  t = 0
+::: {.medium}
+This is the same gradient we would get by hand from $\frac{df}{da} = 3a^2 + 2 = 14$ at $a = 2$. Importantly, we did not have to write the gradient ourselves - we wrote the `grad` function by hand earlier in `grad_desc_lm()`, but autograd will do that for us.
+:::
 
-  for (ep in seq_len(max_step)) {
-    if (replace) {
-      js = sample.int(n, n, replace = TRUE)
-    } else {
-      js = sample.int(n)
-    }
 
-    batches = split(js, ceiling(seq_along(js) / batch_size))
-    for (batch in batches) {
-      t = t + 1
-      G = drop(grad_b(beta, batch))
-      S = b2 * S + (1 - b2) * G^2
-      M = b1 * M + (1 - b1) * G
+## Computational graph
 
-      M_hat = M / (1 - b1^t)
-      S_hat = S / (1 - b2^t)
+Behind the scenes, every operation on a tensor with `requires_grad = TRUE` adds a node to a *dynamic* computational graph. The `$grad_fn` attribute points at the operation that produced the tensor:
 
-      beta = beta - step * (M_hat / sqrt(S_hat + eps))
+::: {.xsmall}
+```{r}
+a = torch_tensor(2, requires_grad = TRUE)
+f = a^3 + 2*a
+f$grad_fn
+```
+:::
 
-      res$x = c(res$x, list(beta))
-      res$loss = c(res$loss, f(beta))
-      res$iter = c(res$iter, t)
-    }
-  }
+. . .
 
-  res
+When we call `f$backward()`, torch walks this graph from `f` back to `a`, applies the chain rule, and accumulates the result into `a$grad`.
+
+::: {.aside}
+The graph is rebuilt on every forward pass - this is what makes it "dynamic" and is one of the things people like about PyTorch (and torch).
+:::
+
+
+# Linear regression <br/> with `torch`
+
+## Tensors from our regression data
+
+We will reuse the regression problem from earlier in this lecture (`X` is $n \times p$ with $n = 10000$, $p = 20$, `y` is the response). We need to convert these to tensors and prepend a column of 1s for the intercept:
+
+::: {.xsmall}
+```{r}
+X1 = cbind(1, X)
+Xt = torch_tensor(X1, dtype = torch_float())
+yt = torch_tensor(as.numeric(y), dtype = torch_float())
+
+beta = torch_zeros(p + 1, dtype = torch_float(), requires_grad = TRUE)
+```
+:::
+
+. . .
+
+::: {.xsmall}
+```{r}
+Xt$shape
+yt$shape
+beta$shape
+```
+:::
+
+::: {.aside}
+We use `dtype = torch_float()` (float32) because that is what the `nn` layers we'll see shortly expect.
+:::
+
+
+## One step by hand
+
+::: {.xsmall}
+```{r}
+loss = ((Xt %*% beta - yt)^2)$sum()
+loss
+```
+:::
+
+. . .
+
+::: {.xsmall}
+```{r}
+loss$backward()
+beta$grad
+```
+:::
+
+. . .
+
+Notice that we never wrote down the gradient ourselves - autograd derived it from the forward pass.
+
+
+## A torch training loop
+
+::: {.mxsmall}
+```{r}
+#| code-line-numbers: "|3|4|5-8"
+beta = torch_zeros(p + 1, dtype = torch_float(), requires_grad = TRUE)
+for (i in 1:200) {
+  loss = ((Xt %*% beta - yt)^2)$sum()
+  loss$backward()
+  with_no_grad({
+    beta$sub_(1e-5 * beta$grad)
+    beta$grad$zero_()
+  })
 }
 ```
 :::
+
+. . .
+
+::: {.mxsmall}
+```{r}
+loss$item()
+deviance(lm_fit)
+```
+:::
+
+. . .
+
+::: {.mxsmall}
+```{r}
+beta$detach() |> as_array() |> round(2)
+lm_fit |> coef() |> round(2) |> unname()
+```
+:::
+
+::: {.aside}
+`with_no_grad({...})` tells autograd "don't track these operations" - we need it because the parameter update is *not* part of the loss, and we don't want it on the computational graph.
+:::
+
+
+# `nn_module`
+
+## What is `nn_module`?
+
+`nn_module()` creates a model class with two key methods:
+
+* `initialize()` - builds the parameters and submodules
+
+* `forward()` - defines how an input is transformed into an output
+
+Any tensor wrapped in `nn_parameter()` (or any `nn_*` submodule like `nn_linear`) is automatically registered as a parameter of the model and will show up in `model$parameters`.
+
+::: {.aside}
+This is a direct analogue of `class Model(torch.nn.Module)` in PyTorch.
+:::
+
+
+## A first linear regression model
+
+::: {.xsmall}
+```{r}
+#| code-line-numbers: "|2-4|5-7"
+linear_model = nn_module(
+  initialize = function(k) {
+    self$beta = nn_parameter(torch_zeros(k))
+  },
+  forward = function(X) {
+    X %*% self$beta
+  }
+)
+```
+:::
+
+. . .
+
+::: {.xsmall}
+```{r}
+(m = linear_model(p + 1))
+```
+:::
+
+. . .
+
+::: {.xsmall}
+```{r}
+m$parameters
+```
+:::
+
+
+## Training loop with an optimizer
+
+Rather than updating `beta` by hand, we can hand the model's parameters to a torch optimizer and let it do the work:
+
+::: {.xsmall}
+```{r}
+#| code-line-numbers: "|2|5|6|7|8"
+m = linear_model(p + 1)
+opt = optim_sgd(m$parameters, lr = 1e-5)
+
+for (i in 1:200) {
+  opt$zero_grad()
+  loss = ((m(Xt) - yt)^2)$sum()
+  loss$backward()
+  opt$step()
+}
+```
+:::
+
+. . .
+
+::: {.xsmall}
+```{r}
+loss$item()
+round(as_array(m$beta$detach()), 2)
+```
+:::
+
+
+## Using `nn_linear`
+
+In practice we rarely build a `nn_parameter` by hand - torch ships with layer modules that handle parameter creation, weight initialization, and the bias term for us. `nn_linear(in_features, out_features)` implements $y = XW^T + b$:
+
+::: {.xsmall}
+```{r}
+#| code-line-numbers: "|3|6"
+linear_model = nn_module(
+  initialize = function(in_features) {
+    self$linear = nn_linear(in_features, 1)
+  },
+  forward = function(X) {
+    self$linear(X)
+  }
+)
+```
+:::
+
+. . .
+
+Because `nn_linear` already includes a bias term, we drop the column of 1s and feed in `X` directly. We do need to reshape `y` to `(n, 1)` so it matches the shape of the model's output:
+
+::: {.xsmall}
+```{r}
+Xt = torch_tensor(X, dtype = torch_float())
+yt = torch_tensor(matrix(y, ncol = 1), dtype = torch_float())
+```
+:::
+
 
 ## Fitting
 
-::: {.xxsmall}
+::: {.xsmall}
 ```{r}
-adam_sizes = c(1, 25, 50, 1000)
-adam_lrs = c(0.01, 0.5, 0.75, 1)
-adam_algos = c("Adam - SGD", "Adam - MBGD (25)", "Adam - MBGD (50)", "Adam - GD")
+#| code-line-numbers: "|2|5"
+m = linear_model(p)
+opt = optim_sgd(m$parameters, lr = 0.05)
 
-adam_res = purrr::map2(adam_sizes, adam_lrs, \(size, lr) {
-  adam_lm(X, y, rep(0, p + 1), batch_size = size, step = lr, max_step = 25, replace = TRUE)
-}) |> setNames(adam_algos)
-```
-
-```{r}
-#| echo: false
-for (algo in adam_algos) {
-  cat(algo, "\n")
-  print(tail(adam_res[[algo]]$x, 1)[[1]])
-  cat("\n")
+losses = numeric(100)
+for (i in 1:100) {
+  opt$zero_grad()
+  loss = nnf_mse_loss(m(Xt), yt)
+  loss$backward()
+  opt$step()
+  losses[i] = loss$item()
 }
 ```
 :::
 
-## Results
+. . .
+
+::: {.xxsmall}
+```{r}
+c(torch = loss$item(), lm = deviance(lm_fit) / n)
+c(torch_intercept = as.numeric(m$linear$bias), lm_intercept = unname(coef(lm_fit)[1]))
+```
+:::
+
+::: {.aside}
+`nnf_mse_loss()` defaults to mean reduction (versus the manual sum we used before), which is why the learning rate is so much larger here.
+:::
+
+
+## Loss curve
 
 ```{r}
 #| echo: false
-purrr::imap_dfr(adam_res, \(res, name) {
-  tibble(
-    iter = res$iter / (n / adam_sizes[match(name, adam_algos)]),
-    loss = res$loss,
-    method = name
-  )
-}) |>
-  ggplot(aes(iter, loss, color = method)) +
-  geom_line(alpha = 0.7) +
+ggplot(tibble(iter = seq_along(losses), loss = losses), aes(iter, loss)) +
+  geom_line() +
   scale_y_log10() +
-  labs(x = "Epoch", y = "Loss", color = "")
+  labs(x = "Iteration", y = "Loss (mean MSE)")
 ```
+
+
+# `luz`
+
+## What is `luz`?
+
+[`luz`](https://mlverse.github.io/luz/) is a high-level training API built on top of `torch`. It removes most of the training-loop boilerplate we just wrote:
+
+* Automatic batching via dataloaders
+
+* Built-in metric tracking, validation splits, callbacks
+
+* Early stopping, learning rate schedulers, checkpoints
+
+* A built-in loss-curve plot
+
+::: {.aside}
+luz is roughly the R analogue of [PyTorch Lightning](https://lightning.ai/docs/pytorch/stable/) - the same `nn_module` we just built can be fit with luz with no changes.
+:::
+
+
+## The luz workflow
+
+::: {.xxsmall}
+```{r}
+#| warning: false
+#| message: false
+torch_manual_seed(42)
+fitted = nn_module(
+  initialize = function(in_features) {
+    self$linear = nn_linear(in_features, 1)
+  },
+  forward = function(X) {
+    self$linear(X)
+  }
+) |>
+  setup(
+    loss = nn_mse_loss(),
+    optimizer = optim_sgd
+  ) |>
+  set_hparams(in_features = p) |>
+  set_opt_hparams(lr = 0.05) |>
+  fit(
+    list(Xt, yt),
+    epochs = 50,
+    dataloader_options = list(batch_size = 100, shuffle = TRUE),
+    verbose = FALSE
+  )
+```
+:::
+
+. . .
+
+::: {.medium}
+The four-stage pipeline maps directly onto things we wrote by hand:
+
+* `setup()` - pick a loss function and optimizer constructor
+
+* `set_hparams()` - arguments passed to the model's `initialize()`
+
+* `set_opt_hparams()` - arguments passed to the optimizer (e.g. `lr`)
+
+* `fit()` - run the training loop, with batching and shuffling handled for us
+:::
+
+## Inspecting the fit
+
+::: {.xsmall}
+```{r}
+loss = ((predict(fitted, Xt)$cpu() - yt)^2)$sum()
+loss$item()
+deviance(lm_fit)
+```
+:::
+
+. . .
+
+::: {.xsmall}
+```{r}
+c(as.numeric(fitted$model$linear$bias),
+  as.numeric(fitted$model$linear$weight)) |> round(2)
+lm_fit |> coef() |> round(2) |> unname()
+```
+:::
+
+
+## Loss curve from luz
+
+::: {.xsmall}
+```{r}
+plot(fitted)
+```
+:::
+
+::: {.aside}
+`plot()` on a fitted luz model returns a `ggplot` object you can further customize.
+:::
+
+
+## The abstraction ladder
+
+We have walked up several layers of abstraction for fitting the same linear regression:
+
+* Hand-coded gradient descent with an analytically derived gradient (`grad_desc_lm()`)
+
+* `torch` tensors + autograd - we no longer need to derive the gradient by hand
+
+* `nn_module` + `optim_sgd` - we no longer need to write the parameter update step
+
+* `nn_linear` - we no longer need to manage the parameter tensors directly
+
+* `luz` - we no longer need to write the training loop, batching, or metric tracking
+
+Each layer trades a bit of explicitness for a lot of convenience - and the same stack scales unchanged from this 21-parameter linear regression to networks with millions of parameters.

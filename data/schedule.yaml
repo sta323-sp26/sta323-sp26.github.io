@@ -320,8 +320,13 @@ schedule:
 - week: 14
   day: 2
   lecture: Gradient Descent
-  slides: 
-
+  slides: Lec26
+  readings:
+  - text: "torch for R"
+    link: https://torch.mlverse.org/
+  - text: "luz"
+    link: https://mlverse.github.io/luz/
+    
 - week: 14
   day: 4
   lecture: Gradient Descent (cont.)

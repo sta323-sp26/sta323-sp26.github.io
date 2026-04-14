@@ -9,7 +9,8 @@
       "Bash(Rscript:*)",
       "Bash(tree:*)",
       "Bash(find:*)",
-      "WebFetch(domain:mirai.r-lib.org)"
+      "WebFetch(domain:mirai.r-lib.org)",
+      "Bash(quarto render:*)"
     ],
     "deny": []
   }
