@@ -80,7 +80,7 @@ grad_desc_lm = function(X, y, beta, step, max_step = 50) {
   res = list(x = list(beta), loss = f(beta), iter = 0)
 
   for (i in seq_len(max_step)) {
-    beta = beta - drop(grad(beta)) * step
+    beta = beta - grad(beta) * step
     res$x = c(res$x, list(beta))
     res$loss = c(res$loss, f(beta))
     res$iter = c(res$iter, i)
@@ -219,7 +219,11 @@ sgd_lm = function(X, y, beta, step, max_step = 50, seed = 1234, replace = TRUE) 
 lm_fit |> coef() |> round(2) |> unname()
 lm_fit |> deviance() |> round(2)
 ```
+:::
 
+. . .
+
+::: {.xxsmall}
 ```{r}
 sgd_lm_rep = sgd_lm(
   X, y, rep(0, p + 1),
@@ -228,6 +232,11 @@ sgd_lm_rep = sgd_lm(
 sgd_lm_rep$x |> tail(1) |> unlist() |> round(2)
 sgd_lm_rep$loss |> tail(1) |> round(2)
 ```
+:::
+
+. . .
+
+::: {.xxsmall}
 ```{r}
 sgd_lm_worep = sgd_lm(
    X, y, rep(0, p + 1),
@@ -239,7 +248,7 @@ sgd_lm_worep$loss |> tail(1) |> round(2)
 :::
 
 
-## Learning by iteration
+## Learning by step
 
 ```{r}
 #| echo: false
@@ -251,7 +260,7 @@ bind_rows(
   ggplot(aes(iter, loss, color = method)) +
   geom_line(alpha = 0.7) +
   scale_y_log10() +
-  labs(x = "Iteration", y = "Loss", color = "")
+  labs(x = "Steps", y = "Loss", color = "")
 ```
 
 ## Learning by Epochs
@@ -312,6 +321,7 @@ Remember that our costs scale as $O(nk)$, so let's see what happens when we incr
 
 ::: {.xsmall}
 ```{r}
+#| code-line-numbers: "|2"
 set.seed(1234)
 n = 10000; p = 20
 X = matrix(rnorm(n * p), n, p)
@@ -332,7 +342,7 @@ lm_fit |> coef() |> round(2) |> unname()
 
 ## Fitting
 
-::: {.xxsmall}
+::: {.xsmall}
 ```{r}
 lm_fit |> coef() |> round(2) |> unname()
 lm_fit |> deviance() |> round(2)
@@ -350,7 +360,7 @@ gd_lm$loss |> tail(1) |> round(2)
 
 ##
 
-::: {.xxsmall}
+::: {.xsmall}
 ```{r}
 sgd_lm_rep = sgd_lm(
   X, y, rep(0, p + 1),
@@ -464,12 +474,12 @@ This is a variant of stochastic gradient descent where a subset of $m$ data poin
 
 ::: {.xsmall}
 ```{r}
-#| code-line-numbers: "|4|5|11-15|17|19"
+#| code-line-numbers: "|5|11-15|17|19"
 mb_grad_desc_lm = function(X, y, beta, step, batch_size = 10, max_step = 50, seed = 1234, replace = TRUE) {
   X = cbind(1, X)
   n = nrow(X); k = ncol(X)
   f = \(beta) sum((y - X %*% beta)^2)
-  grad_b = \(beta, idx) 2 * t(X[idx, , drop = FALSE]) %*% (X[idx, , drop = FALSE] %*% beta - y[idx])
+  grad_b = \(beta, i) 2 * t(X[i,]) %*% (X[i,] %*% beta - y[i])
 
   res = list(x = list(beta), loss = f(beta), iter = 0)
   set.seed(seed)
@@ -483,7 +493,7 @@ mb_grad_desc_lm = function(X, y, beta, step, batch_size = 10, max_step = 50, see
 
     batches = split(js, ceiling(seq_along(js) / batch_size))
     for (batch in batches) {
-      beta = beta - drop(grad_b(beta, batch)) * step
+      beta = beta - grad_b(beta, batch) * step
       res$x = c(res$x, list(beta))
       res$loss = c(res$loss, f(beta))
       res$iter = c(res$iter, tail(res$iter, 1) + 1)
@@ -778,7 +788,7 @@ as_array(t$detach())
 
 Tensors can be reshaped with `$view()` or `$reshape()`, transposed with `$t()`:
 
-::: {.xxsmall}
+::: {.mxsmall}
 ```{r}
 a = torch_arange(1, 12)
 a$view(c(3, 4))
@@ -787,7 +797,7 @@ a$view(c(3, 4))
 
 . . .
 
-::: {.xxsmall}
+::: {.mxsmall}
 ```{r}
 a$reshape(c(2, 6))
 a$view(c(3, 4))$t()
@@ -886,8 +896,7 @@ We will reuse the regression problem from earlier in this lecture (`X` is $n \ti
 
 ::: {.xsmall}
 ```{r}
-X1 = cbind(1, X)
-Xt = torch_tensor(X1, dtype = torch_float())
+Xt = torch_tensor(cbind(1, X), dtype = torch_float())
 yt = torch_tensor(as.numeric(y), dtype = torch_float())
 
 beta = torch_zeros(p + 1, dtype = torch_float(), requires_grad = TRUE)
@@ -904,9 +913,6 @@ beta$shape
 ```
 :::
 
-::: {.aside}
-We use `dtype = torch_float()` (float32) because that is what the `nn` layers we'll see shortly expect.
-:::
 
 
 ## One step by hand
@@ -1080,6 +1086,24 @@ yt = torch_tensor(matrix(y, ncol = 1), dtype = torch_float())
 ```
 :::
 
+## Linear parameters
+
+Constructing the model registers a `weight` matrix (shape `(out_features, in_features)`) and a `bias` vector (shape `(out_features)`) as parameters:
+
+::: {.xsmall}
+```{r}
+(m = linear_model(p))
+```
+:::
+
+. . .
+
+::: {.xsmall}
+```{r}
+m$parameters
+```
+:::
+
 
 ## Fitting
 
@@ -1102,7 +1126,7 @@ for (i in 1:100) {
 
 . . .
 
-::: {.xxsmall}
+::: {.xsmall}
 ```{r}
 c(torch = loss$item(), lm = deviance(lm_fit) / n)
 c(torch_intercept = as.numeric(m$linear$bias), lm_intercept = unname(coef(lm_fit)[1]))
@@ -1110,7 +1134,7 @@ c(torch_intercept = as.numeric(m$linear$bias), lm_intercept = unname(coef(lm_fit
 :::
 
 ::: {.aside}
-`nnf_mse_loss()` defaults to mean reduction (versus the manual sum we used before), which is why the learning rate is so much larger here.
+`nnf_mse_loss()` defaults to mean reduction (versus the manual sum we used before), which is why the learning rate is larger here.
 :::
 
 
@@ -1121,7 +1145,7 @@ c(torch_intercept = as.numeric(m$linear$bias), lm_intercept = unname(coef(lm_fit
 ggplot(tibble(iter = seq_along(losses), loss = losses), aes(iter, loss)) +
   geom_line() +
   scale_y_log10() +
-  labs(x = "Iteration", y = "Loss (mean MSE)")
+  labs(x = "Epoch", y = "Loss (MSE)")
 ```
 
 
@@ -1146,7 +1170,9 @@ luz is roughly the R analogue of [PyTorch Lightning](https://lightning.ai/docs/p
 
 ## The luz workflow
 
-::: {.xxsmall}
+::: {.columns}
+::: {.column}
+::: {.mxsmall}
 ```{r}
 #| warning: false
 #| message: false
@@ -1168,24 +1194,26 @@ fitted = nn_module(
   fit(
     list(Xt, yt),
     epochs = 50,
-    dataloader_options = list(batch_size = 100, shuffle = TRUE),
+    dataloader_options = list(
+      batch_size = 100, 
+      shuffle = TRUE
+    ),
     verbose = FALSE
   )
 ```
 :::
-
-. . .
-
-::: {.medium}
+:::
+::: {.column .medium .fragment}
 The four-stage pipeline maps directly onto things we wrote by hand:
 
-* `setup()` - pick a loss function and optimizer constructor
+* `setup()` - pick a loss function and optimizer
 
 * `set_hparams()` - arguments passed to the model's `initialize()`
 
-* `set_opt_hparams()` - arguments passed to the optimizer (e.g. `lr`)
+* `set_opt_hparams()` - arguments passed to the optimizer
 
 * `fit()` - run the training loop, with batching and shuffling handled for us
+:::
 :::
 
 ## Inspecting the fit
