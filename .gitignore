@@ -6,3 +6,4 @@ public/
 static/slides/prev/
 test/
 .DS_Store
+static/slides/data/cifar10/

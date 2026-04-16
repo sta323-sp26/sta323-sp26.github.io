@@ -10,7 +10,9 @@
       "Bash(tree:*)",
       "Bash(find:*)",
       "WebFetch(domain:mirai.r-lib.org)",
-      "Bash(quarto render:*)"
+      "Bash(quarto render:*)",
+      "Bash(head -1151 static/slides/Lec26.qmd)",
+      "Read(//tmp/**)"
     ],
     "deny": []
   }

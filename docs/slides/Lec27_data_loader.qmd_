@@ -1,0 +1,104 @@
+
+# Datasets & Dataloaders
+
+## Why bother?
+
+So far we have been handing `list(X_train_t, y_train_t)` straight to `fit()`. That works when the data is:
+
+* already in memory as tensors,
+
+* small enough that shuffling and batching the full tensor is cheap, and
+
+* shaped as a simple `(x, y)` pair that luz can split into batches.
+
+For anything more interesting - images loaded lazily from disk, on-the-fly augmentation, text, or datasets that don't fit in RAM - we reach for the torch `dataset()` / `dataloader()` abstraction.
+
+
+## `tensor_dataset()`
+
+The simplest dataset is a thin wrapper around a set of tensors - `.getitem(i)` returns the `i`-th row of each:
+
+::: {.xsmall}
+```{r}
+train_ds = tensor_dataset(X_train_t, y_train_t)
+
+length(train_ds)
+```
+:::
+
+. . .
+
+::: {.xsmall}
+```{r}
+ex = train_ds$.getitem(1)
+str(ex, max.level = 1)
+ex[[1]]$shape; ex[[2]]$item()
+```
+:::
+
+::: {.aside}
+`tensor_dataset()` is the R analogue of PyTorch's `TensorDataset`. Any tensors you pass get indexed along their first dimension.
+:::
+
+
+## `dataloader()`
+
+A dataloader wraps a dataset and turns it into an iterator over mini-batches - handling batching, shuffling, and (optionally) parallel workers for us:
+
+::: {.xsmall}
+```{r}
+train_dl = dataloader(train_ds, batch_size = 64, shuffle = TRUE)
+
+length(train_dl)
+```
+:::
+
+. . .
+
+::: {.xsmall}
+```{r}
+batch = train_dl$.iter()$.next()
+str(batch, max.level = 1)
+batch[[1]]$shape; batch[[2]]$shape
+```
+:::
+
+::: {.aside}
+`length(train_dl)` reports the number of mini-batches per epoch - here `ceiling(1437 / 64) = 23`.
+:::
+
+
+## Fitting with a dataloader
+
+When `fit()` gets a dataloader instead of a `list(x, y)`, it iterates the dataloader directly - no `dataloader_options` needed:
+
+::: {.xsmall}
+```{r}
+test_ds = tensor_dataset(X_test_t, y_test_t)
+test_dl = dataloader(test_ds, batch_size = 64, shuffle = FALSE)
+
+torch_manual_seed(1)
+fitted_dl = mnist_fnn |>
+  setup(
+    loss = nn_cross_entropy_loss(),
+    optimizer = optim_sgd,
+    metrics = list(luz_metric_accuracy())
+  ) |>
+  set_hparams(hidden = 64, activation = nn_relu) |>
+  set_opt_hparams(lr = 0.05) |>
+  fit(
+    train_dl,
+    valid_data = test_dl,
+    epochs = 30,
+    verbose = FALSE
+  )
+```
+:::
+
+. . .
+
+::: {.xsmall}
+```{r}
+get_metrics(fitted_dl) |> tail(4)
+```
+:::

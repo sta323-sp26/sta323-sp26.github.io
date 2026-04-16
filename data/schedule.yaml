@@ -329,8 +329,13 @@ schedule:
     
 - week: 14
   day: 4
-  lecture: Gradient Descent (cont.)
-  slides: 
+  lecture: "Neural Networks with torch & luz"
+  slides: Lec27
+  readings:
+  - text: "luz"
+    link: https://mlverse.github.io/luz/
+  - text: "torchvision for R"
+    link: https://torchvision.mlverse.org/
 
 - week: 15
   day: 2
